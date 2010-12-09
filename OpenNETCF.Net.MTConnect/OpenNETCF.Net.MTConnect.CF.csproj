@@ -71,6 +71,9 @@
     <Compile Include="Requests\ResourceRequestBase.cs" />
     <Compile Include="Requests\SampleRequest.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SDKOverview.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

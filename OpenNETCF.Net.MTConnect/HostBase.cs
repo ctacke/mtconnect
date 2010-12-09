@@ -28,6 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Threading;
+using System.Xml.Linq;
+using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace OpenNETCF.Net.MTConnect
 {
@@ -80,9 +83,23 @@ namespace OpenNETCF.Net.MTConnect
             }
             else if (request is CurrentRequest)
             {
-                // TODO add filtering
+                var current = request as CurrentRequest;
+
                 SetResponseHeader(context, "Content-Type", "text/xml");
-                var xml = Agent.Data.CurrentXml();
+
+                string xml = string.Empty;
+
+                if (!string.IsNullOrEmpty(current.Path))
+                {
+                    // TODO add filtering
+                    var fp = new FilterPath(request.ResourceName, current.Path);
+                    xml = Agent.Data.CurrentXml(fp);
+                }
+                else
+                {
+                    xml = Agent.Data.CurrentXml();
+                }
+
                 SendResponse(xml, context, true);
             }
             else if (request is SampleRequest)
@@ -161,8 +178,6 @@ namespace OpenNETCF.Net.MTConnect
                 // TODO return valid MTConnect error string
                 throw new NotSupportedException();
             }
-
         }
-
     }
 }
