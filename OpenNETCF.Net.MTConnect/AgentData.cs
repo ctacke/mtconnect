@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace OpenNETCF.Net.MTConnect
 {
@@ -307,9 +308,102 @@ namespace OpenNETCF.Net.MTConnect
             return values.ToArray();
         }
 
+        internal DataItemValue[] Current(out long nextSequence, FilterPath filter)
+        {
+            if(filter == null) return Current(out nextSequence);
+
+            lock (m_syncRoot)
+            {
+                nextSequence = NextSequenceNumber;
+            }
+
+            List<DataItemValue> values = new List<DataItemValue>();
+
+            foreach (var device in m_agent.Devices)
+            {
+                if(!filter.ContainsDevice(device.Name)) continue;
+
+                // if there is no component filter, get the device data items
+                if(!filter.HasComponents)
+                {
+                    foreach (var item in device.DataItems)
+                    {
+                        var last = m_buffer.Last(i => i.Item.ID == item.ID);
+                        if (last != null) values.Add(last);
+                    }
+                }
+
+                foreach (var component in device.Components)
+                {
+                    if (filter.ContainsComponent(component.Name))
+                    {
+                        // skip if there is a subcomponent requested
+                        if(!filter.HasSubcomponents)
+                        {
+                        foreach (var item in component.DataItems)
+                        {
+                            var last = m_buffer.Last(i => i.Item.ID == item.ID);
+                            if (last != null) values.Add(last);
+                        }
+                        }
+
+                        foreach (var subcomponent in component.Components)
+                        {
+                            if (filter.ContainsSubcomponent(subcomponent.Name))
+                            {
+                                foreach (var item in subcomponent.DataItems)
+                                {
+                                    var last = m_buffer.Last(i => i.Item.ID == item.ID);
+                                    if (last != null) values.Add(last);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return values.ToArray();
+        }
+
         public string CurrentXml()
         {
             return CurrentXml(f => true);
+        }
+
+        internal string CurrentXml(FilterPath filter)
+        {
+            long nextSequence;
+
+            var data = Current(out nextSequence, filter);
+
+            var doc = new XDocument(new XDeclaration("1.0", "utf-8", "true"));
+
+            XNamespace ns = "urn:mtconnect.com:MTConnectStreams:1.1";
+            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+            var schemaLocation = "urn:mtconnect.com:MTConnectStreams:1.1 http://www.mtconnect.org/schemas/MTConnectStreams_1.1.xsd";
+
+            var mtcStreamsElement = new XElement(ns + "MTConnectStreams",
+                new XAttribute("xmlns", ns),
+                new XAttribute(XNamespace.Xmlns + "xsi", xsi),
+                new XAttribute(xsi + "schemaLocation", schemaLocation));
+
+            doc.Add(mtcStreamsElement);
+
+            var headerElement = new XElement(ns + "Header")
+                .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"))
+                .AddAttribute("sender", m_agent.Host == null ? "[unconnected]" : m_agent.Host.HostName)
+                .AddAttribute("instanceId", m_agent.InstanceID.ToString())
+                .AddAttribute("bufferSize", m_agent.Data.BufferSize.ToString())
+                .AddAttribute("version", m_agent.Version)
+                .AddAttribute("nextSequence", nextSequence.ToString())
+                .AddAttribute("firstSequence", data.FirstSequence().ToString())
+                .AddAttribute("lastSequence", data.LastSequence().ToString());
+
+            mtcStreamsElement.Add(headerElement);
+
+            mtcStreamsElement.Add(data.AsStreamsXml(ns));
+
+            return doc.ToString();
         }
 
         public string CurrentXml(Func<DataItem, bool> filter)

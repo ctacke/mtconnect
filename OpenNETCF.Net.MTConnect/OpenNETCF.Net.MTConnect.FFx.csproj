@@ -63,6 +63,7 @@
     <Compile Include="DataItemType.cs" />
     <Compile Include="DataItemValue.cs" />
     <Compile Include="Exceptions\RequestParameterException.cs" />
+    <Compile Include="FilterPath.cs" />
     <Compile Include="HostBase.cs" />
     <Compile Include="IHost.cs" />
     <Compile Include="MTConnectProvider.cs" />

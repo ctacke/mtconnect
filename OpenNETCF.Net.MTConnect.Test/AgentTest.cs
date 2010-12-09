@@ -134,6 +134,38 @@ namespace OpenNETCF.Net.MTConnect.Test
         }
 
         [TestMethod()]
+        public void PathFilteredCurrentDataTest()
+        {
+            Agent agent = new Agent();
+            Adapter a = new OrgAdapter();
+            agent.Adapters.Add(a);
+            var di1 = a.Device.DataItems["18"];
+            var di2 = a.Device.DataItems["6"];
+
+            var firstValue = "12";
+            di1.SetValue(firstValue);
+            var secondValue = "6";
+            di2.SetValue(secondValue);
+
+            var path = new FilterPath("*", null);
+            long seq;
+            var result = agent.Data.Current(out seq, path);
+            Assert.AreEqual(2, result.Length);
+
+            path = new FilterPath("*", "//axes");
+            result = agent.Data.Current(out seq, path);
+            Assert.AreEqual(2, result.Length);
+
+            path = new FilterPath("*", "//axes//Z");
+            result = agent.Data.Current(out seq, path);
+            Assert.AreEqual(1, result.Length);
+
+            path = new FilterPath("*", "//nodevice");
+            result = agent.Data.Current(out seq, path);
+            Assert.AreEqual(0, result.Length);
+        }
+
+        [TestMethod()]
         public void CurrentDataXmlTest()
         {
             Agent agent = new Agent();
