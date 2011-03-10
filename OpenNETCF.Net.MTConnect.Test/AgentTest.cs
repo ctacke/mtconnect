@@ -1,10 +1,9 @@
-﻿using OpenNETCF.Net.MTConnect;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     [TestClass()]
     public class AgentTest
@@ -68,6 +67,16 @@ namespace OpenNETCF.Net.MTConnect.Test
             var instanceId = header.Attribute("instanceId");
             Assert.IsNotNull(instanceId);
             Assert.IsTrue(long.TryParse(instanceId.Value,  out l));
+        }
+
+        [TestMethod()]
+        public void ProbeTest()
+        {
+            Agent agent = new Agent();
+            Adapter a = new OrgAdapter();
+
+            agent.Adapters.Add(a);
+            var probe = agent.Probe();
         }
 
         [TestMethod()]
@@ -224,5 +233,16 @@ namespace OpenNETCF.Net.MTConnect.Test
             Assert.IsNotNull(lastSequence);
             Assert.IsTrue(long.TryParse(lastSequence.Value, out l));
         }
+
+        [TestMethod()]
+        public void GenerateErrorDocumentTest()
+        {
+            var agent = new Agent();
+
+            var error = new MTConnectError(ErrorCode.InvalidUri, "Bad URI");
+
+            var err = agent.GenerateErrorDocument(error);
+        }
+        
     }
 }

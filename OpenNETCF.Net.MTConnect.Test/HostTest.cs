@@ -1,8 +1,7 @@
-﻿using OpenNETCF.Net.MTConnect;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     [TestClass()]
     public class HostTest
@@ -19,7 +18,7 @@ namespace OpenNETCF.Net.MTConnect.Test
             var before = host.ResponsesSent;
 
             // pretend we got a probe request
-            host.HandleHttpGet(new Uri("http://my.server.com/mtc/probe"), null, null);
+            host.HandleHttpGet("test", new Uri("http://my.server.com/mtc/probe"), null, null);
 
             Assert.AreEqual(before + 1, host.ResponsesSent);
         }
@@ -40,7 +39,7 @@ namespace OpenNETCF.Net.MTConnect.Test
             var before = host.ResponsesSent;
 
             // pretend we got a probe request
-            host.HandleHttpGet(new Uri("http://my.server.com/mtc/probe"), null, this);
+            host.HandleHttpGet("test", new Uri("http://my.server.com/mtc/probe"), null, this);
 
             Assert.AreEqual(this, passedContext);
         }

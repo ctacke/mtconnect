@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectDevices xmlns:m="urn:mtconnect.org:MTConnectDevices:1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mtconnect.org:MTConnectDevices:1.1" xsi:schemaLocation="urn:mtconnect.org:MTConnectDevices:1.1 http://www.mtconnect.org/schemas/MTConnectDevices_1.1.xsd">
+    <Header creationTime="2009-03-22T01:50:29+00:00" sender="localhost" instanceId="1237628993" bufferSize="100000" version="1.0"/>
+    <Devices>
+        <Device name="Lathe1" uuid="10000" id="10000">
+            <DataItems>
+                <DataItem category="SAMPLE" type="VOLTAGE" name="Data300" id="300" units="VOLT" />
+            </DataItems>
+            <Components>
+                <Actuator name="Component1000" id="1000">
+                    <DataItems>
+                        <DataItem category="Sample" type="AMPERAGE" name="Data100" id="100" units="AMPERE" />
+                    </DataItems>
+                </Actuator>
+            </Components>
+        </Device>
+        <Device name="Lathe2" uuid="20000" id="20000">
+            <DataItems>
+                <DataItem category="SAMPLE" type="AMPERAGE" name="Dat400" id="400" units="AMPERE" />
+            </DataItems>
+        </Device>
+    </Devices>
+</MTConnectDevices>

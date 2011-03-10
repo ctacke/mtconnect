@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     public class OrgAdapter : Adapter
     {
@@ -14,7 +14,7 @@ namespace OpenNETCF.Net.MTConnect.Test
         {
             var stream = TestManager.GetTestConfig(ConfigXmlNames.AgentXML);
             var doc = XDocument.Load(stream);
-            m_deviceElement = ConfigParser.GetDeviceElement(doc);
+            m_deviceElement = ConfigParser.GetDeviceElement(doc, null);
         }
 
         public override void Start()

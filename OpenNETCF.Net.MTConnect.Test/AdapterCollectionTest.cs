@@ -1,8 +1,7 @@
-﻿using OpenNETCF.Net.MTConnect;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     [TestClass()]
     public class AdapterCollectionTest

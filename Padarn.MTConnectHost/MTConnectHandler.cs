@@ -24,6 +24,7 @@ namespace Padarn.MTConnectHost
             }
 
             MTConnectService.Instance.Host.HandleHttpGet(
+                context.Request.UserHostAddress,
                 context.Request.Url,
                 requestData,
                 context.Response);
