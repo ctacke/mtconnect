@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     public delegate void ResponseHandler(string data, object context);
 

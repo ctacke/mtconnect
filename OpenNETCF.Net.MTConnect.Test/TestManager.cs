@@ -5,11 +5,13 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     internal static class ConfigXmlNames
     {
-        public const string AgentXML = "OpenNETCF.Net.MTConnect.Test.inputs.agent.mtconnect.org.xml";
+        public const string AgentXML = "OpenNETCF.MTConnect.Test.inputs.agent.mtconnect.org.xml";
+        public const string TwoDeviceBasicXML = "OpenNETCF.MTConnect.Test.inputs.TwoDeviceBasic.xml";
+        public const string BasicDataStreamXML = "OpenNETCF.MTConnect.Test.inputs.BasicDataStream.xml";
     }
 
     internal static class TestManager

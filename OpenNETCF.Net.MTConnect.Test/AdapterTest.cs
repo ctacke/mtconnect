@@ -1,10 +1,9 @@
-﻿using OpenNETCF.Net.MTConnect;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
 using System.Linq;
 
-namespace OpenNETCF.Net.MTConnect.Test
+namespace OpenNETCF.MTConnect.Test
 {
     [TestClass()]
     public class AdapterTest

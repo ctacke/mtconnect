@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{31456734-8B25-4242-B3C7-98E69D2BC395}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenNETCF.MTConnect</RootNamespace>
+    <AssemblyName>OpenNETCF.MTConnect.Agent</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\FFx\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\FFx\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenNETCF.Extensions">
+      <HintPath>..\references\FFx\OpenNETCF.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Adapter.cs" />
+    <Compile Include="AdapterCollection.cs" />
+    <Compile Include="Agent.cs" />
+    <Compile Include="AgentData.cs" />
+    <Compile Include="AgentInterface.cs" />
+    <Compile Include="DataItemValueExtensions.cs" />
+    <Compile Include="FilterPath.cs" />
+    <Compile Include="HostBase.cs" />
+    <Compile Include="Interfaces\IDataObserver.cs" />
+    <Compile Include="Interfaces\IHost.cs" />
+    <Compile Include="Interfaces\IHostedAdapter.cs" />
+    <Compile Include="MTConnectProvider.cs" />
+    <Compile Include="Connector.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestParser.cs" />
+    <Compile Include="Requests\CurrentRequest.cs" />
+    <Compile Include="Requests\IResourceRequest.cs" />
+    <Compile Include="Requests\ProbeRequest.cs" />
+    <Compile Include="Requests\ResourceRequestBase.cs" />
+    <Compile Include="Requests\SampleRequest.cs" />
+    <Compile Include="XmlDefinedAdapterBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.FFX.csproj">
+      <Project>{92B182EE-E5D6-4706-A668-D9065FDC9624}</Project>
+      <Name>OpenNETCF.MTConnect.Common.FFX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

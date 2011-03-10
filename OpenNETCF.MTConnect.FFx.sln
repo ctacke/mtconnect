@@ -1,0 +1,109 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Test", "OpenNETCF.Net.MTConnect.Test\OpenNETCF.MTConnect.Test.csproj", "{74EEB80F-D9B2-4135-83B5-AD37DA488959}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31C1A474-F91F-43E5-B45E-B639AD9E677E}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		OpenNETCF.Net.MTConnect.FFx.vsmdi = OpenNETCF.Net.MTConnect.FFx.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padarn.MTConnectHost.FFx", "Padarn.MTConnectHost\Padarn.MTConnectHost.FFx.csproj", "{66B2526B-C120-49EF-A4DC-119CD4D1C939}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Common.FFX", "OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.FFX.csproj", "{92B182EE-E5D6-4706-A668-D9065FDC9624}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Agent.FFx", "OpenNETCF.MTConnect.Agent\OpenNETCF.MTConnect.Agent.FFx.csproj", "{31456734-8B25-4242-B3C7-98E69D2BC395}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Client.FFx", "OpenNETCF.MTConnect.Client\OpenNETCF.MTConnect.Client.FFx.csproj", "{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
+		SccProjectUniqueName0 = Padarn.MTConnectHost\\Padarn.MTConnectHost.FFx.csproj
+		SccProjectName0 = Padarn.MTConnectHost
+		SccLocalPath0 = Padarn.MTConnectHost
+		SccProjectUniqueName1 = OpenNETCF.Net.MTConnect.Test\\OpenNETCF.MTConnect.Test.csproj
+		SccProjectName1 = OpenNETCF.Net.MTConnect.Test
+		SccLocalPath1 = OpenNETCF.Net.MTConnect.Test
+		SccLocalPath2 = .
+		SccProjectUniqueName3 = OpenNETCF.MTConnect.Agent\\OpenNETCF.MTConnect.Agent.FFx.csproj
+		SccProjectName3 = OpenNETCF.MTConnect.Agent
+		SccLocalPath3 = OpenNETCF.MTConnect.Agent
+		SccProjectUniqueName4 = OpenNETCF.MTConnect.Client\\OpenNETCF.MTConnect.Client.FFx.csproj
+		SccProjectName4 = OpenNETCF.MTConnect.Client
+		SccLocalPath4 = OpenNETCF.MTConnect.Client
+		SccProjectUniqueName5 = OpenNETCF.MTConnect.Common\\OpenNETCF.MTConnect.Common.FFX.csproj
+		SccProjectName5 = OpenNETCF.MTConnect.Common
+		SccLocalPath5 = OpenNETCF.MTConnect.Common
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = OpenNETCF.Net.MTConnect.FFx.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{74EEB80F-D9B2-4135-83B5-AD37DA488959}.Release|x86.ActiveCfg = Release|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{66B2526B-C120-49EF-A4DC-119CD4D1C939}.Release|x86.ActiveCfg = Release|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{92B182EE-E5D6-4706-A668-D9065FDC9624}.Release|x86.ActiveCfg = Release|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{31456734-8B25-4242-B3C7-98E69D2BC395}.Release|x86.ActiveCfg = Release|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

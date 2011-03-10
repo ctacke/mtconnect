@@ -58,15 +58,19 @@
     <Compile Include="SampleAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenNETCF.Net.MTConnect\OpenNETCF.Net.MTConnect.FFx.csproj">
-      <Project>{31456734-8B25-4242-B3C7-98E69D2BC395}</Project>
-      <Name>OpenNETCF.Net.MTConnect.FFx</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="agent.mtconnect.org.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenNETCF.MTConnect.Agent\OpenNETCF.MTConnect.Agent.FFx.csproj">
+      <Project>{31456734-8B25-4242-B3C7-98E69D2BC395}</Project>
+      <Name>OpenNETCF.MTConnect.Agent.FFx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.FFX.csproj">
+      <Project>{92B182EE-E5D6-4706-A668-D9065FDC9624}</Project>
+      <Name>OpenNETCF.MTConnect.Common.FFX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

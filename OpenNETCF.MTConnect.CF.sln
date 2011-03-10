@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Common.CF", "OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.CF.csproj", "{6853DD79-B331-4C72-9A9C-750F4F5376FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Agent.CF", "OpenNETCF.MTConnect.Agent\OpenNETCF.MTConnect.Agent.CF.csproj", "{BD304E53-562F-443F-99CD-C01A3432829E}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
+		SccProjectUniqueName0 = OpenNETCF.MTConnect.Common\\OpenNETCF.MTConnect.Common.CF.csproj
+		SccProjectName0 = OpenNETCF.MTConnect.Common
+		SccLocalPath0 = OpenNETCF.MTConnect.Common
+		SccProjectUniqueName1 = OpenNETCF.MTConnect.Agent\\OpenNETCF.MTConnect.Agent.CF.csproj
+		SccProjectName1 = OpenNETCF.MTConnect.Agent
+		SccLocalPath1 = OpenNETCF.MTConnect.Agent
+		SccLocalPath2 = .
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6853DD79-B331-4C72-9A9C-750F4F5376FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6853DD79-B331-4C72-9A9C-750F4F5376FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6853DD79-B331-4C72-9A9C-750F4F5376FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6853DD79-B331-4C72-9A9C-750F4F5376FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD304E53-562F-443F-99CD-C01A3432829E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD304E53-562F-443F-99CD-C01A3432829E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD304E53-562F-443F-99CD-C01A3432829E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD304E53-562F-443F-99CD-C01A3432829E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

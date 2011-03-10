@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenNETCF.Net.MTConnect;
+using OpenNETCF.MTConnect;
 using OpenNETCF.Web.Server;
 using OpenNETCF.Web;
 using System.Net;
