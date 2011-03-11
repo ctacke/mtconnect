@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public class CurrentRequest : ResourceRequestBase
     {

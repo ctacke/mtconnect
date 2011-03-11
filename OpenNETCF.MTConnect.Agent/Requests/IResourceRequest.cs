@@ -27,10 +27,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public interface IResourceRequest
     {
+        string RequestSource { get; set; }
         string ResourceName { get; set; }
         void SetParameters(string paramString);
         
