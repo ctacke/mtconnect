@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public abstract class ResourceRequestBase : IResourceRequest
     {
@@ -38,6 +38,7 @@ namespace OpenNETCF.Net.MTConnect
         private Dictionary<string, string> m_parameters = new Dictionary<string, string>(new CaselessComparer());
 
         public string ResourceName { get; set; }
+        public string RequestSource { get; set; }
 
         abstract protected string[] ParameterNames { get; }
         

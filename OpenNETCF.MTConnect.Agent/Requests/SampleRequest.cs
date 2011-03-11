@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public class SampleRequest : ResourceRequestBase
     {
