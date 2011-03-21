@@ -27,18 +27,32 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public class DeviceCollection : IEnumerable<Device>
     {
         private Dictionary<string, Device> m_devices = new Dictionary<string, Device>();
 
-        internal void Add(Device device)
+        public DeviceCollection()
+        {
+        }
+
+        public DeviceCollection(Device device)
+        {
+            Add(device);
+        }
+
+        public DeviceCollection(IEnumerable<Device> devices)
+        {
+            AddRange(devices);
+        }
+
+        public void Add(Device device)
         {
             m_devices.Add(device.Name, device);
         }
 
-        internal void AddRange(IEnumerable<Device> devices)
+        public void AddRange(IEnumerable<Device> devices)
         {
             foreach (var d in devices) { Add(d); }
         }
@@ -53,6 +67,11 @@ namespace OpenNETCF.Net.MTConnect
             }
         }
 
+        public int Count
+        {
+            get { return m_devices.Count; }
+        }
+
         public IEnumerator<Device> GetEnumerator()
         {
             return m_devices.Values.GetEnumerator();
@@ -61,6 +80,11 @@ namespace OpenNETCF.Net.MTConnect
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        internal void Clear()
+        {
+            m_devices.Clear();
         }
     }
 }

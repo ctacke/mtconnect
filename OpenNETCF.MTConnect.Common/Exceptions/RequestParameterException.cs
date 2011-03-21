@@ -27,8 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenNETCF.Net.MTConnect
-
+namespace OpenNETCF.MTConnect
 {
     public class RequestParameterException : Exception
     {   
@@ -68,9 +67,9 @@ namespace OpenNETCF.Net.MTConnect
 
     public class InvalidAdapterException : Exception
     {
-        public Adapter Adapter { get; private set; }
+        public IAdapter Adapter { get; private set; }
 
-        public InvalidAdapterException(Adapter adapter, string message)
+        public InvalidAdapterException(IAdapter adapter, string message)
             : base(message)
         {
             Adapter = adapter;
@@ -109,6 +108,17 @@ namespace OpenNETCF.Net.MTConnect
         {
             DataItem = item;
             Value = value;
+        }
+    }
+
+    public class InvalidIDException : Exception
+    {
+        public string ID { get; private set; }
+
+        public InvalidIDException(string id, string message)
+            : base(message)
+        {
+            ID = id;
         }
     }
 }
