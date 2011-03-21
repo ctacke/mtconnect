@@ -29,13 +29,13 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
-    internal static class ConfigParser
+    public static class ConfigParser
     {
-        public static XElement GetDeviceElement(XDocument document)
+        public static XElement[] GetDeviceElements(XDocument document)
         {
-            return GetDeviceElement(document, null);
+            return document.Descendants(document.Root.Name.Namespace + "Device").ToArray();
         }
 
         public static XElement GetDeviceElement(XDocument document, string deviceName)
@@ -110,10 +110,8 @@ namespace OpenNETCF.Net.MTConnect
 
         }
 
-        internal static Device[] ParseConfigFile(Stream configFile)
+        internal static DeviceCollection ParseConfigFile(Stream configFile)
         {
-            List<Device> deviceList = new List<Device>();
-
             string xml;
 
             // read the data
@@ -121,6 +119,13 @@ namespace OpenNETCF.Net.MTConnect
             {
                 xml = reader.ReadToEnd();
             }
+
+            return ParseConfigFile(xml);
+        }
+
+        internal static DeviceCollection ParseConfigFile(string xml)
+        {
+            var deviceList = new DeviceCollection();
 
 
             var doc = XDocument.Parse(xml);
@@ -136,7 +141,7 @@ namespace OpenNETCF.Net.MTConnect
                 deviceList.Add(Device.FromXElement<Device>(ns, deviceNode));
             }
 
-            return deviceList.ToArray();
+            return deviceList;
         }
 
         internal static Dictionary<string, string> GetAttributes(XElement element)

@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public sealed class PropertyCollection : IEnumerable<KeyValuePair<string, string>>
     {
@@ -41,6 +41,11 @@ namespace OpenNETCF.Net.MTConnect
         internal void Add(string name, string value)
         {
             m_values.Add(name, value);
+        }
+
+        public int Count
+        {
+            get { return m_values.Count; }
         }
 
         public static implicit operator PropertyCollection(Dictionary<string, string> d)
@@ -59,6 +64,17 @@ namespace OpenNETCF.Net.MTConnect
                     return m_values[propertyName];
                 }
                 return null;
+            }
+            set
+            {
+                if (!ContainsProperty(propertyName))
+                {
+                    m_values.Add(propertyName, value);
+                }
+                else
+                {
+                    m_values[propertyName] = value;
+                }
             }
         }
 
@@ -82,6 +98,11 @@ namespace OpenNETCF.Net.MTConnect
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        internal bool ContainsProperty(string propertyName)
+        {
+            return m_values.ContainsKey(propertyName);
         }
     }
 

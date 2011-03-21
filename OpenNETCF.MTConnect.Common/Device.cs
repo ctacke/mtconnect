@@ -29,7 +29,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Diagnostics;
 
-namespace OpenNETCF.Net.MTConnect
+namespace OpenNETCF.MTConnect
 {
     public class Device : ComponentBase
     {
@@ -38,9 +38,19 @@ namespace OpenNETCF.Net.MTConnect
         {
         }
 
-        public string UUID
+        public Device(string name, string uuid, string id)
+            : base(new PropertyCollection())
         {
-            get { return Properties[CommonProperties.UUID]; }
+            OpenNETCF.Validate
+                .Begin()
+                .IsNotNullOrEmpty(name)
+                .IsNotNullOrEmpty(uuid)
+                .IsNotNullOrEmpty(id)
+                .Check();
+
+            Name = name;
+            UUID = uuid;
+            ID = id;            
         }
 
         public override XElement AsXElement(XNamespace ns)

@@ -24,10 +24,10 @@ using System.Runtime.InteropServices;
 
 
 // see http://modland.nascom.nasa.gov/browse/calendar.html
-[assembly: AssemblyVersion("0.9.10336")]
+[assembly: AssemblyVersion("0.9.11080")]
 
 #if !WindowsCE
-[assembly: AssemblyFileVersion("0.9.10336")]
+[assembly: AssemblyFileVersion("0.9.11080")]
 #endif
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.Test")]
