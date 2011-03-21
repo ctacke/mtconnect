@@ -26,9 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenNETCF.Web;
 using System.IO;
 using System.Xml.Linq;
+using OpenNETCF.Web;
 
 namespace OpenNETCF.MTConnect
 {
@@ -49,11 +49,11 @@ namespace OpenNETCF.MTConnect
             }
 
             var uri = new Uri(agentAddress);
-            var targetAddress = uri.Host;
+            var targetAddress = uri.Port == 80 ? uri.Host : string.Format("{0}:{1}", uri.Host, uri.Port);
 
             SyncRoot = new object();
             RestConnector = new RestConnector(targetAddress);
-            RootFolder = uri.PathAndQuery;
+            RootFolder = uri.AbsolutePath;
         }
 
         protected string GetProbePath()

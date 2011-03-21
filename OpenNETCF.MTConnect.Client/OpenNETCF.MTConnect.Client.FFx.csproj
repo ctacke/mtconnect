@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Shared\MTConnect.SDK.VersionInfo.cs">
+      <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="Clients\Client.cs" />
     <Compile Include="DataMonitor.cs" />
     <Compile Include="Entities\ComponentStream.cs" />
@@ -68,7 +71,9 @@
       <Name>OpenNETCF.MTConnect.Common.FFX</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClientDiagram.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

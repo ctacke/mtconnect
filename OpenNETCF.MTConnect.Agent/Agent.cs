@@ -42,6 +42,8 @@ namespace OpenNETCF.MTConnect
 
         internal IHost Host { get; set; }
 
+        private Dictionary<string, DataItem> m_dataItemMap = new Dictionary<string, DataItem>();
+
         internal Agent()
             : this(1000)
         {
@@ -110,8 +112,6 @@ namespace OpenNETCF.MTConnect
             // TODO raise an event
         }
 
-        private Dictionary<string, DataItem> m_dataItemMap = new Dictionary<string, DataItem>();
-
         public void PublishData(string dataItemID, string value, DateTime time)
         {
             DataItem dataItem = GetDataItemByID(dataItemID);
@@ -139,7 +139,7 @@ namespace OpenNETCF.MTConnect
             }
             else
             {
-                foreach (var device in Devices)
+                foreach (var device in Devices.ToArray())
                 {
                     var items = device.DataItems.Find(d => d.ID == dataItemID);
 

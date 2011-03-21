@@ -22,14 +22,6 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5ef4e156-f843-44d5-9720-447329a8d243")]
 
-
-// see http://modland.nascom.nasa.gov/browse/calendar.html
-[assembly: AssemblyVersion("0.9.11080")]
-
-#if !WindowsCE
-[assembly: AssemblyFileVersion("0.9.11080")]
-#endif
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.Test")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.VirtualAgent")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.VirtualAgentCE")]

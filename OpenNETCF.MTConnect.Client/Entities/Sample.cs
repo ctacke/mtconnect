@@ -38,11 +38,11 @@ namespace OpenNETCF.MTConnect
             : base(ns, element)
         {
             this.Type = element.Name.LocalName;
-            if (string.Compare(element.Value, "UNAVAILABLE", true) == 0)
+            if (string.Compare(element.Value, "UNAVAILABLE", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 Value = null;
             }
-            if (string.Compare(element.Value, "NULL", true) == 0)
+            if (string.Compare(element.Value, "NULL", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 Value = null;
             }

@@ -84,7 +84,6 @@ namespace OpenNETCF.MTConnect
                     {
                         var value = pair.Substring(index + name.Length + 1);
                         m_parameters.Add(name, value);
-                        Debug.WriteLine(string.Format("{0}='{1}'", name, value));
                         names.Remove(name);
                         break;
                     }

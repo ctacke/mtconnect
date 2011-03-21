@@ -30,10 +30,11 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    public interface IHostedAdapter : IAdapter
+    public interface IHostedAdapter : IAdapter, IDisposable
     {
+        AgentInterface AgentInterface { get; set; }
+
         void BeforeLoad();
-        void SetAgentInterface(AgentInterface agentInterface);
         Device GetDeviceDefinition();
         void AfterLoad();
         void OnError(Exception exception);

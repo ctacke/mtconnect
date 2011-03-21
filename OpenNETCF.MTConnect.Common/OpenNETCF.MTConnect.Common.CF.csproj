@@ -63,6 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Shared\MTConnect.SDK.VersionInfo.cs">
+      <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="Components\ComponentCollection.cs" />
