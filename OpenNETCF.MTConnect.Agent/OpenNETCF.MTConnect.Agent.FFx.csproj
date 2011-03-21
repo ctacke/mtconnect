@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Shared\MTConnect.SDK.VersionInfo.cs">
+      <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="Adapter.cs" />
     <Compile Include="AdapterCollection.cs" />
     <Compile Include="Agent.cs" />

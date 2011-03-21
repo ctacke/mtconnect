@@ -44,6 +44,7 @@ namespace OpenNETCF.MTConnect
         public event EventHandler<GenericEventArgs<Condition>> NewCondition;
 
         public bool Running { get; private set; }
+        public bool Connected { get; private set; }
 
         public DataMonitor(string agentAddress)
             : this(agentAddress, 1000)
@@ -89,6 +90,8 @@ namespace OpenNETCF.MTConnect
 
             new Thread(MonitorThreadProc) { IsBackground = true }
             .Start();
+
+            Connected = true;
         }
 
         public void Stop()
@@ -158,10 +161,12 @@ namespace OpenNETCF.MTConnect
                     data = m_client.Sample();
                     if (data != null)
                     {
+                        Connected = true;
                         HandleNewData(data);
                     }
                     else
                     {
+                        Connected = false;
                     }
 
                     et = Environment.TickCount - start;

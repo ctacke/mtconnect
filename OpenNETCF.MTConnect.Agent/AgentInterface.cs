@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
@@ -36,10 +37,17 @@ namespace OpenNETCF.MTConnect
 
         public event EventHandler<DataItemValue> DataItemValueChanged;
 
+        private Dictionary<string, string> m_publishedValueCache = new Dictionary<string, string>();
+
         internal AgentInterface(Agent agent)
         {
             m_agent = agent;
             m_agent.Adapters.DataItemValueSet += new EventHandler<DataItemValue>(DataItemValueSet);
+        }
+
+        public void ClearCache()
+        {
+            m_publishedValueCache.Clear();
         }
 
         private void DataItemValueSet(object sender, DataItemValue e)
@@ -52,8 +60,36 @@ namespace OpenNETCF.MTConnect
             );
         }
 
+        private bool IsChangedValue(string dataItemID, string value)
+        {
+            if (!m_publishedValueCache.ContainsKey(dataItemID))
+            {
+                m_publishedValueCache.Add(dataItemID, value);
+                return true;
+            }
+
+            var previous = m_publishedValueCache[dataItemID];
+            if (previous != value)
+            {
+                m_publishedValueCache[dataItemID] = value;
+                return true;
+            }
+
+            return false;
+        }
+
         public void PublishData(string dataItemID, string value)
         {
+            PublishData(dataItemID, value, true);
+        }
+
+        public void PublishData(string dataItemID, string value, bool ignoreDuplicates)
+        {
+            if ((ignoreDuplicates) && (!IsChangedValue(dataItemID, value)))
+            {
+                return;
+            }
+
             m_agent.PublishData(dataItemID, value, DateTime.Now);
         }
 

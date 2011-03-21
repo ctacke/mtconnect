@@ -279,12 +279,6 @@ namespace OpenNETCF.MTConnect
             // TODO: check constraints?
             // TODO: check alarms?
 
-            // raise up the chain to the Agent
-            if (this.Name == "CallMethod")
-            {
-                Debug.WriteLine("CallMethod");
-            }
-
             ValueSet.Fire(this, new DataItemValue(-1, this, value, time));
         }
     }
