@@ -35,7 +35,7 @@ namespace OpenNETCF.MTConnect
     {
         public static XElement[] GetDeviceElements(XDocument document)
         {
-            return document.Descendants(document.Root.Name.Namespace + "Device").ToArray();
+            return document.Descendants(document.Root.Name.Namespace + NodeNames.Device).ToArray();
         }
 
         public static XElement GetDeviceElement(XDocument document, string deviceName)
@@ -43,11 +43,11 @@ namespace OpenNETCF.MTConnect
             XElement deviceElement;
             if (deviceName == null)
             {
-                deviceElement = document.Descendants(document.Root.Name.Namespace + "Device").First();
+                deviceElement = document.Descendants(document.Root.Name.Namespace + NodeNames.Device).First();
             }
             else
             {
-                deviceElement = (from d in document.Descendants(document.Root.Name.Namespace + "Device")
+                deviceElement = (from d in document.Descendants(document.Root.Name.Namespace + NodeNames.Device)
                                  where d.Attribute("name").Value == deviceName
                                  select d).FirstOrDefault();
             }
@@ -62,7 +62,7 @@ namespace OpenNETCF.MTConnect
 
         public static ComponentDescription GetComponentDescription(XElement componentElement)
         {
-            var descriptionNode = componentElement.Element(componentElement.Name.Namespace + "Description");
+            var descriptionNode = componentElement.Element(componentElement.Name.Namespace + NodeNames.Description);
             if (descriptionNode == null) return null;
 
             ComponentDescription desc = new ComponentDescription();
@@ -81,7 +81,7 @@ namespace OpenNETCF.MTConnect
         public static ComponentDescriptor[] GetComponentDescriptors(XElement componentElement)
         {
             List<ComponentDescriptor> descriptors = new List<ComponentDescriptor>();
-            var componentsList = componentElement.Element(componentElement.Name.Namespace + "Components");
+            var componentsList = componentElement.Element(componentElement.Name.Namespace + NodeNames.Components);
 
             if (componentsList != null)
             {
@@ -97,11 +97,11 @@ namespace OpenNETCF.MTConnect
 
         public static PropertyCollection[] GetComponentDataItems(XElement componentElement)
         {
-            var itemsNode = componentElement.Element(componentElement.Name.Namespace + "DataItems");
+            var itemsNode = componentElement.Element(componentElement.Name.Namespace + NodeNames.DataItems);
             if (itemsNode == null) return null;
 
             List<PropertyCollection> propsList = new List<PropertyCollection>();
-            foreach (var item in itemsNode.Elements(componentElement.Name.Namespace + "DataItem"))
+            foreach (var item in itemsNode.Elements(componentElement.Name.Namespace + NodeNames.DataItem))
             {
                 propsList.Add(PropertyCollection.FromAttributes(item.Attributes()));
             }

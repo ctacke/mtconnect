@@ -43,9 +43,9 @@ namespace OpenNETCF.MTConnect
         {
         }
 
-        public Sample[] AllSamples()
+        public ISample[] AllSamples()
         {
-            List<Sample> samples = new List<Sample>();
+            List<ISample> samples = new List<ISample>();
 
             foreach (var device in DeviceStreams)
             {
@@ -60,9 +60,9 @@ namespace OpenNETCF.MTConnect
             return samples.ToArray();
         }
 
-        public Event[] AllEvents()
+        public IEvent[] AllEvents()
         {
-            List<Event> events = new List<Event>();
+            List<IEvent> events = new List<IEvent>();
 
             foreach (var device in DeviceStreams)
             {
@@ -77,9 +77,9 @@ namespace OpenNETCF.MTConnect
             return events.ToArray();
         }
 
-        public Condition[] AllConditions()
+        public ICondition[] AllConditions()
         {
-            List<Condition> conditions = new List<Condition>();
+            List<ICondition> conditions = new List<ICondition>();
 
             foreach (var device in DeviceStreams)
             {
@@ -94,7 +94,7 @@ namespace OpenNETCF.MTConnect
             return conditions.ToArray();
         }
 
-        public Sample GetSample(string sampleID)
+        public ISample GetSample(string sampleID)
         {
             foreach (var device in DeviceStreams)
             {

@@ -30,20 +30,12 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class Event : DataElementBase
+    public class Event<T> : DataElementBase<T>, IEvent
     {
-        public string Value { get; internal protected set; }
-
-        private Event(XNamespace ns, XElement element)
+        internal Event(XNamespace ns, XElement element)
             : base(ns, element)
         {
             this.Type = element.Name.LocalName;
-            Value = element.Value;
-        }
-
-        internal static Event FromXml(XNamespace ns, XElement element)
-        {
-            return new Event(ns, element);
         }
     }
 }

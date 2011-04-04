@@ -34,13 +34,27 @@ namespace OpenNETCF.MTConnect
     public class AgentData
     {
         private CircularBuffer<DataItemValue> m_buffer;
+        private Dictionary<string, DataItemValue> m_currentValues;
+
         private long m_currentSequence = 1;
         private object m_syncRoot = new object();
         private Agent m_agent;
+        internal const int DefaultBufferSize = 10000;
 
         internal AgentData(Agent agent)
+            : this(agent, DefaultBufferSize)
         {
-            m_buffer = new CircularBuffer<DataItemValue>(10000);
+        }
+
+        internal AgentData(Agent agent, int bufferSize)
+        {
+            Validate.Begin()
+                .IsPositive(bufferSize)
+                .Check();
+
+            m_buffer = new CircularBuffer<DataItemValue>(bufferSize);
+            m_currentValues = new Dictionary<string, DataItemValue>();
+
             m_agent = agent;
         }
 
@@ -60,8 +74,23 @@ namespace OpenNETCF.MTConnect
                 var sequence = IncrementSequenceNumber();
                 var div = new DataItemValue(sequence, item, value, time);
                 m_buffer.Enqueue(div);
+                UpdateCurrentValuesList(div);
 
                 return sequence;
+            }
+        }
+
+        private void UpdateCurrentValuesList(DataItemValue value)
+        {
+            var id = value.Item.ID;
+
+            if (m_currentValues.ContainsKey(id))
+            {
+                m_currentValues[id] = value;
+            }
+            else
+            {
+                m_currentValues.Add(id, value);
             }
         }
 
@@ -70,6 +99,7 @@ namespace OpenNETCF.MTConnect
             lock (m_syncRoot)
             {
                 m_buffer.Clear();
+                m_currentValues.Clear();
             }
         }
 
@@ -176,6 +206,49 @@ namespace OpenNETCF.MTConnect
 
             List<DataItemValue> values = new List<DataItemValue>();
 
+            foreach (var item in m_currentValues)
+            {
+                if (filter(item.Value.Item))
+                {
+                    values.Add(item.Value);
+                }
+            }
+
+            return values.ToArray();
+        }
+
+        internal DataItemValue[] Current(out long nextSequence, FilterPath filter)
+        {
+            if (filter == null) return Current(out nextSequence);
+
+            lock (m_syncRoot)
+            {
+                nextSequence = NextSequenceNumber;
+            }
+
+            List<DataItemValue> values = new List<DataItemValue>();
+
+            foreach (var item in m_currentValues)
+            {
+                if (!filter.ContainsDevice(item.Value.Item.Device.Name)) continue;
+                if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
+                if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
+
+                values.Add(item.Value);
+            }
+
+            return values.ToArray();
+        }
+
+        public DataItemValue[] Current_old(out long nextSequence, Func<DataItem, bool> filter)
+        {
+            lock (m_syncRoot)
+            {
+                nextSequence = NextSequenceNumber;
+            }
+
+            List<DataItemValue> values = new List<DataItemValue>();
+
             // This will return the last DatItemValue in the buffer for each known DataItem for every Device and Component.
             // It may well be slow if the tree is large.
             // We could markedly improve perf by caching the "last" for every data item, but at the cost of memory for the cache
@@ -211,7 +284,7 @@ namespace OpenNETCF.MTConnect
             return values.ToArray();
         }
 
-        internal DataItemValue[] Current(out long nextSequence, FilterPath filter)
+        internal DataItemValue[] Current_old(out long nextSequence, FilterPath filter)
         {
             if(filter == null) return Current(out nextSequence);
 

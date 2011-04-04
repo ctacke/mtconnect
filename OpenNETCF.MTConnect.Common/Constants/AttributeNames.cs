@@ -23,18 +23,21 @@
 // -------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    internal static class NodeNames
+    internal static class AttributeNames
     {
-        internal const string Device = "Device";
-        internal const string Description = "Description";
-        internal const string Components = "Components";
-        internal const string DataItems = "DataItems";
-        internal const string DataItem = "DataItem";
+        internal const string DataItemId = "dataItemId";
+        internal const string Sequence = "sequence";
+        internal const string Timestamp = "timestamp";
+        internal const string Type = "type";
+        internal const string Name = "name";
+        internal const string Qualifier = "qualifier";
+        internal const string NativeCode = "nativeCode";
+        internal const string NativeSeverity = "nativeSeverity";
     }
 }

@@ -75,7 +75,7 @@ namespace OpenNETCF.MTConnect
 
         public XElement AsXElement(XNamespace ns)
         {
-            var element = new XElement(ns + "Components");
+            var element = new XElement(ns + NodeNames.Components);
 
             foreach (var c in this)
             {

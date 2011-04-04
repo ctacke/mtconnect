@@ -35,8 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenNETCF.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="OpenNETCF.Extensions">
       <HintPath>..\references\FFx\OpenNETCF.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -59,10 +58,12 @@
     <Compile Include="Entities\DataStream.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Sample.cs" />
-    <Compile Include="REST\DigestRestConnector.cs" />
     <Compile Include="Clients\EntityClient.cs" />
+    <Compile Include="Interfaces\ICondition.cs" />
+    <Compile Include="Interfaces\IDataElement.cs" />
+    <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces\ISample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="REST\RestConnector.cs" />
     <Compile Include="Clients\XmlClient.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClientDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="REST\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

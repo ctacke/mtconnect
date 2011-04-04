@@ -70,7 +70,6 @@
     <Compile Include="AdapterCollection.cs" />
     <Compile Include="Agent.cs" />
     <Compile Include="AgentData.cs" />
-    <Compile Include="AgentInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connector.cs" />
     <Compile Include="Constants.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="HostBase.cs" />
     <Compile Include="Interfaces\IDataObserver.cs" />
     <Compile Include="Interfaces\IHost.cs" />
-    <Compile Include="Interfaces\IHostedAdapter.cs" />
     <Compile Include="MTConnectProvider.cs" />
     <Compile Include="RequestParser.cs" />
     <Compile Include="Requests\CurrentRequest.cs" />

@@ -30,12 +30,15 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class DataElementBase
+    public class DataElementBase<T>
     {
         public string Type { get; internal protected set; }
         public string DataItemID { get; internal protected set; }
         public DateTime Timestamp { get; internal protected set; }
         public int Sequence { get; internal protected set; }
+
+        public bool Writable { get; internal protected set; }
+        public object Value { get; set; }
 
         internal DataElementBase(XNamespace ns, XElement element)
         {
@@ -61,6 +64,18 @@ namespace OpenNETCF.MTConnect
                 try
                 {
                     Sequence = int.Parse(attr.Value);
+                }
+                catch { }
+            }
+
+            Writable = false;
+
+            attr = element.Attribute("writable");
+            if (attr != null)
+            {
+                try
+                {
+                    Writable = bool.Parse(attr.Value);
                 }
                 catch { }
             }

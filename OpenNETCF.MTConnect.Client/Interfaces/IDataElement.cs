@@ -23,18 +23,19 @@
 // -------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    internal static class NodeNames
+    public interface IDataElement
     {
-        internal const string Device = "Device";
-        internal const string Description = "Description";
-        internal const string Components = "Components";
-        internal const string DataItems = "DataItems";
-        internal const string DataItem = "DataItem";
+        string Type { get; }
+        string DataItemID { get; }
+        DateTime Timestamp { get; }
+        int Sequence { get; }
+        bool Writable { get; }
+        object Value { get; set; }
     }
 }

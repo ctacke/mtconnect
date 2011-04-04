@@ -45,6 +45,14 @@ namespace OpenNETCF.MTConnect
         public const string CoordinateSystem = "coordinateSystem";
         public const string SignificantDigits = "significantDigits";
         public const string Source = "source";
+        public const string Qualifier = "qualifier";
+        public const string NativeCode = "nativeCode";
+        public const string NativeSeverity = "nativeSeverity";
+    }
         
+    public static class ExtendedProperties
+    {
+        public const string Writable = "writable";
+        public const string ValueType = "valueType";
     }
 }

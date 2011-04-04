@@ -32,16 +32,18 @@ namespace OpenNETCF.MTConnect
 {
     public class DataMonitor : IDisposable
     {
+        private Boolean m_restart;
         private EntityClient m_client;
+        private string m_agentAddress;
         private int m_period;
         private AutoResetEvent m_stopEvent;
-        private Dictionary<string, Sample> m_samples = new Dictionary<string,Sample>();
-        private Dictionary<string, Event> m_events = new Dictionary<string,Event>();
-        private Dictionary<string, Condition> m_conditions = new Dictionary<string,Condition>();
+        private Dictionary<string, ISample> m_samples = new Dictionary<string, ISample>();
+        private Dictionary<string, IEvent> m_events = new Dictionary<string, IEvent>();
+        private Dictionary<string, ICondition> m_conditions = new Dictionary<string, ICondition>();
 
-        public event EventHandler<GenericEventArgs<Sample>> NewSample;
-        public event EventHandler<GenericEventArgs<Event>> NewEvent;
-        public event EventHandler<GenericEventArgs<Condition>> NewCondition;
+        public event EventHandler<GenericEventArgs<ISample>> NewSample;
+        public event EventHandler<GenericEventArgs<IEvent>> NewEvent;
+        public event EventHandler<GenericEventArgs<ICondition>> NewCondition;
 
         public bool Running { get; private set; }
         public bool Connected { get; private set; }
@@ -53,6 +55,7 @@ namespace OpenNETCF.MTConnect
 
         public DataMonitor(string agentAddress, int period)
         {
+            m_agentAddress = agentAddress;
             m_client = new EntityClient(agentAddress);
             Period = period;
             m_stopEvent = new AutoResetEvent(false);
@@ -99,7 +102,7 @@ namespace OpenNETCF.MTConnect
             m_stopEvent.Set();
         }
 
-        public Sample GetSample(string id)
+        public ISample GetSample(string id)
         {
             lock (m_samples)
             {
@@ -111,7 +114,7 @@ namespace OpenNETCF.MTConnect
             }
         }
 
-        public Event GetEvent(string id)
+        public IEvent GetEvent(string id)
         {
             lock (m_events)
             {
@@ -123,7 +126,7 @@ namespace OpenNETCF.MTConnect
             }
         }
 
-        public Condition GetCondition(string id)
+        public ICondition GetCondition(string id)
         {
             lock (m_conditions)
             {
@@ -161,8 +164,13 @@ namespace OpenNETCF.MTConnect
                     data = m_client.Sample();
                     if (data != null)
                     {
-                        Connected = true;
                         HandleNewData(data);
+
+                        if (!Connected)
+                        {
+                            m_client = new EntityClient(m_agentAddress);
+                            Connected = true;
+                        }
                     }
                     else
                     {
@@ -199,7 +207,7 @@ namespace OpenNETCF.MTConnect
                     ThreadPool.QueueUserWorkItem(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
-                        NewSample.Fire(this, new GenericEventArgs<Sample>(s));
+                        NewSample.Fire(this, new GenericEventArgs<ISample>(s));
                     });
                 }
             }
@@ -221,7 +229,7 @@ namespace OpenNETCF.MTConnect
                     ThreadPool.QueueUserWorkItem(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
-                        NewEvent.Fire(this, new GenericEventArgs<Event>(e));
+                        NewEvent.Fire(this, new GenericEventArgs<IEvent>(e));
                     });
                 }
             }
@@ -243,7 +251,7 @@ namespace OpenNETCF.MTConnect
                     ThreadPool.QueueUserWorkItem(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
-                        NewCondition.Fire(this, new GenericEventArgs<Condition>(c));
+                        NewCondition.Fire(this, new GenericEventArgs<ICondition>(c));
                     });
                 }
             }

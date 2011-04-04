@@ -67,6 +67,15 @@ namespace OpenNETCF.MTConnect
             }
             set
             {
+                if (value == null)
+                {
+                    if (m_values.ContainsKey(propertyName))
+                    {
+                        m_values.Remove(propertyName);
+                    }
+                    return;
+                }
+
                 if (!ContainsProperty(propertyName))
                 {
                     m_values.Add(propertyName, value);
