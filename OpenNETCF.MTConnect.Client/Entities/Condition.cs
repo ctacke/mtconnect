@@ -30,11 +30,64 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class Condition : DataElementBase
+    internal static class DataElementFactory
+    {
+        internal static ICondition ConditionFromXml(XNamespace ns, XElement element)
+        {
+            return new Condition(ns, element);
+        }
+
+        internal static IEvent EventFromXml(XNamespace ns, XElement element)
+        {
+            string valueType = "string";
+            var attr = element.Attribute("valueType");
+            if (attr != null)
+            {
+                valueType = attr.Value;
+            }
+
+            IEvent @event;
+
+            switch (valueType.ToLower())
+            {
+                case "int":
+                    @event = new Event<int?>(ns, element);
+                    @event.Value = int.Parse(element.Value);
+                    break;
+                case "boolean":
+                    @event = new Event<bool?>(ns, element);
+                    @event.Value = bool.Parse(element.Value);
+                    break;
+                case "string":
+                    @event = new Event<string>(ns, element);
+                    @event.Value = element.Value;
+                    break;
+                case "double":
+                    @event = new Event<double?>(ns, element);
+                    @event.Value = double.Parse(element.Value);
+                    break;
+                case "datetime":
+                    @event = new Event<DateTime?>(ns, element);
+                    @event.Value = DateTime.Parse(element.Value);
+                    break;
+                default:
+                    throw new NotSupportedException(string.Format("Event with value type of '{0}' not supported", valueType));
+            }
+
+            return @event;
+        }
+
+        internal static ISample SampleFromXml(XNamespace ns, XElement element)
+        {
+            return new Sample(ns, element);
+        }
+    }
+
+    public class Condition : DataElementBase<string>, ICondition
     {
         public string ConditionType { get; internal protected set; }
 
-        private Condition(XNamespace ns, XElement element)
+        internal Condition(XNamespace ns, XElement element)
             : base(ns, element)
         {
             this.ConditionType = element.Name.LocalName;
@@ -44,11 +97,6 @@ namespace OpenNETCF.MTConnect
             {
                 Type = attr.Value;
             }
-        }
-
-        internal static Condition FromXml(XNamespace ns, XElement element)
-        {
-            return new Condition(ns, element);
         }
     }
 }

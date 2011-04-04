@@ -117,7 +117,7 @@ namespace OpenNETCF.MTConnect
 
         public XElement AsXElement(XNamespace ns)
         {
-            var element = new XElement(ns + "DataItems");
+            var element = new XElement(ns + NodeNames.DataItems);
 
             foreach (var di in this)
             {

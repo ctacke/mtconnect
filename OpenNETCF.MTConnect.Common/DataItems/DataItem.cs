@@ -63,6 +63,21 @@ namespace OpenNETCF.MTConnect
                 .Check();
 
             this.Category = category;
+
+            switch (category)
+            {
+                case DataItemCategory.Sample:
+                    ValueType = typeof(double);
+                    break;
+                case DataItemCategory.Condition:
+                    ValueType = typeof(string);
+                    break;
+                case DataItemCategory.Event:
+                    // TODO:
+                    ValueType = typeof(object);
+                    break;
+            }
+
             this.Type = dataItemType.ToUpper();
             this.Name = name;
             this.ID = id;
@@ -156,7 +171,66 @@ namespace OpenNETCF.MTConnect
             get { return Properties[CommonProperties.Source]; }
             set { SetProperty(CommonProperties.Source, value); }
         }
-        
+
+        public bool Writable
+        {
+            get 
+            {
+                bool value = false;
+                if (Properties.ContainsProperty(ExtendedProperties.Writable))
+                {
+                    try
+                    {
+                        value = bool.Parse(Properties[ExtendedProperties.Writable]);
+                    }
+                    catch { }
+                }
+                return value;
+            }
+            set  {  SetProperty(ExtendedProperties.Writable, value.ToString()); }
+        }
+
+        public Type ValueType
+        {
+            //get
+            //{
+            //    bool value = false;
+            //    try
+            //    {
+            //        value = bool.Parse(Properties[ExtendedProperties.ValueType]);
+            //    }
+            //    catch { }
+            //    return value;
+            //}
+            set 
+            {
+                if(value.Equals(typeof(string)))
+                {
+                    SetProperty(ExtendedProperties.ValueType, "string"); 
+                }
+                else if (value.Equals(typeof(double)))
+                {
+                    SetProperty(ExtendedProperties.ValueType, "double");
+                }
+                else if (value.Equals(typeof(int)))
+                {
+                    SetProperty(ExtendedProperties.ValueType, "int");
+                }
+                else if (value.Equals(typeof(bool)))
+                {
+                    SetProperty(ExtendedProperties.ValueType, "boolean");
+                }
+                else if (value.Equals(typeof(DateTime)))
+                {
+                    SetProperty(ExtendedProperties.ValueType, "dateTime");
+                }
+                else
+                {
+                    SetProperty(ExtendedProperties.ValueType, null);
+                }
+            }
+        }
+
         public DataItemCategory Category
         {
             get
@@ -182,7 +256,6 @@ namespace OpenNETCF.MTConnect
             OpenNETCF.Validate
                 .Begin()
                 .IsNotNullOrEmpty(propertyName)
-                .IsNotNull(value)
                 .Check();
 
             Properties[propertyName] = value;
@@ -244,7 +317,7 @@ namespace OpenNETCF.MTConnect
         public XElement AsXElement(XNamespace ns)
         {
             if (ns == null) ns = string.Empty;
-            var element = new XElement(ns + "DataItem");
+            var element = new XElement(ns + NodeNames.DataItem);
 
             foreach (var prop in Properties)
             {
@@ -264,12 +337,12 @@ namespace OpenNETCF.MTConnect
             if (this.Category == DataItemCategory.Condition)
             {
                 // per spec (Part 3, 3.1.1), CONDITION category values must be Normal, Warning, Fault or Unavailable
-                switch (value)
+                switch (value.ToLower())
                 {
-                    case "Normal":
-                    case "Warning":
-                    case "Fault":
-                    case "Unavailable":
+                    case "normal":
+                    case "warning":
+                    case "fault":
+                    case "unavailable":
                         break;
                     default:
                         throw new InvalidDataItemValueException(this, value, "Condition DataItems must be 'Normal', 'Warning', 'Fault' or 'Unavailable'");

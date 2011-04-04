@@ -30,11 +30,9 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class Sample : DataElementBase
+    public class Sample : DataElementBase<double?>, ISample
     {
-        public double? Value { get; internal protected set; }
-
-        private Sample(XNamespace ns, XElement element)
+        internal Sample(XNamespace ns, XElement element)
             : base(ns, element)
         {
             this.Type = element.Name.LocalName;
@@ -58,11 +56,6 @@ namespace OpenNETCF.MTConnect
                     Value = null;
                 }
             }
-        }
-
-        internal static Sample FromXml(XNamespace ns, XElement element)
-        {
-            return new Sample(ns, element);
         }
     }
 }

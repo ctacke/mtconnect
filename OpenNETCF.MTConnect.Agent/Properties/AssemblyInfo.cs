@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpenNETCF.MTConnect.Agent")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("OpenNETCF Consulting")]
 [assembly: AssemblyProduct("OpenNETCF.MTConnect.Agent")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
 [assembly: AssemblyTrademark("")]
@@ -25,3 +25,5 @@ using System.Runtime.InteropServices;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.Test")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.VirtualAgent")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.VirtualAgentCE")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OpenNETCF.MTConnect.Infrastructure")]
+

@@ -22,7 +22,6 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 // -------------------------------------------------------------------------------------------------------
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +29,7 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    public interface IHostedAdapter : IAdapter, IDisposable
+    public interface IEvent : IDataElement
     {
-        AgentInterface AgentInterface { get; set; }
-
-        void BeforeLoad();
-        Device GetDeviceDefinition();
-        void AfterLoad();
-        void OnError(Exception exception);
-        void OnConfigurationChange();
     }
 }

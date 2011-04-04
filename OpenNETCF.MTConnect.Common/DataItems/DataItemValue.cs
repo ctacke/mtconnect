@@ -58,14 +58,14 @@ namespace OpenNETCF.MTConnect
             {
                 case DataItemCategory.Condition:
                     element = new XElement(ns + this.Value)
-                        .AddAttribute("dataItemId", this.Item.ID)
-                        .AddAttribute("sequence", this.Sequence.ToString())
-                        .AddAttribute("timestamp", this.Time.ToString("s"))
-                        .AddAttribute("type", this.Item.Type.ToString())
-                        .AddAttributeIfHasValue("name", this.Item.Name)
-                        .AddAttributeIfHasValue("qualifier", this.Item.Properties["qualifier"])
-                        .AddAttributeIfHasValue("nativeCode", this.Item.Properties["nativeCode"])
-                        .AddAttributeIfHasValue("nativeSeverity", this.Item.Properties["nativeSeverity"]);
+                        .AddAttribute(AttributeNames.DataItemId, this.Item.ID)
+                        .AddAttribute(AttributeNames.Sequence, this.Sequence.ToString())
+                        .AddAttribute(AttributeNames.Timestamp, this.Time.ToString("s"))
+                        .AddAttribute(AttributeNames.Type, this.Item.Type.ToString())
+                        .AddAttributeIfHasValue(AttributeNames.Name, this.Item.Name)
+                        .AddAttributeIfHasValue(AttributeNames.Qualifier, this.Item.Properties[CommonProperties.Qualifier])
+                        .AddAttributeIfHasValue(AttributeNames.NativeCode, this.Item.Properties[CommonProperties.NativeCode])
+                        .AddAttributeIfHasValue(AttributeNames.NativeSeverity, this.Item.Properties[CommonProperties.NativeSeverity]);
 
                     // TODO: xs:lang
 
@@ -73,10 +73,10 @@ namespace OpenNETCF.MTConnect
                 case DataItemCategory.Event:
                 case DataItemCategory.Sample:
                     element = new XElement(ns + TypeToCamel(this.Item.Type))
-                        .AddAttribute("dataItemId", this.Item.ID)
-                        .AddAttribute("sequence", this.Sequence.ToString())
-                        .AddAttribute("timestamp", this.Time.ToString("s"))
-                        .AddAttributeIfHasValue("name", this.Item.Name);
+                        .AddAttribute(AttributeNames.DataItemId, this.Item.ID)
+                        .AddAttribute(AttributeNames.Sequence, this.Sequence.ToString())
+                        .AddAttribute(AttributeNames.Timestamp, this.Time.ToString("s"))
+                        .AddAttributeIfHasValue(AttributeNames.Name, this.Item.Name);
                     
                     element.Value = Value;
 

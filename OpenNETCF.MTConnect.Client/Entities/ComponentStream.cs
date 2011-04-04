@@ -38,9 +38,9 @@ namespace OpenNETCF.MTConnect
         public string UUID { get; private set; }
         public string NativeName { get; private set; }
 
-        public Sample[] Samples { get; private set; }
-        public Event[] Events { get; private set; }
-        public Condition[] Conditions { get; private set; }
+        public ISample[] Samples { get; private set; }
+        public IEvent[] Events { get; private set; }
+        public ICondition[] Conditions { get; private set; }
 
         internal ComponentStream()
         {
@@ -81,36 +81,36 @@ namespace OpenNETCF.MTConnect
             }
 
             // <samples>
-            var samples = new List<Sample>();
+            var samples = new List<ISample>();
             var samplesElement = element.Element(ns + "Samples");
             if(samplesElement != null)
             {
                 foreach (var s in samplesElement.Elements())
                 {
-                    samples.Add(Sample.FromXml(ns, s));
+                    samples.Add(DataElementFactory.SampleFromXml(ns, s));
                 }
             }
             cs.Samples = samples.ToArray();
 
             // <events>
-            var events = new List<Event>();
+            var events = new List<IEvent>();
             var eventsElement = element.Element(ns + "Events");
             if (eventsElement != null)
             {
                 foreach (var s in eventsElement.Elements())
                 {
-                    events.Add(Event.FromXml(ns, s));
+                    events.Add(DataElementFactory.EventFromXml(ns, s));
                 }
             }
             cs.Events = events.ToArray();
 
             // <condition>
-            var conditions = new List<Condition>();
+            var conditions = new List<ICondition>();
             foreach( var ce in element.Elements(ns + "Condition"))
             {
                 foreach (var c in ce.Elements())
                 {
-                    conditions.Add(Condition.FromXml(ns, c));
+                    conditions.Add(DataElementFactory.ConditionFromXml(ns, c));
                 }
             }
             cs.Conditions = conditions.ToArray();

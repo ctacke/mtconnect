@@ -56,7 +56,7 @@ namespace OpenNETCF.MTConnect
         public override XElement AsXElement(XNamespace ns)
         {
             if (ns == null) ns = string.Empty;
-            var element = new XElement(ns + "Device");
+            var element = new XElement(ns + NodeNames.Device);
 
             foreach(var prop in Properties)
             {

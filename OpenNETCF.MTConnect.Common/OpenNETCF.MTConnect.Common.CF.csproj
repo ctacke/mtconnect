@@ -73,6 +73,7 @@
     <Compile Include="Components\ComponentDescriptor.cs" />
     <Compile Include="Components\ComponentType.cs" />
     <Compile Include="ConfigParser.cs" />
+    <Compile Include="Constants\AttributeNames.cs" />
     <Compile Include="Constants\CommonProperties.cs" />
     <Compile Include="Constants\ErrorCode.cs">
       <SubType>Code</SubType>
