@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="Clients\Client.cs" />
     <Compile Include="DataMonitor.cs" />
+    <Compile Include="Entities\BaseStream.cs" />
     <Compile Include="Entities\ComponentStream.cs" />
     <Compile Include="Entities\Condition.cs" />
     <Compile Include="Entities\DataElementBase.cs" />
