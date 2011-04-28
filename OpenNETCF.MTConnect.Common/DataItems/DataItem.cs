@@ -31,7 +31,7 @@ using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
-    public sealed class DataItem
+    public class DataItem
     {
         internal event EventHandler<DataItemValue> ValueSet;
 
@@ -41,6 +41,12 @@ namespace OpenNETCF.MTConnect
         private Constraint m_constraint;
 
         public PropertyCollection Properties { get; private set; }
+
+
+        public DataItem()
+        {
+            Properties = new PropertyCollection();
+        }
 
         internal DataItem(PropertyCollection props)
         {

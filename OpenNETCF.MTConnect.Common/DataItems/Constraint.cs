@@ -35,6 +35,11 @@ namespace OpenNETCF.MTConnect
         private double? m_minimum;
         private double? m_maximum;
 
+        public Constraint()
+        {
+
+        }
+
         public Constraint(string value)
         {
             Value = value;

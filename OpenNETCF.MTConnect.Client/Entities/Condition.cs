@@ -91,6 +91,7 @@ namespace OpenNETCF.MTConnect
             : base(ns, element)
         {
             this.ConditionType = element.Name.LocalName;
+            this.Value = ConditionType.ToString();
 
             var attr = element.Attribute("type");
             if (attr != null)

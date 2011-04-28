@@ -93,9 +93,8 @@ namespace OpenNETCF.MTConnect
 
                 string xml = string.Empty;
 
-                if (!string.IsNullOrEmpty(current.Path))
+                if ((!string.IsNullOrEmpty(current.Path)) || (request.ResourceName != "*"))
                 {
-                    // TODO add filtering
                     var fp = new FilterPath(request.ResourceName, current.Path);
                     xml = Agent.Data.CurrentXml(fp);
                 }

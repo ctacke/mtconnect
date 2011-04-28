@@ -26,68 +26,34 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class DeviceCollection : IEnumerable<Device>
+    public class AgentInformation
     {
-        private Dictionary<string, Device> m_devices = new Dictionary<string, Device>();
-
-        public DateTime CreateTime { get; internal set; }
-        public AgentInformation AgentInformation { get; internal set; }
-
-        public DeviceCollection()
+        public AgentInformation()
         {
+            AgentType = "Default";
         }
 
-        public DeviceCollection(Device device)
-        {
-            Add(device);
-        }
+        public string Name { get; internal set; }
+        public string Version { get; internal set; }
+        public int BufferSize { get; internal set; }
+        public string InstanceID { get; internal set; }
+        public string AgentType { get; internal set; }
 
-        public DeviceCollection(IEnumerable<Device> devices)
+        public static AgentInformation FromXml(XElement element)
         {
-            AddRange(devices);
-        }
-
-        public void Add(Device device)
-        {
-            m_devices.Add(device.Name, device);
-        }
-
-        public void AddRange(IEnumerable<Device> devices)
-        {
-            foreach (var d in devices) { Add(d); }
-        }
-
-        public Device this[string name]
-        {
-            get 
+            var ai = new AgentInformation()
             {
-                if (!m_devices.ContainsKey(name)) return null;
-
-                return m_devices[name]; 
-            }
-        }
-
-        public int Count
-        {
-            get { return m_devices.Count; }
-        }
-
-        public IEnumerator<Device> GetEnumerator()
-        {
-            return m_devices.Values.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        internal void Clear()
-        {
-            m_devices.Clear();
+                Name = element.AttributeValue("sender"),
+                Version = element.AttributeValue("version"),
+                BufferSize = (int)element.Attribute("bufferSize"),
+                InstanceID = element.AttributeValue("instanceId"),
+                AgentType = element.AttributeValue("agentType") ?? "Default"
+            };
+            return ai;
         }
     }
 }

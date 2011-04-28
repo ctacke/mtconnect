@@ -212,6 +212,7 @@ namespace OpenNETCF.MTConnect
                 .IsNotNull(dataItem)
                 .Check();
 
+            dataItem.Component = this;
             DataItems.Add(dataItem);
             return dataItem;
         }

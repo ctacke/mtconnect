@@ -52,6 +52,32 @@ namespace OpenNETCF.MTConnect
             return DataStream.FromXml(xml);
         }
 
+        public DataStream Current(string deviceName)
+        {
+            var xml = GetCurrentXml(deviceName);
+            return DataStream.FromXml(xml);
+        }
+
+        public IDataElement GetDataItemById(string id)
+        {
+            string path = string.Format("//DataItem[@id=\"{0}\"]", id);
+            var xml = GetPathFilteredCurrentXml(path);
+            if (xml == string.Empty) return null;
+            var stream = DataStream.FromXml(xml);
+            if (stream == null) return null;
+            if(stream.DeviceStreams.Length == 0) return null;
+            if (stream.DeviceStreams[0].AllDataItems.Length > 0)
+            {
+                return stream.DeviceStreams[0].AllDataItems.FirstOrDefault();
+            }
+            if (stream.DeviceStreams[0].ComponentStreams.Length > 0)
+            {
+                return stream.DeviceStreams[0].ComponentStreams[0].AllDataItems.FirstOrDefault();
+            }
+
+            return null;
+        }
+
         public DataStream Sample()
         {
             return Sample(100);

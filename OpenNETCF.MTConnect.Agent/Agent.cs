@@ -39,6 +39,7 @@ namespace OpenNETCF.MTConnect
         public AgentData Data { get; private set; }
 
         public long InstanceID { get; private set; }
+        public string AgentTypeName { get; private set; }
 
         internal IHost Host { get; set; }
 
@@ -62,6 +63,8 @@ namespace OpenNETCF.MTConnect
                 .Check();
 
             // TODO: implement checkpoints
+
+            AgentTypeName = "OpenNETCF VirtualAgent";
 
             Initialize(bufferSize);
         }
@@ -121,9 +124,10 @@ namespace OpenNETCF.MTConnect
                 throw new InvalidIDException(dataItemID, string.Format("DataItem with ID {0} not found", dataItemID));
             }
 
-            if (dataItem.Device == null)
+            if (dataItem == null || dataItem.Device == null)
             {
                 if (Debugger.IsAttached) Debugger.Break();
+                return;
             }
 
             dataItem.SetValue(value);
@@ -241,6 +245,7 @@ namespace OpenNETCF.MTConnect
                     .AddAttribute("version", Version)
                     .AddAttribute("bufferSize", this.Data.BufferSize.ToString())
                     .AddAttribute("instanceId", this.InstanceID.ToString())
+                    .AddAttribute("agentType", AgentTypeName)
                     );
 
             XElement element = new XElement(ns + "Devices");
@@ -251,8 +256,6 @@ namespace OpenNETCF.MTConnect
                 if (device == null)
                 {
                     throw new Exception("Device not found");
-                    // error
-                    // TODO: pass proper MTC error string
                 }
 
                 element.Add(device.AsXElement(ns));

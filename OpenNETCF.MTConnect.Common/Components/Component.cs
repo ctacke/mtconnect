@@ -65,6 +65,7 @@ namespace OpenNETCF.MTConnect
             this.Name = name;
             this.ID = id;
             this.XmlNodeName = componentType.ToString();
+            this.ComponentType = componentType;
         }
 
         public Component(ComponentType componentType, string name, string id, params Component[] subcomponents)

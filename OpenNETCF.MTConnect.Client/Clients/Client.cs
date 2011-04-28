@@ -76,6 +76,17 @@ namespace OpenNETCF.MTConnect
             return Path.Combine(RootFolder, "current");
         }
 
+        protected string GetCurrentPath(string deviceName)
+        {
+            if (string.IsNullOrEmpty(RootFolder))
+            {
+                return "current";
+            }
+
+            var path = Path.Combine(RootFolder, deviceName);
+            return Path.Combine(path, "current");
+        }
+
         protected string GetSamplePath(int from)
         {
             return GetSamplePath(from, 100);
@@ -117,6 +128,28 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetCurrentPath();
+                var xml = RestConnector.Get(path);
+                return xml;
+            }
+        }
+
+        protected internal string GetCurrentXml(string deviceName)
+        {
+            lock (SyncRoot)
+            {
+                var path = GetCurrentPath(deviceName);
+                var xml = RestConnector.Get(path);
+                return xml;
+            }
+        }
+
+        protected internal string GetPathFilteredCurrentXml(string filter)
+        {
+            lock (SyncRoot)
+            {
+                var path = GetCurrentPath();
+                path += "?path=";
+                path += filter;
                 var xml = RestConnector.Get(path);
                 return xml;
             }

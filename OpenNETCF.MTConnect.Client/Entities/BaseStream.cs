@@ -1,4 +1,9 @@
-﻿// -------------------------------------------------------------------------------------------------------
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
+
+// -------------------------------------------------------------------------------------------------------
 // LICENSE INFORMATION
 //
 // - This software is licensed under the MIT shared source license.
@@ -22,72 +27,51 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 // -------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-
 namespace OpenNETCF.MTConnect
 {
-    public class DeviceCollection : IEnumerable<Device>
+    public abstract class BaseStream
     {
-        private Dictionary<string, Device> m_devices = new Dictionary<string, Device>();
+        internal protected List<IDataElement> m_elements = new List<IDataElement>();
 
-        public DateTime CreateTime { get; internal set; }
-        public AgentInformation AgentInformation { get; internal set; }
+        public string Name { get; internal protected set; }
+        public string UUID { get; internal protected set; }
 
-        public DeviceCollection()
+        public IDataElement[] AllDataItems
         {
-        }
-
-        public DeviceCollection(Device device)
-        {
-            Add(device);
-        }
-
-        public DeviceCollection(IEnumerable<Device> devices)
-        {
-            AddRange(devices);
-        }
-
-        public void Add(Device device)
-        {
-            m_devices.Add(device.Name, device);
-        }
-
-        public void AddRange(IEnumerable<Device> devices)
-        {
-            foreach (var d in devices) { Add(d); }
-        }
-
-        public Device this[string name]
-        {
-            get 
+            get
             {
-                if (!m_devices.ContainsKey(name)) return null;
-
-                return m_devices[name]; 
+                return m_elements.ToArray();
             }
         }
 
-        public int Count
+        public ISample[] Samples
         {
-            get { return m_devices.Count; }
+            get
+            {
+                return (from s in m_elements
+                        where s is ISample
+                        select s as ISample).ToArray();
+            }
         }
 
-        public IEnumerator<Device> GetEnumerator()
+        public IEvent[] Events
         {
-            return m_devices.Values.GetEnumerator();
+            get
+            {
+                return (from s in m_elements
+                        where s is IEvent
+                        select s as IEvent).ToArray();
+            }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        public ICondition[] Conditions
         {
-            return GetEnumerator();
-        }
-
-        internal void Clear()
-        {
-            m_devices.Clear();
+            get
+            {
+                return (from s in m_elements
+                        where s is ICondition
+                        select s as ICondition).ToArray();
+            }
         }
     }
 }
