@@ -32,7 +32,6 @@ namespace OpenNETCF.MTConnect
 {
     public class DataMonitor : IDisposable
     {
-        private Boolean m_restart;
         private EntityClient m_client;
         private string m_agentAddress;
         private int m_period;
@@ -157,7 +156,7 @@ namespace OpenNETCF.MTConnect
                 var et = Environment.TickCount - start;
                 if (et < Period) Thread.Sleep(Period - et);
 
-                while (!(m_stopEvent.WaitOne(0, false)))
+                while (!(m_stopEvent.WaitOne(0)))
                 {
                     start = Environment.TickCount;
 

@@ -60,6 +60,7 @@
     <Compile Include="Clients\EntityClient.cs" />
     <Compile Include="Clients\XmlClient.cs" />
     <Compile Include="DataMonitor.cs" />
+    <Compile Include="Entities\BaseStream.cs" />
     <Compile Include="Entities\ComponentStream.cs" />
     <Compile Include="Entities\Condition.cs" />
     <Compile Include="Entities\DataElementBase.cs" />
@@ -67,6 +68,10 @@
     <Compile Include="Entities\DeviceStream.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Sample.cs" />
+    <Compile Include="Interfaces\ICondition.cs" />
+    <Compile Include="Interfaces\IDataElement.cs" />
+    <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces\ISample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

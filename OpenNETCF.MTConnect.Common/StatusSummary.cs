@@ -29,7 +29,6 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    [Serializable]
     public class StatusSummary
     {
         public StatusSummary()
