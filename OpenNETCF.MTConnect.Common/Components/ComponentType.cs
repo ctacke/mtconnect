@@ -34,7 +34,7 @@ namespace OpenNETCF.MTConnect
         Axes,
         Linear,
         Rotary,
-        Controller,
+        Controllers,
         Path,
         Door,
         Actuator,

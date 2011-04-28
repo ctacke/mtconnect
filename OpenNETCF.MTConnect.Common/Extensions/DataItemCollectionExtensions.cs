@@ -23,71 +23,36 @@
 // -------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class DeviceCollection : IEnumerable<Device>
+    public static class DataItemCollectionExtensions
     {
-        private Dictionary<string, Device> m_devices = new Dictionary<string, Device>();
-
-        public DateTime CreateTime { get; internal set; }
-        public AgentInformation AgentInformation { get; internal set; }
-
-        public DeviceCollection()
+        public static IEnumerable<DataItem> Find(this DataItemCollection c, Func<DataItem, bool> criteria)
         {
-        }
+            List<DataItem> itemList = new List<DataItem>();
 
-        public DeviceCollection(Device device)
-        {
-            Add(device);
-        }
+            // look in the collection
+            var items = from i in c.Items
+                       where criteria(i)
+                       select i;
 
-        public DeviceCollection(IEnumerable<Device> devices)
-        {
-            AddRange(devices);
-        }
+            if (items != null) itemList.AddRange(items);
 
-        public void Add(Device device)
-        {
-            m_devices.Add(device.Name, device);
-        }
-
-        public void AddRange(IEnumerable<Device> devices)
-        {
-            foreach (var d in devices) { Add(d); }
-        }
-
-        public Device this[string name]
-        {
-            get 
+            // look in subcomponents
+            foreach (var subcomponent in c.Parent.Components)
             {
-                if (!m_devices.ContainsKey(name)) return null;
-
-                return m_devices[name]; 
+                items = subcomponent.DataItems.Find(criteria);
+                if (items != null) itemList.AddRange(items);
             }
-        }
 
-        public int Count
-        {
-            get { return m_devices.Count; }
-        }
+            if (itemList.Count == 0) return null;
 
-        public IEnumerator<Device> GetEnumerator()
-        {
-            return m_devices.Values.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        internal void Clear()
-        {
-            m_devices.Clear();
+            return itemList;
         }
     }
 }

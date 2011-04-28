@@ -202,19 +202,19 @@ namespace OpenNETCF.MTConnect
             lock (m_syncRoot)
             {
                 nextSequence = NextSequenceNumber;
-            }
 
-            List<DataItemValue> values = new List<DataItemValue>();
+                List<DataItemValue> values = new List<DataItemValue>();
 
-            foreach (var item in m_currentValues)
-            {
-                if (filter(item.Value.Item))
+                foreach (var item in m_currentValues)
                 {
-                    values.Add(item.Value);
+                    if (filter(item.Value.Item))
+                    {
+                        values.Add(item.Value);
+                    }
                 }
-            }
 
-            return values.ToArray();
+                return values.ToArray();
+            }
         }
 
         internal DataItemValue[] Current(out long nextSequence, FilterPath filter)
@@ -224,121 +224,21 @@ namespace OpenNETCF.MTConnect
             lock (m_syncRoot)
             {
                 nextSequence = NextSequenceNumber;
-            }
 
-            List<DataItemValue> values = new List<DataItemValue>();
+                List<DataItemValue> values = new List<DataItemValue>();
 
-            foreach (var item in m_currentValues)
-            {
-                if (!filter.ContainsDevice(item.Value.Item.Device.Name)) continue;
-                if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
-                if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
-
-                values.Add(item.Value);
-            }
-
-            return values.ToArray();
-        }
-
-        public DataItemValue[] Current_old(out long nextSequence, Func<DataItem, bool> filter)
-        {
-            lock (m_syncRoot)
-            {
-                nextSequence = NextSequenceNumber;
-            }
-
-            List<DataItemValue> values = new List<DataItemValue>();
-
-            // This will return the last DatItemValue in the buffer for each known DataItem for every Device and Component.
-            // It may well be slow if the tree is large.
-            // We could markedly improve perf by caching the "last" for every data item, but at the cost of memory for the cache
-            // We'll revisit that if perf is an issue when fielded
-
-            foreach (var device in m_agent.Devices)
-            {
-                foreach (var item in device.DataItems)
+                foreach (var item in m_currentValues)
                 {
-                    var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                    if ((last != null) && (filter(last.Item))) values.Add(last);
+                    if (!filter.ContainsDevice(item.Value.Item.Device.Name)) continue;
+                    if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
+                    if (!filter.ContainsComponent(item.Value.Item.Component.Name)) continue;
+                    if (!filter.ContainsDataItem(item.Value.Item)) continue;
+
+                    values.Add(item.Value);
                 }
 
-                foreach (var component in device.Components)
-                {
-                    foreach (var item in component.DataItems)
-                    {
-                        var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                        if ((last != null) && (filter(last.Item))) values.Add(last);
-                    }
-
-                    foreach (var subcomponent in component.Components)
-                    {
-                        foreach (var item in subcomponent.DataItems)
-                        {
-                            var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                            if ((last != null) && (filter(last.Item))) values.Add(last);
-                        }
-                    }
-                }
+                return values.ToArray();
             }
-
-            return values.ToArray();
-        }
-
-        internal DataItemValue[] Current_old(out long nextSequence, FilterPath filter)
-        {
-            if(filter == null) return Current(out nextSequence);
-
-            lock (m_syncRoot)
-            {
-                nextSequence = NextSequenceNumber;
-            }
-
-            List<DataItemValue> values = new List<DataItemValue>();
-
-            foreach (var device in m_agent.Devices)
-            {
-                if(!filter.ContainsDevice(device.Name)) continue;
-
-                // if there is no component filter, get the device data items
-                if(!filter.HasComponents)
-                {
-                    foreach (var item in device.DataItems)
-                    {
-                        var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                        if (last != null) values.Add(last);
-                    }
-                }
-
-                foreach (var component in device.Components)
-                {
-                    if (filter.ContainsComponent(component.Name))
-                    {
-                        // skip if there is a subcomponent requested
-                        if(!filter.HasSubcomponents)
-                        {
-                        foreach (var item in component.DataItems)
-                        {
-                            var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                            if (last != null) values.Add(last);
-                        }
-                        }
-
-                        foreach (var subcomponent in component.Components)
-                        {
-                            if (filter.ContainsSubcomponent(subcomponent.Name))
-                            {
-                                foreach (var item in subcomponent.DataItems)
-                                {
-                                    var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                                    if (last != null) values.Add(last);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return values.ToArray();
         }
 
         public string CurrentXml()

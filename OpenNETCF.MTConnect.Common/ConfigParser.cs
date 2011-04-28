@@ -127,9 +127,15 @@ namespace OpenNETCF.MTConnect
         {
             var deviceList = new DeviceCollection();
 
-
             var doc = XDocument.Parse(xml);
             var ns = doc.Root.Name.Namespace;
+
+            var header = doc.Descendants(ns + "Header").FirstOrDefault();
+            if (header != null)
+            {
+                deviceList.CreateTime = (DateTime)header.Attribute("creationTime");
+                deviceList.AgentInformation = AgentInformation.FromXml(header);
+            }
 
             var devices =
                 from d in doc.Descendants(ns + NodeNames.Device)

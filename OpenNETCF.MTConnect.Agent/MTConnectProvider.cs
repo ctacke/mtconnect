@@ -26,13 +26,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.Threading;
 
 namespace OpenNETCF.MTConnect
 {
-    public abstract class MTConnectProvider
+    public abstract class MTConnectProvider : IMTConnectProvider
     {
+        public event EventHandler<GenericEventArgs<StatusSummary>> StatusChanged;
+
         protected abstract Adapter[] GetAdapters();
         protected abstract IHost GetHost(Agent agent);
+
+        public abstract string AgentAddress { get; }
+        public abstract bool Running { get; }
+        public abstract void Start();
+        public abstract void Stop();
+        public abstract void UpdateAdapter(string requestSource, string xml);
+        public abstract void SetDataByDataItemID(string requestSource, string dataItemID, string data);
 
         private static string ConfigPath { get; set; }
 
@@ -50,6 +61,20 @@ namespace OpenNETCF.MTConnect
             }
 
             Host.Start();
+        }
+
+        protected void RaiseStatusUpdateRequested(string source, string description)
+        {
+            // put this on another thread to prevent it from affecting actual request throughput
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                StatusChanged.Fire(this, new GenericEventArgs<StatusSummary>(new StatusSummary
+                {
+                    Source = source,
+                    Description = description,
+                    TimeStamp = DateTime.Now
+                }));
+            });
         }
     }
 }

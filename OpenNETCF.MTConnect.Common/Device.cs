@@ -33,6 +33,8 @@ namespace OpenNETCF.MTConnect
 {
     public class Device : ComponentBase
     {
+        private DataItem m_available;
+
         internal Device(PropertyCollection props)
             : base(props)
         {
@@ -50,7 +52,28 @@ namespace OpenNETCF.MTConnect
 
             Name = name;
             UUID = uuid;
-            ID = id;            
+            ID = id;
+
+            m_available = new DataItem(DataItemCategory.Event, DataItemType.AVAILABILITY, "Available", AvailabilityDataItemID)
+            {
+                Device = this
+            };
+
+            this.DataItems.Add(m_available);
+            SetAvailability(true);
+        }
+
+        public virtual string AvailabilityDataItemID
+        {
+            get
+            {
+                return string.Format("{0}_{1}_Available", this.Name, this.ID);
+            }
+        }
+
+        public void SetAvailability(bool available)
+        {
+            m_available.SetValue(available ? "AVAILABLE" : "UNAVAILABLE");
         }
 
         public override XElement AsXElement(XNamespace ns)

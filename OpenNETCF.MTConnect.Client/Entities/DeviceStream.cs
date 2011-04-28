@@ -30,14 +30,8 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class DeviceStream
+    public class DeviceStream : BaseStream
     {
-        public string Name { get; private set; }
-        public string UUID { get; private set; }
-
-        public ISample[] Samples { get; private set; }
-        public IEvent[] Events { get; private set; }
-        public ICondition[] Conditions { get; private set; }
         public ComponentStream[] ComponentStreams { get; set; }
 
         internal DeviceStream()
@@ -51,7 +45,7 @@ namespace OpenNETCF.MTConnect
             var attr = element.Attribute("name");
             if (attr == null)
             {
-                throw new Exception("Device Stream missing 'name' attribute"); 
+                throw new Exception("Device Stream missing 'name' attribute");
             }
             ds.Name = attr.Value;
 
@@ -63,7 +57,7 @@ namespace OpenNETCF.MTConnect
             ds.UUID = attr.Value;
 
             // <samples>
-            var samples = new List<ISample>();
+            var samples = new List<IDataElement>();
             var samplesElement = element.Element(ns + "Samples");
             if (samplesElement != null)
             {
@@ -72,10 +66,10 @@ namespace OpenNETCF.MTConnect
                     samples.Add(DataElementFactory.SampleFromXml(ns, s));
                 }
             }
-            ds.Samples = samples.ToArray();
+            ds.m_elements.AddRange(samples);
 
             // <events>
-            var events = new List<IEvent>();
+            var events = new List<IDataElement>();
             var eventsElement = element.Element(ns + "Events");
             if (eventsElement != null)
             {
@@ -84,10 +78,10 @@ namespace OpenNETCF.MTConnect
                     events.Add(DataElementFactory.EventFromXml(ns, s));
                 }
             }
-            ds.Events = events.ToArray();
+            ds.m_elements.AddRange(events);
 
             // <condition>
-            var conditions = new List<ICondition>();
+            var conditions = new List<IDataElement>();
             foreach (var ce in element.Elements(ns + "Condition"))
             {
                 foreach (var c in ce.Elements())
@@ -95,7 +89,7 @@ namespace OpenNETCF.MTConnect
                     conditions.Add(DataElementFactory.ConditionFromXml(ns, c));
                 }
             }
-            ds.Conditions = conditions.ToArray();
+            ds.m_elements.AddRange(conditions);
 
             List<ComponentStream> streams = new List<ComponentStream>();
 

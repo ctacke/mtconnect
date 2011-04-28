@@ -29,65 +29,16 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    public class DeviceCollection : IEnumerable<Device>
+    [Serializable]
+    public class StatusSummary
     {
-        private Dictionary<string, Device> m_devices = new Dictionary<string, Device>();
-
-        public DateTime CreateTime { get; internal set; }
-        public AgentInformation AgentInformation { get; internal set; }
-
-        public DeviceCollection()
+        public StatusSummary()
         {
+            TimeStamp = DateTime.Now;
         }
 
-        public DeviceCollection(Device device)
-        {
-            Add(device);
-        }
-
-        public DeviceCollection(IEnumerable<Device> devices)
-        {
-            AddRange(devices);
-        }
-
-        public void Add(Device device)
-        {
-            m_devices.Add(device.Name, device);
-        }
-
-        public void AddRange(IEnumerable<Device> devices)
-        {
-            foreach (var d in devices) { Add(d); }
-        }
-
-        public Device this[string name]
-        {
-            get 
-            {
-                if (!m_devices.ContainsKey(name)) return null;
-
-                return m_devices[name]; 
-            }
-        }
-
-        public int Count
-        {
-            get { return m_devices.Count; }
-        }
-
-        public IEnumerator<Device> GetEnumerator()
-        {
-            return m_devices.Values.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        internal void Clear()
-        {
-            m_devices.Clear();
-        }
+        public DateTime TimeStamp { get; set; }
+        public string Source { get; set; }
+        public string Description { get; set; }
     }
 }

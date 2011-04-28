@@ -103,5 +103,30 @@ namespace OpenNETCF.MTConnect
 
             return (string.Compare(ComponentPath[1], componentName, true) == 0);
         }
+
+        public bool ContainsDataItem(DataItem item)
+        {
+            if(string.IsNullOrEmpty(DataItemFilter)) return true;
+
+            // first do an ID check
+            var start = DataItemFilter.IndexOf("@id", StringComparison.InvariantCultureIgnoreCase);
+            if (start >= 0)
+            {
+                // find the '='
+                var mid = DataItemFilter.IndexOf('=');
+                if((mid <0) || (mid < start)) throw new Exception(string.Format("Invalid path filter syntax: '{0}'", DataItemFilter));
+
+                // get the comparison value
+                var compare = DataItemFilter.Substring(mid + 1).Trim('\"');
+                if (string.IsNullOrEmpty(compare))
+                {
+                    throw new Exception(string.Format("Invalid path filter syntax: '{0}'", DataItemFilter));
+                }
+
+                return (item.ID == compare);
+            }
+
+            throw new NotSupportedException("DataItem filtering is only supported by @id");
+        }
     }
 }

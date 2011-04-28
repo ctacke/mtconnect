@@ -94,7 +94,7 @@ namespace OpenNETCF.MTConnect
             new Thread(MonitorThreadProc) { IsBackground = true }
             .Start();
 
-            Connected = true;
+            Connected = false;
         }
 
         public void Stop()
@@ -157,7 +157,7 @@ namespace OpenNETCF.MTConnect
                 var et = Environment.TickCount - start;
                 if (et < Period) Thread.Sleep(Period - et);
 
-                while (!(m_stopEvent.WaitOne(0)))
+                while (!(m_stopEvent.WaitOne(0, false)))
                 {
                     start = Environment.TickCount;
 

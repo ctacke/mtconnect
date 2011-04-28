@@ -127,6 +127,10 @@ namespace OpenNETCF.MTConnect
             var ns = doc.Root.GetDefaultNamespace();
             var root = doc.Element(ns + "MTConnectStreams");
 
+            // this happens on an error
+            // TODO: get the error text
+            if (root == null) return null;
+
             var dataStream = new DataStream();
 
             var streams = new List<DeviceStream>();

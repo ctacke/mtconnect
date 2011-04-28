@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BD304E53-562F-443F-99CD-C01A3432829E}</ProjectGuid>
+    <ProjectGuid>{8144E1DC-4470-4824-AB92-5C2F17E12748}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenNETCF.MTConnect</RootNamespace>
-    <AssemblyName>OpenNETCF.MTConnect.Agent</AssemblyName>
+    <AssemblyName>OpenNETCF.MTConnect.Client</AssemblyName>
     <ProjectTypeGuids>{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PlatformFamilyName>WindowsCE</PlatformFamilyName>
     <PlatformID>E2BECB1F-8C8C-41ba-B736-9BE7D946A398</PlatformID>
@@ -18,11 +18,11 @@
     <NativePlatformName>Windows CE</NativePlatformName>
     <FormFactorID>
     </FormFactorID>
+    <DeployDirPrefix>\</DeployDirPrefix>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <DeployDirPrefix>\</DeployDirPrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,27 +66,23 @@
     <Compile Include="..\Shared\MTConnect.SDK.VersionInfo.cs">
       <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Adapter.cs" />
-    <Compile Include="AdapterCollection.cs" />
-    <Compile Include="Agent.cs" />
-    <Compile Include="AgentData.cs" />
-    <Compile Include="Interfaces\IMTConnectProvider.cs" />
+    <Compile Include="DataMonitor.cs" />
+    <Compile Include="Clients\Client.cs" />
+    <Compile Include="Clients\EntityClient.cs" />
+    <Compile Include="Clients\XmlClient.cs" />
+    <Compile Include="Entities\BaseStream.cs" />
+    <Compile Include="Entities\ComponentStream.cs" />
+    <Compile Include="Entities\Condition.cs" />
+    <Compile Include="Entities\DataElementBase.cs" />
+    <Compile Include="Entities\DataStream.cs" />
+    <Compile Include="Entities\DeviceStream.cs" />
+    <Compile Include="Entities\Event.cs" />
+    <Compile Include="Entities\Sample.cs" />
+    <Compile Include="Interfaces\ICondition.cs" />
+    <Compile Include="Interfaces\IDataElement.cs" />
+    <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces\ISample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Connector.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="DataItemValueExtensions.cs" />
-    <Compile Include="FilterPath.cs" />
-    <Compile Include="HostBase.cs" />
-    <Compile Include="Interfaces\IDataObserver.cs" />
-    <Compile Include="Interfaces\IHost.cs" />
-    <Compile Include="MTConnectProvider.cs" />
-    <Compile Include="RequestParser.cs" />
-    <Compile Include="Requests\CurrentRequest.cs" />
-    <Compile Include="Requests\IResourceRequest.cs" />
-    <Compile Include="Requests\ProbeRequest.cs" />
-    <Compile Include="Requests\ResourceRequestBase.cs" />
-    <Compile Include="Requests\SampleRequest.cs" />
-    <Compile Include="XmlDefinedAdapterBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.CF.csproj">

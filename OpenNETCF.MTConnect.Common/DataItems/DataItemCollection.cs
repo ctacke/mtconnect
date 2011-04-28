@@ -30,32 +30,6 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public static class DataItemCollectionExtensions
-    {
-        public static IEnumerable<DataItem> Find(this DataItemCollection c, Func<DataItem, bool> criteria)
-        {
-            List<DataItem> itemList = new List<DataItem>();
-
-            // look in the collection
-            var items = from i in c.Items
-                       where criteria(i)
-                       select i;
-
-            if (items != null) itemList.AddRange(items);
-
-            // look in subcomponents
-            foreach (var subcomponent in c.Parent.Components)
-            {
-                items = subcomponent.DataItems.Find(criteria);
-                if (items != null) itemList.AddRange(items);
-            }
-
-            if (itemList.Count == 0) return null;
-
-            return itemList;
-        }
-    }
-
     public class DataItemCollection : IEnumerable<DataItem>
     {
         internal event EventHandler<DataItemValue> DataItemValueSet;
