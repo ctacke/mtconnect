@@ -72,6 +72,7 @@
     <Compile Include="DeviceCollection.cs" />
     <Compile Include="Exceptions\MTConnectError.cs" />
     <Compile Include="Exceptions\RequestParameterException.cs" />
+    <Compile Include="Extensions\ComponentExtensions.cs" />
     <Compile Include="Extensions\DataItemCollectionExtensions.cs" />
     <Compile Include="Extensions\DeviceCollectionExtensions.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />
