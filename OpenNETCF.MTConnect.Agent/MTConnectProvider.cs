@@ -34,15 +34,16 @@ namespace OpenNETCF.MTConnect
     public abstract class MTConnectProvider : IMTConnectProvider
     {
         public event EventHandler<GenericEventArgs<StatusSummary>> StatusChanged;
+        public event EventHandler AdapterConfigurationChanged;
 
         protected abstract Adapter[] GetAdapters();
         protected abstract IHost GetHost(Agent agent);
+        protected abstract void OnSetAdapterConfiguration(string requestSource, string xml);
 
         public abstract string AgentAddress { get; }
         public abstract bool Running { get; }
         public abstract void Start();
         public abstract void Stop();
-        public abstract void UpdateAdapter(string requestSource, string xml);
         public abstract void SetDataByDataItemID(string requestSource, string dataItemID, string data);
 
         private static string ConfigPath { get; set; }
@@ -61,6 +62,19 @@ namespace OpenNETCF.MTConnect
             }
 
             Host.Start();
+        }
+
+        public void SetAdapterConfiguration(string requestSource, string xml)
+        {
+            OnSetAdapterConfiguration(requestSource, xml);
+            RaiseAdapterConfigurationChanged();
+        }
+
+        protected void RaiseAdapterConfigurationChanged()
+        {
+            var handler = AdapterConfigurationChanged;
+            if (handler == null) return;
+            handler(this, EventArgs.Empty);
         }
 
         protected void RaiseStatusUpdateRequested(string source, string description)

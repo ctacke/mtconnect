@@ -32,26 +32,26 @@ using System.Xml;
 
 namespace OpenNETCF.MTConnect
 {
-    public abstract class XmlDefinedAdapterBase : Adapter
+    public class XmlDefinedAdapter : Adapter
     {
         private XElement m_deviceElement;
 
-        public XmlDefinedAdapterBase(Stream configuration)
+        public XmlDefinedAdapter(Stream configuration)
             : this(XmlReader.Create(configuration))
         {
         }
 
-        public XmlDefinedAdapterBase(XmlReader reader)
+        public XmlDefinedAdapter(XmlReader reader)
             : this(XDocument.Load(reader))
         {
         }
 
-        public XmlDefinedAdapterBase(XDocument configuration)
+        public XmlDefinedAdapter(XDocument configuration)
         {
             m_deviceElement = ConfigParser.GetDeviceElement(configuration, null);
         }
 
-        public XmlDefinedAdapterBase(XElement deviceElement)
+        public XmlDefinedAdapter(XElement deviceElement)
         {
             m_deviceElement = deviceElement;
         }

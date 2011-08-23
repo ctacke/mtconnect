@@ -40,6 +40,18 @@ namespace OpenNETCF.MTConnect
 
         private object m_syncRoot = new object();
 
+        public ComponentCollection()
+        {
+        }
+
+        internal ComponentCollection(ComponentCollection collection)
+        {
+            foreach (var c in collection)
+            {
+                this.Add(new Component(c));
+            }
+        }
+
         public IEnumerator<Component> GetEnumerator()
         {
             return m_components.GetEnumerator();
@@ -50,7 +62,21 @@ namespace OpenNETCF.MTConnect
             return GetEnumerator();
         }
 
-        internal Component Add(Component component)
+        public Boolean Remove(Component component)
+        {
+            lock (m_syncRoot)
+            {
+                if (m_componentDictionary.ContainsKey(component.ID))
+                {
+                    m_componentDictionary.Remove(component.ID);
+                    m_components.Remove(component);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Component Add(Component component)
         {
             OpenNETCF.Validate
                 .Begin()
@@ -85,6 +111,14 @@ namespace OpenNETCF.MTConnect
             return element;
         }
 
+        public Boolean HasComponent(string id)
+        {
+            if (m_componentDictionary == null) return false;
+            if (m_componentDictionary.Count == 0) return false;
+            if (m_componentDictionary.Keys.Contains(id)) return true;
+            return false;
+        }
+
         public Component this[int index]
         {
             get { return m_components[index]; }
@@ -92,7 +126,12 @@ namespace OpenNETCF.MTConnect
 
         public Component this[string id]
         {
-            get { return m_componentDictionary[id]; }
+            get { 
+                if(!m_componentDictionary.ContainsKey(id))
+                {
+                    return null;
+                }
+                return m_componentDictionary[id]; }
         }
 
         public int Count

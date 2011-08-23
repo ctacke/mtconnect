@@ -29,10 +29,9 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    public interface IAdapter
+    public interface IDevice
     {
-        Device Device { get; }
-
-        void PublishDefaultData();
+        string Name { get; }
+        IEnumerable<Component> Components { get; }
     }
 }

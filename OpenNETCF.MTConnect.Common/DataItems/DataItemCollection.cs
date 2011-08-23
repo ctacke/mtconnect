@@ -37,6 +37,15 @@ namespace OpenNETCF.MTConnect
         private Dictionary<string, DataItem> m_items = new Dictionary<string, DataItem>();
         private ComponentBase m_parent;
 
+        internal DataItemCollection(DataItemCollection collection)
+        {
+            foreach (var di in collection)
+            {
+                this.Add(new DataItem(di));
+            }
+            m_parent = collection.Parent;
+        }
+
         internal DataItemCollection(ComponentBase parent)
         {
             m_parent = parent;
@@ -62,6 +71,11 @@ namespace OpenNETCF.MTConnect
             item.Component = m_parent;
             m_items.Add(item.ID, item);
             item.ValueSet += new EventHandler<DataItemValue>(item_ValueSet);
+        }
+
+        public void Clear()
+        {
+            m_items.Clear();
         }
 
         void item_ValueSet(object sender, DataItemValue e)

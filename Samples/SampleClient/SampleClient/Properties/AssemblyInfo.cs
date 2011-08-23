@@ -5,9 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenNETCF.MTConnect.Common")]
+[assembly: AssemblyTitle("SampleClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("SampleClient")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -17,9 +20,17 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("69c5035b-16aa-42f2-8e05-b83381b6dc46")]
+[assembly: Guid("0f8a3c1c-3f43-4b23-b92e-28dc51bb0235")]
 
-[assembly: InternalsVisibleTo("OpenNETCF.MTConnect.Agent")]
-[assembly: InternalsVisibleTo("OpenNETCF.MTConnect.Client")]
-[assembly: InternalsVisibleTo("OpenNETCF.MTConnect.Agent.Test")]
-[assembly: InternalsVisibleTo("OpenNETCF.MTConnect.Test")]
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

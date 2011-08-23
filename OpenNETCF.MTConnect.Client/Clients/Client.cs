@@ -35,25 +35,56 @@ namespace OpenNETCF.MTConnect
     public abstract class Client
     {
         protected string RootFolder { get; private set; }
-        protected RestConnector RestConnector { get; private set; }
+        public RestConnector RestConnector { get; private set; }
         public object SyncRoot { get; private set; }
- 
-        public Client(string agentAddress)
+        public int RequestTimeout { get; set; }
+        public string AgentAddress { get; private set; }
+
+        public Client(string clientAddress)
         {
-            // TODO: support authentication
-            
-            agentAddress = agentAddress.Replace('\\', '/');
-            if(!agentAddress.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            if (!clientAddress.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             {
-                agentAddress = "http://" + agentAddress;
+                clientAddress = "http://" + clientAddress;
             }
 
-            var uri = new Uri(agentAddress);
-            var targetAddress = uri.Port == 80 ? uri.Host : string.Format("{0}:{1}", uri.Host, uri.Port);
+            var uri = new Uri(clientAddress, UriKind.Absolute);
+            var connector = new RestConnector(uri.Host);
+            Initialize(connector, uri.LocalPath);
+        }
+
+        public Client(Uri clientAddress)
+        {
+            var connector = new RestConnector(clientAddress.Host);
+
+            Initialize(connector, clientAddress.LocalPath);
+        }
+
+        public Client(RestConnector connector, string rootFolder)
+        {
+            try
+            {
+                rootFolder = rootFolder.Replace('\\', '/');
+                if (!rootFolder.StartsWith("/"))
+                {
+                    rootFolder = "/" + rootFolder;
+                }
+            }
+            catch
+            {
+                rootFolder = "/";
+            }
+
+            Initialize(connector, rootFolder);
+        }
+
+        private void Initialize(RestConnector connector, string rootFolder)
+        {
+            RequestTimeout = 2000;
 
             SyncRoot = new object();
-            RestConnector = new RestConnector(targetAddress);
-            RootFolder = uri.AbsolutePath;
+            RestConnector = connector;
+            AgentAddress = connector.DeviceAddress;
+            RootFolder = rootFolder;
         }
 
         protected string GetProbePath()
@@ -118,7 +149,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetProbePath();
-                var xml = RestConnector.Get(path);
+                var xml = RestConnector.Get(path, 2000);
                 return xml;
             }
         }
@@ -128,7 +159,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetCurrentPath();
-                var xml = RestConnector.Get(path);
+                var xml = RestConnector.Get(path, RequestTimeout);
                 return xml;
             }
         }
@@ -138,7 +169,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetCurrentPath(deviceName);
-                var xml = RestConnector.Get(path);
+                var xml = RestConnector.Get(path, RequestTimeout);
                 return xml;
             }
         }
@@ -150,7 +181,7 @@ namespace OpenNETCF.MTConnect
                 var path = GetCurrentPath();
                 path += "?path=";
                 path += filter;
-                var xml = RestConnector.Get(path);
+                var xml = RestConnector.Get(path, RequestTimeout);
                 return xml;
             }
         }
@@ -170,7 +201,7 @@ namespace OpenNETCF.MTConnect
                 }
 
                 var path = GetSamplePath(from, maxItems);
-                var xml = RestConnector.Get(path);
+                var xml = RestConnector.Get(path, RequestTimeout);
                 if (xml != string.Empty)
                 {
                     next = GetNextSequenceID(xml);
@@ -185,7 +216,12 @@ namespace OpenNETCF.MTConnect
             var doc = XDocument.Parse(xml);
 
             var ns = doc.Root.GetDefaultNamespace();
-            var header = doc.Element(ns + "MTConnectStreams").Element(ns + "Header");
+
+            var stream = doc.Element(ns + "MTConnectStreams");
+
+            if (stream == null) return -1;
+
+            var header = stream.Element(ns + "Header");
             var next = int.Parse(header.Attribute("nextSequence").Value);
 
             return next;

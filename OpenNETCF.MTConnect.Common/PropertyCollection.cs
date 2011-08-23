@@ -38,6 +38,14 @@ namespace OpenNETCF.MTConnect
         {
         }
 
+        public PropertyCollection(PropertyCollection collection)
+        {
+            foreach (var p in collection)
+            {
+                this.Add(p.Key, p.Value);
+            }
+        }
+
         internal void Add(string name, string value)
         {
             m_values.Add(name, value);

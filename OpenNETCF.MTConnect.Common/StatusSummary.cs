@@ -26,11 +26,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
     public class StatusSummary
     {
+        [DebuggerStepThrough]
         public StatusSummary()
         {
             TimeStamp = DateTime.Now;

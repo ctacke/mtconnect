@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using OpenNETCF.Web;
 
 namespace OpenNETCF.MTConnect
 {
@@ -35,8 +36,8 @@ namespace OpenNETCF.MTConnect
     {
         private int m_nextSequence = -1;
 
-        public XmlClient(string agentAddress)
-            : base(agentAddress)
+        public XmlClient(RestConnector connector, string rootFolder)
+            : base(connector, rootFolder)
         {
         }
 

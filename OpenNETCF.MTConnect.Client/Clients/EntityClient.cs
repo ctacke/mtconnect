@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using OpenNETCF.Web;
 
 namespace OpenNETCF.MTConnect
 {
@@ -34,9 +35,24 @@ namespace OpenNETCF.MTConnect
     {
         private int m_nextSequence = -1;
 
-        public EntityClient(string agentAddress)
-            : base(agentAddress)
+        public EntityClient(string clientAddress)
+            : base(clientAddress)
         {
+        }
+
+        public EntityClient(Uri clientAddress)
+            : base(clientAddress)
+        {
+        }
+
+        public EntityClient(RestConnector connector, string rootFolder)
+            : base(connector, rootFolder)
+        {
+        }
+
+        public void ResetSequence()
+        {
+            m_nextSequence = -1;
         }
 
         public DeviceCollection Probe()
@@ -90,6 +106,10 @@ namespace OpenNETCF.MTConnect
             if (next > 0)
             {
                 m_nextSequence = next;
+            }
+            else if (next == 0)
+            {
+                m_nextSequence = -1;
             }
             if (xml == string.Empty) return null;
             return DataStream.FromXml(xml);

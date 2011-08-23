@@ -35,6 +35,19 @@ namespace OpenNETCF.MTConnect
     {
         private Device m_device;
 
+        public Component(Component component)
+            : base(new PropertyCollection())
+        {
+            foreach (var p in component.Properties)
+            {
+                this.Properties[p.Key] = p.Value;
+            }
+            this.DataItems = new DataItemCollection(component.DataItems);
+            this.Device = new Device(component.Device);
+        }
+
+        
+
         internal Component(PropertyCollection props, Device device)
             : base(props)
         {
@@ -58,6 +71,7 @@ namespace OpenNETCF.MTConnect
             OpenNETCF.Validate
                 .Begin()
                 .IsNotNullOrEmpty(componentType)
+                .IsFalse(componentType.Contains(' '))  // spec requires the type to have no spaces, as it becomes an XML node name
                 .IsNotNullOrEmpty(name)
                 .IsNotNullOrEmpty(id)
                 .Check();

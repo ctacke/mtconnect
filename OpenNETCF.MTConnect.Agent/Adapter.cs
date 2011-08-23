@@ -26,21 +26,86 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
-    public abstract class Adapter : IAdapter
+    public class Adapter : IAdapter
     {
-        public event EventHandler<DataItemValue> DataItemValueSet;
-
-        public abstract void Start();
-        public abstract PropertyCollection GetDeviceProperties();
-        public abstract ComponentDescription GetComponentDescription(ComponentBase component);
-        public abstract PropertyCollection[] GetDeviceDataItems();
-        public abstract ComponentDescriptor[] GetComponentDescriptors(ComponentBase parent);
-        public abstract PropertyCollection[] GetComponentDataItems(ComponentBase parent);
+        private EventHandler<DataItemValue> DataItemValueSetDelegate;
+        private static int m_instanceCount = 0;
+        private int m_instanceNumber = 0;
 
         private Device m_device;
+        private Dictionary<string, string> m_defaultDataMap = new Dictionary<string, string>();
+
+        public event EventHandler<DataItemValue> DataItemValueSet
+        {
+            add 
+            {
+                Debug.WriteLine("Subscribed " + m_instanceNumber.ToString());
+                DataItemValueSetDelegate += value;
+            }
+            remove 
+            {
+                Debug.WriteLine("Unsubscribed " + m_instanceNumber.ToString());
+                DataItemValueSetDelegate -= value;
+            }
+        }
+
+        public AdapterCollection Container { get; internal set; }
+        public String InstanceName { get; set; }
+        public virtual void Start() { }
+        public virtual PropertyCollection GetDeviceProperties() { return null; }
+        public virtual ComponentDescription GetComponentDescription(ComponentBase component) { return null; }
+        public virtual PropertyCollection[] GetDeviceDataItems() { return null; }
+        public virtual ComponentDescriptor[] GetComponentDescriptors(ComponentBase parent) { return null; }
+        public virtual PropertyCollection[] GetComponentDataItems(ComponentBase parent) { return null; }
+
+        public Adapter()
+        {
+            m_instanceNumber = ++m_instanceCount;
+            m_defaultDataMap.Add("SYSTEM.DOUBLE", "0.0");
+            m_defaultDataMap.Add("SYSTEM.BOOLEAN", "false");
+            m_defaultDataMap.Add("SYSTEM.STRING", string.Empty);
+            m_defaultDataMap.Add("SYSTEM.INT64", "0");
+            m_defaultDataMap.Add("AVAILABILITY", "AVAILABLE");
+        }
+
+        internal Adapter(Device device)
+            : this()
+        {
+            Device = device;
+        }
+
+        public virtual void PublishDefaultData() 
+        {
+            Debug.WriteLine("PublishDefaultData for " + this.Device.Name);
+
+            PublishDefaultData(this.Device);
+        }
+
+        private void PublishDefaultData(ComponentBase component)
+        {
+            foreach (var di in component.DataItems)
+            {
+                PublishDefaultData(di);
+            }
+
+            foreach (var c in component.Components)
+            {
+                PublishDefaultData(c);
+            }
+        }
+
+        private void PublishDefaultData(DataItem dataItem)
+        {
+            var typeName = dataItem.Type.ToUpper();
+            if (m_defaultDataMap.ContainsKey(typeName))
+            {
+                this.Container.Agent.PublishData(dataItem.ID, m_defaultDataMap[typeName], DateTime.Now);
+            }
+        }
 
         public Device Device 
         {
@@ -53,27 +118,21 @@ namespace OpenNETCF.MTConnect
                 }
 
                 m_device = value;
-                m_device.DataItemValueSet += Device_DataItemValueSet;
+                if (value != null)
+                {
+                    m_device.DataItemValueSet += Device_DataItemValueSet;
+                }
             }
         }
 
         private void Device_DataItemValueSet(object sender, DataItemValue e)
         {
-            OnDataItemValueSet(e);
+            OnDataItemValueSet(sender, e);
         }
 
-        public virtual void OnDataItemValueSet(DataItemValue value)
+        public virtual void OnDataItemValueSet(object sender, DataItemValue value)
         {
-            DataItemValueSet.Fire(Device, value);
-        }
-
-        public Adapter()
-        {
-        }
-
-        internal Adapter(Device device)
-        {
-            Device = device;
+            DataItemValueSetDelegate.Fire(sender ?? Device, value);
         }
     }
 }

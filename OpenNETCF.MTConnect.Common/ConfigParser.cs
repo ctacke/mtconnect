@@ -127,6 +127,8 @@ namespace OpenNETCF.MTConnect
         {
             var deviceList = new DeviceCollection();
 
+            if (string.IsNullOrEmpty(xml)) return deviceList;
+
             var doc = XDocument.Parse(xml);
             var ns = doc.Root.Name.Namespace;
 
