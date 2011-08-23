@@ -86,7 +86,7 @@
     <Compile Include="Requests\ProbeRequest.cs" />
     <Compile Include="Requests\ResourceRequestBase.cs" />
     <Compile Include="Requests\SampleRequest.cs" />
-    <Compile Include="XmlDefinedAdapterBase.cs" />
+    <Compile Include="XmlDefinedAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.CF.csproj">

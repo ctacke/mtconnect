@@ -35,6 +35,16 @@ namespace OpenNETCF.MTConnect
     {
         private DataItem m_available;
 
+        public Device(Device device)
+            : base(new PropertyCollection())
+        {
+            foreach (var p in device.Properties)
+            {
+                this.Properties[p.Key] = p.Value;
+            }
+            this.DataItems = new DataItemCollection(device.DataItems);
+        }
+
         internal Device(PropertyCollection props)
             : base(props)
         {

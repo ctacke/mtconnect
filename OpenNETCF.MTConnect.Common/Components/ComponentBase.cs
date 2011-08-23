@@ -40,7 +40,7 @@ namespace OpenNETCF.MTConnect
 
         public ComponentCollection Components { get; private set; }
         public PropertyCollection Properties { get; private set; }
-        public DataItemCollection DataItems { get; private set; }
+        public DataItemCollection DataItems { get; protected set; }
         public ComponentDescription Description { get; set; }
 
         public string XmlNodeName { get; set; }
@@ -101,7 +101,13 @@ namespace OpenNETCF.MTConnect
             DataItemValueSet.Fire(sender, e);
         }
 
-        internal static T FromXElement<T>(XNamespace ns, XElement element)
+        internal static T FromXElement<T>(XElement element)
+            where T : ComponentBase
+        {
+            return FromXElement<T>(string.Empty, element, null);
+        }
+
+        public static T FromXElement<T>(XNamespace ns, XElement element)
             where T : ComponentBase
         {
             return FromXElement<T>(ns, element, null);
@@ -110,6 +116,8 @@ namespace OpenNETCF.MTConnect
         private static T FromXElement<T>(XNamespace ns, XElement element, Device parent)
             where T : ComponentBase
         {
+            if (ns == null) ns = string.Empty;
+
             PropertyCollection props = ConfigParser.GetAttributes(element);
 
             T comp;
@@ -184,6 +192,11 @@ namespace OpenNETCF.MTConnect
             }
 
             DataItems.Validate();
+        }
+
+        public Boolean RemoveComponent(Component component)
+        {
+            return Components.Remove(component);
         }
 
         public Component AddComponent(Component component)

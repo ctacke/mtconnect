@@ -29,6 +29,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace OpenNETCF.MTConnect
 {
@@ -41,9 +42,10 @@ namespace OpenNETCF.MTConnect
         public long InstanceID { get; private set; }
         public string AgentTypeName { get; private set; }
 
+        private string m_versionNumber;
         internal IHost Host { get; set; }
 
-        private Dictionary<string, DataItem> m_dataItemMap = new Dictionary<string, DataItem>();
+        private Dictionary<string, DataItem> m_dataItemMap = new Dictionary<string, DataItem>(StringComparer.InvariantCultureIgnoreCase);
 
         internal Agent()
             : this(1000)
@@ -65,13 +67,14 @@ namespace OpenNETCF.MTConnect
             // TODO: implement checkpoints
 
             AgentTypeName = "OpenNETCF VirtualAgent";
+            m_versionNumber = Assembly.GetCallingAssembly().GetName().Version.ToString(3);
 
             Initialize(bufferSize);
         }
 
         public string Version
         {
-            get { return "1.1"; }
+            get { return m_versionNumber; }
         }
 
         private void Initialize(int bufferSize)
@@ -79,6 +82,7 @@ namespace OpenNETCF.MTConnect
             Adapters = new AdapterCollection(this);
             Adapters.DataItemValueSet += new EventHandler<DataItemValue>(Adapters_DataItemValueSet);
             Adapters.AdapterAdded += new EventHandler<GenericEventArgs<Adapter>>(Adapters_AdapterAdded);
+            Adapters.AdapterRemoved += new EventHandler<GenericEventArgs<Adapter>>(Adapters_AdapterRemoved);
             Adapters.Cleared += new EventHandler(Adapters_Cleared);
 
             Devices = new DeviceCollection();
@@ -88,13 +92,33 @@ namespace OpenNETCF.MTConnect
 
         void Adapters_Cleared(object sender, EventArgs e)
         {
+            m_dataItemMap.Clear();
             Devices.Clear();
-            Data.Clear();
+            //Data.Clear();
+        }
+
+        static bool TryParse(string s, out int value)
+        {
+            try
+            {
+                value = int.Parse(s);
+                return true;
+            }
+            catch
+            {
+                value = 0;
+                return false;
+            }
         }
 
         void Adapters_AdapterAdded(object sender, GenericEventArgs<Adapter> e)
         {
             Devices.Add(e.Value.Device);
+        }
+
+        void Adapters_AdapterRemoved(object sender, GenericEventArgs<Adapter> e)
+        {
+            Devices.Remove(e.Value.Device);
         }
 
         void Adapters_DataItemValueSet(object sender, DataItemValue value)
@@ -111,56 +135,57 @@ namespace OpenNETCF.MTConnect
                 // this was a duplicate value.  It wasn't stored (per the spec) and we don't want to raise an event for it
                 return;
             }
-
-            // TODO raise an event
         }
 
         public void PublishData(string dataItemID, string value, DateTime time)
         {
-            DataItem dataItem = GetDataItemByID(dataItemID);
+            PublishData(dataItemID, value, time, null);
+        }
 
-            if (dataItem == null)
-            {
-                throw new InvalidIDException(dataItemID, string.Format("DataItem with ID {0} not found", dataItemID));
-            }
+        public void PublishData(string dataItemID, string value, DateTime time, object parameter)
+        {
+            DataItem dataItem = GetDataItemByID(dataItemID);
 
             if (dataItem == null || dataItem.Device == null)
             {
-                if (Debugger.IsAttached) Debugger.Break();
+                //if (Debugger.IsAttached) Debugger.Break();
                 return;
             }
 
-            dataItem.SetValue(value);
+            dataItem.SetValue(parameter, value, DateTime.Now);
         }
 
-        protected DataItem GetDataItemByID(string dataItemID)
+        public DataItem GetDataItemByID(string dataItemID)
         {
             DataItem dataItem = null;
 
-            if (m_dataItemMap.ContainsKey(dataItemID))
+            lock (m_dataItemMap)
             {
-                dataItem = m_dataItemMap[dataItemID];
-            }
-            else
-            {
-                foreach (var device in Devices.ToArray())
+                if (m_dataItemMap.ContainsKey(dataItemID))
                 {
-                    var items = device.DataItems.Find(d => d.ID == dataItemID);
-
-                    if (items != null)
+                    dataItem = m_dataItemMap[dataItemID];
+                }
+                else
+                {
+                    foreach (var device in Devices.ToArray())
                     {
-                        dataItem = items.FirstOrDefault();
-                    }
+                        var items = device.DataItems.Find(d => d.ID == dataItemID);
 
-                    if (dataItem != null)
-                    {
-                        if (dataItem.Device == null)
+                        if (items != null)
                         {
-                            dataItem.Device = device;
+                            dataItem = items.FirstOrDefault();
                         }
 
-                        m_dataItemMap.Add(dataItemID, dataItem);
-                        break;
+                        if (dataItem != null)
+                        {
+                            if (dataItem.Device == null)
+                            {
+                                dataItem.Device = device;
+                            }
+
+                            m_dataItemMap.Add(dataItemID, dataItem);
+                            break;
+                        }
                     }
                 }
             }

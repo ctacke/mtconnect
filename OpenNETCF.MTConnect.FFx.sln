@@ -16,9 +16,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Agent.F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Client.FFx", "OpenNETCF.MTConnect.Client\OpenNETCF.MTConnect.Client.FFx.csproj", "{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleClient", "Samples\SampleClient\SampleClient\SampleClient.csproj", "{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -34,6 +36,9 @@ Global
 		SccProjectUniqueName4 = OpenNETCF.MTConnect.Common\\OpenNETCF.MTConnect.Common.FFX.csproj
 		SccProjectName4 = OpenNETCF.MTConnect.Common
 		SccLocalPath4 = OpenNETCF.MTConnect.Common
+		SccProjectUniqueName5 = Samples\\SampleClient\\SampleClient\\SampleClient.csproj
+		SccProjectName5 = Samples/SampleClient/SampleClient
+		SccLocalPath5 = Samples\\SampleClient\\SampleClient
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = OpenNETCF.Net.MTConnect.FFx.vsmdi
@@ -87,6 +92,16 @@ Global
 		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E171643A-7EDD-4AD6-AB26-4ED13E6F2AEF}.Release|x86.ActiveCfg = Release|Any CPU
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|x86.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|x86.Build.0 = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Any CPU.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Mixed Platforms.Build.0 = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|x86.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

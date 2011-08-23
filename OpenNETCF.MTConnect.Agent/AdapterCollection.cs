@@ -33,14 +33,18 @@ namespace OpenNETCF.MTConnect
     {
         internal event EventHandler<DataItemValue> DataItemValueSet;
         internal event EventHandler<GenericEventArgs<Adapter>> AdapterAdded;
+        internal event EventHandler<GenericEventArgs<Adapter>> AdapterRemoved;
         internal event EventHandler Cleared;
 
         private List<Adapter> m_adapters = new List<Adapter>();
-        private Agent m_agent;
+
+        internal Agent Agent { get; private set; }
+        public object SyncRoot { get; private set; }
 
         internal AdapterCollection(Agent agent)
         {
-            m_agent = agent;
+            SyncRoot = new object();
+            Agent = agent;
         }
 
         public IEnumerator<Adapter> GetEnumerator()
@@ -53,11 +57,25 @@ namespace OpenNETCF.MTConnect
             return GetEnumerator();
         }
 
+        public Adapter this[int index]
+        {
+            get 
+            {
+                lock (SyncRoot)
+                {
+                    return m_adapters[index];
+                }
+            }
+        }
+
         public void AddRange(IEnumerable<Adapter> adapters)
         {
-            foreach (var adapter in adapters)
+            lock (SyncRoot)
             {
-                Add(adapter);
+                foreach (var adapter in adapters)
+                {
+                    Add(adapter);
+                }
             }
         }
 
@@ -120,14 +138,30 @@ namespace OpenNETCF.MTConnect
 
             ValidateAdapter(adapter);
 
-            lock (m_adapters)
+            lock (SyncRoot)
             {
+                adapter.DataItemValueSet += adapter_DataItemValueSet;
+                adapter.Container = this;
                 m_adapters.Add(adapter);
             }
 
-            adapter.DataItemValueSet += adapter_DataItemValueSet;
-
             AdapterAdded.Fire(this, new GenericEventArgs<Adapter>(adapter));
+        }
+
+        public void Remove(string deviceID)
+        {
+            lock (SyncRoot)
+            {
+                var adapter = m_adapters.Find(t => t.Device.ID == deviceID);
+                if (adapter != null)
+                {
+                    adapter.DataItemValueSet -= adapter_DataItemValueSet;
+                    adapter.Container = null;
+                    m_adapters.Remove(adapter);
+                    AdapterRemoved.Fire(this, new GenericEventArgs<Adapter>(adapter));
+                    adapter = null;
+                }
+            }
         }
 
         void adapter_DataItemValueSet(object sender, DataItemValue e)
@@ -142,14 +176,19 @@ namespace OpenNETCF.MTConnect
 
         public void Clear()
         {
-            lock (m_adapters)
+            lock (SyncRoot)
             {
-                foreach (var adapter in m_adapters)
+                for(int i = 0 ; i < m_adapters.Count ; i++)
                 {
+                    var adapter = m_adapters[0];
+                    m_adapters.RemoveAt(0);
                     adapter.DataItemValueSet -= adapter_DataItemValueSet;
+                    adapter.Container = null;
+                    adapter.Device = null;
+                    adapter = null;
                 }
 
-                m_adapters.Clear();
+                m_adapters = new List<Adapter>();
             }
             Cleared.Fire(this, EventArgs.Empty);
         }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace OpenNETCF.MTConnect.Test
 {
-    public class XmlAdapter : XmlDefinedAdapterBase
+    public class XmlAdapter : XmlDefinedAdapter
     {
         public XmlAdapter(Stream configuration)
             : base(configuration)

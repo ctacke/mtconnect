@@ -60,6 +60,11 @@ namespace OpenNETCF.MTConnect
             foreach (var d in devices) { Add(d); }
         }
 
+        public void Remove(Device device)
+        {
+            m_devices.Remove(device.Name);
+        }
+
         public Device this[string name]
         {
             get 

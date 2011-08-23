@@ -343,12 +343,19 @@ namespace OpenNETCF.MTConnect
 
         public string GetCurrentValue(string dataItemID)
         {
-            // work backward from the end of the data so the most recent is returned
-            // this is conceptualy identical to doing a "current" with a filter by dataitemid
+            DataItemValue item = null;
 
-            var item = m_buffer.Last(i => i.Item.ID == dataItemID);
+            if (m_currentValues.Keys.Contains(dataItemID))
+            {
+                item = m_currentValues[dataItemID];
+            }
+            else
+            {
+                item = m_buffer.Last(i => i.Item.ID == dataItemID);
+            }
+
             if (item == null) return null;
-
+            
             return item.Value;
         }
     }

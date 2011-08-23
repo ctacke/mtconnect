@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using OpenNETCF.Web;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
@@ -47,15 +49,18 @@ namespace OpenNETCF.MTConnect
         public bool Running { get; private set; }
         public bool Connected { get; private set; }
 
-        public DataMonitor(string agentAddress)
-            : this(agentAddress, 1000)
+        public RestConnector RestConnector { get; private set; }
+
+        public DataMonitor(EntityClient entityClient)
+            : this(entityClient, 1000)
         {
         }
 
-        public DataMonitor(string agentAddress, int period)
+        public DataMonitor(EntityClient entityClient, int period)
         {
-            m_agentAddress = agentAddress;
-            m_client = new EntityClient(agentAddress);
+            m_agentAddress = entityClient.RestConnector.DeviceAddress;
+            m_client = entityClient;
+            RestConnector = m_client.RestConnector;
             Period = period;
             m_stopEvent = new AutoResetEvent(false);
             Running = false;
@@ -90,7 +95,11 @@ namespace OpenNETCF.MTConnect
         {
             if (Running) return;
 
-            new Thread(MonitorThreadProc) { IsBackground = true }
+            new Thread(MonitorThreadProc) 
+            { 
+                IsBackground = true,
+                Name = string.Format("DataMonitor[{0}]", m_client.AgentAddress)
+            }
             .Start();
 
             Connected = false;
@@ -150,6 +159,7 @@ namespace OpenNETCF.MTConnect
                 var data = m_client.Sample();
                 if (data != null)
                 {
+                    Connected = true;
                     HandleNewData(data);
                 }
 
@@ -161,13 +171,24 @@ namespace OpenNETCF.MTConnect
                     start = Environment.TickCount;
 
                     data = m_client.Sample();
+
+                    var now = Environment.TickCount;
+                    if (now - start > 20)
+                    {
+                        Debug.WriteLine(string.Format("! DataMonitor: Sample took {0}ms", now - start));
+                    }
+
                     if (data != null)
                     {
                         HandleNewData(data);
+                        var now2 = Environment.TickCount;
+                        if (now2 - now > 20)
+                        {
+                            Debug.WriteLine(string.Format("! DataMonitor: Sample took {0}ms", now2 - now));
+                        }
 
                         if (!Connected)
                         {
-                            m_client = new EntityClient(m_agentAddress);
                             Connected = true;
                         }
                     }
@@ -177,6 +198,10 @@ namespace OpenNETCF.MTConnect
                     }
 
                     et = Environment.TickCount - start;
+                    if (et > 20)
+                    {
+                        Debug.WriteLine(string.Format("Data Monitor Thread {0} Took {1} (ms)", Thread.CurrentThread.ManagedThreadId, et));
+                    }
                     if (et < Period) Thread.Sleep(Period - et);
                 }
             }

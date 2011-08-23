@@ -33,7 +33,7 @@ namespace OpenNETCF.MTConnect
 {
     public class DataItem
     {
-        internal event EventHandler<DataItemValue> ValueSet;
+        public event EventHandler<DataItemValue> ValueSet;
 
         private DataItemCategory? m_category;
         private ComponentBase m_component;
@@ -42,10 +42,18 @@ namespace OpenNETCF.MTConnect
 
         public PropertyCollection Properties { get; private set; }
 
-
         public DataItem()
         {
             Properties = new PropertyCollection();
+        }
+
+        internal DataItem(DataItem item)
+        {
+            Properties = new PropertyCollection(item.Properties);
+            this.Constraint = item.Constraint;
+            this.Category = item.Category;
+            this.Device = new Device(item.Device);
+            this.Component = new Component(item.Component as Component);
         }
 
         internal DataItem(PropertyCollection props)
@@ -58,7 +66,12 @@ namespace OpenNETCF.MTConnect
         {
         }
 
-        public DataItem(DataItemCategory category, string dataItemType, string name, string id)
+        public DataItem(DataItemCategory category, string dataItemType, string name, string id, Boolean writeable)
+            : this(category, dataItemType, name, id)
+        {
+            Writable = writeable;
+        }
+       public DataItem(DataItemCategory category, string dataItemType, string name, string id)
             : this(new PropertyCollection())
         {
             OpenNETCF.Validate
@@ -92,7 +105,7 @@ namespace OpenNETCF.MTConnect
         public ComponentBase Component
         {
             get { return m_component; }
-            internal set 
+            set 
             {
                 m_component = value;
                 if (m_component is Device)
@@ -109,7 +122,7 @@ namespace OpenNETCF.MTConnect
         public Device Device
         {
             get { return m_device; }
-            internal set { m_device = value; }
+            set { m_device = value; }
         }
 
         public string Name
@@ -335,10 +348,15 @@ namespace OpenNETCF.MTConnect
 
         public void SetValue(string value)
         {
-            SetValue(value, DateTime.Now);
+            SetValue(null, value, DateTime.Now);
         }
 
         public void SetValue(string value, DateTime time)
+        {
+            SetValue(null, value, time);
+        }
+
+        public void SetValue(object parameter, string value, DateTime time)
         {
             if (this.Category == DataItemCategory.Condition)
             {
@@ -358,7 +376,7 @@ namespace OpenNETCF.MTConnect
             // TODO: check constraints?
             // TODO: check alarms?
 
-            ValueSet.Fire(this, new DataItemValue(-1, this, value, time));
+            ValueSet.Fire(parameter, new DataItemValue(-1, this, value, time));
         }
     }
 }

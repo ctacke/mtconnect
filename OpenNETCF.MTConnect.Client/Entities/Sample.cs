@@ -40,7 +40,11 @@ namespace OpenNETCF.MTConnect
             {
                 Value = null;
             }
-            if (string.Compare(element.Value, "NULL", StringComparison.InvariantCultureIgnoreCase) == 0)
+            else if (string.Compare(element.Value, "NULL", StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                Value = null;
+            }
+            else if (string.IsNullOrEmpty(element.Value))
             {
                 Value = null;
             }

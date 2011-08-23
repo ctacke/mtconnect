@@ -9,6 +9,7 @@ namespace OpenNETCF.MTConnect
     public interface IMTConnectProvider
     {
         event EventHandler<GenericEventArgs<StatusSummary>> StatusChanged;
+        event EventHandler AdapterConfigurationChanged;
 
         string AgentAddress { get; }
         Agent Agent { get; }
@@ -18,7 +19,7 @@ namespace OpenNETCF.MTConnect
         void Start();
         void Stop();
 
-        void UpdateAdapter(string requestSource, string xml);
+        void SetAdapterConfiguration(string requestSource, string xml);
         void SetDataByDataItemID(string requestSource, string dataItemID, string data);
     }
 }
