@@ -53,12 +53,14 @@
     <Compile Include="AdapterCollection.cs" />
     <Compile Include="Agent.cs" />
     <Compile Include="AgentData.cs" />
+    <Compile Include="AgentInterface.cs" />
     <Compile Include="DataItemValueExtensions.cs" />
     <Compile Include="FilterPath.cs" />
     <Compile Include="HostBase.cs" />
     <Compile Include="Interfaces\IDataObserver.cs" />
     <Compile Include="Interfaces\IHost.cs" />
     <Compile Include="Interfaces\IMTConnectProvider.cs" />
+    <Compile Include="Interfaces\IVirtualAgentService.cs" />
     <Compile Include="MTConnectProvider.cs" />
     <Compile Include="Connector.cs" />
     <Compile Include="Constants.cs" />
