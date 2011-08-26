@@ -70,7 +70,9 @@
     <Compile Include="AdapterCollection.cs" />
     <Compile Include="Agent.cs" />
     <Compile Include="AgentData.cs" />
+    <Compile Include="AgentInterface.cs" />
     <Compile Include="Interfaces\IMTConnectProvider.cs" />
+    <Compile Include="Interfaces\IVirtualAgentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connector.cs" />
     <Compile Include="Constants.cs" />
