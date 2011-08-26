@@ -67,6 +67,9 @@
       <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
     </Compile>
     <Compile Include="AgentInformation.cs" />
+    <Compile Include="Attributes\DataItemAttribute.cs" />
+    <Compile Include="Attributes\MTConnectMethodAttribute.cs" />
+    <Compile Include="Attributes\MTConnectPropertyAttribute.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="Components\ComponentCollection.cs" />
@@ -79,8 +82,11 @@
     <Compile Include="Constants\ErrorCode.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Constants\EventNames.cs" />
+    <Compile Include="Constants\LogPriority.cs" />
     <Compile Include="Constants\NodeNames.cs" />
     <Compile Include="Constants\UnitValues.cs" />
+    <Compile Include="Constants\XmlNames.cs" />
     <Compile Include="DataItems\Constraint.cs" />
     <Compile Include="DataItems\DataItem.cs" />
     <Compile Include="DataItems\DataItemCategory.cs" />
@@ -94,7 +100,24 @@
     <Compile Include="Extensions\ComponentExtensions.cs" />
     <Compile Include="Extensions\DataItemCollectionExtensions.cs" />
     <Compile Include="Extensions\DeviceCollectionExtensions.cs" />
+    <Compile Include="HostedAdapterBase.cs" />
+    <Compile Include="HostedAdapterBase_Methods.cs" />
+    <Compile Include="HostedAdapterBase_Properties.cs" />
+    <Compile Include="HostedComponentBase.cs" />
+    <Compile Include="HostedDeviceBase.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />
+    <Compile Include="Interfaces\IAdapterInstanceInfo.cs" />
+    <Compile Include="Interfaces\IAgentInterface.cs" />
+    <Compile Include="Interfaces\IConfigurationService.cs" />
+    <Compile Include="Interfaces\IDevice.cs" />
+    <Compile Include="Interfaces\IHostedAdapter.cs" />
+    <Compile Include="Interfaces\IHostedAdapterService.cs" />
+    <Compile Include="Interfaces\IHostedComponent.cs" />
+    <Compile Include="Interfaces\IHostedDevice.cs" />
+    <Compile Include="Interfaces\IInstanceService.cs" />
+    <Compile Include="Interfaces\ILogService.cs" />
+    <Compile Include="Interfaces\IVirtualAgentConfiguration.cs" />
+    <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyCollection.cs" />
     <Compile Include="StatusSummary.cs" />
