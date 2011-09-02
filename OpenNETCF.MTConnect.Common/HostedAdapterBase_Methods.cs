@@ -168,7 +168,6 @@ namespace OpenNETCF.MTConnect
                     if (parameters.Length != parameterInfos.Length)
                     {
                         // Bad Number of Arguments
-//                        Log.Error(string.Format("CallMethod '{0}' Invalid Number of Paramters", methodName), "Host Adapter Base - " + HostedDevice.Name);
                         return string.Empty;
                         //throw new ArgumentException();
                     }
@@ -194,7 +193,6 @@ namespace OpenNETCF.MTConnect
                         else if (parameterInfo.ParameterType == typeof(Int32))
                         {
                             nextParameter = Int32.Parse(parameters[parameterCounter]);
-                            parameterList.Add(nextParameter);
                         }
                         else if (parameterInfo.ParameterType == typeof(string))
                         {

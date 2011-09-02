@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClientDiagram.cd" />
+    <None Include="DeviceDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="REST\" />
