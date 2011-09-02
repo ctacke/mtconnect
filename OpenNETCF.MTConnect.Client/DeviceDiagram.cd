@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="OpenNETCF.MTConnect.DeviceCollection">
+    <Position X="4.25" Y="1.25" Width="1.5" />
+    <Members>
+      <Method Name="Add" Hidden="true" />
+      <Method Name="AddRange" Hidden="true" />
+      <Method Name="DeviceCollection" Hidden="true" />
+      <Method Name="GetEnumerator" Hidden="true" />
+      <Method Name="Remove" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="this[System.String]" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OpenNETCF.MTConnect.Component">
+    <Position X="8.75" Y="6.25" Width="1.75" />
+    <Members>
+      <Method Name="AsXElement" Hidden="true" />
+      <Method Name="Component" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="Device" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OpenNETCF.MTConnect.ComponentCollection">
+    <Position X="11" Y="1.25" Width="2.25" />
+    <Members>
+      <Method Name="Add" Hidden="true" />
+      <Method Name="AsXElement" Hidden="true" />
+      <Method Name="ComponentCollection" Hidden="true" />
+      <Method Name="GetEnumerator" Hidden="true" />
+      <Method Name="HasComponent" Hidden="true" />
+      <Method Name="Remove" Hidden="true" />
+      <Property Name="Item" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="this[System.Int32]" />
+      <Property Name="this[System.String]" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OpenNETCF.MTConnect.Device">
+    <Position X="5.25" Y="6.25" Width="1.75" />
+    <Members>
+      <Method Name="AsXElement" Hidden="true" />
+      <Property Name="AvailabilityDataItemID" Hidden="true" />
+      <Method Name="Device" Hidden="true" />
+      <Method Name="SetAvailability" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="OpenNETCF.MTConnect.ComponentBase">
+    <Position X="6.25" Y="1.25" Width="1.5" />
+    <Members>
+      <Method Name="AddComponent" Hidden="true" />
+      <Method Name="AddDataItem" Hidden="true" />
+      <Method Name="AsXElement" Hidden="true" />
+      <Method Name="FromXElement" Hidden="true" />
+      <Method Name="RemoveComponent" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <ShowAsCollectionAssociation>
+      <Property Name="DataItems" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="OpenNETCF.MTConnect.DataItem">
+    <Position X="8.75" Y="1.25" Width="1.75" />
+    <Members>
+      <Method Name="AsXElement" Hidden="true" />
+      <Method Name="DataItem" Hidden="true" />
+      <Method Name="SetValue" Hidden="true" />
+      <Event Name="ValueSet" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
