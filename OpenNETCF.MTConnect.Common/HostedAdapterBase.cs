@@ -48,7 +48,10 @@ namespace OpenNETCF.MTConnect
         public virtual void OnError(Exception exception) { }
         public virtual void OnNewAgentInterface() { }
         public virtual void BeforeLoad() { }
-        public virtual void AfterLoad() { }
+        public virtual void AfterLoad()
+        {
+//            UpdateProperties();
+        }
 
         public HostedAdapterBase()
         {
@@ -147,11 +150,13 @@ namespace OpenNETCF.MTConnect
 
         protected void PublisherProc()
         {
+            // publish default/startup property data
+            UpdateProperties();
+
             // do periodic publishing work here
             while (!m_shutdownEvent.WaitOne(m_refreshPeriod, false))
             {
                 OnPublish();
-                UpdateProperties();
             }
         }
     }

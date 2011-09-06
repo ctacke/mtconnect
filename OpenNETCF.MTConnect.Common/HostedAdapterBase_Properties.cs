@@ -217,6 +217,10 @@ namespace OpenNETCF.MTConnect
             {
                 pd.PropertyInfo.SetValue(pd.Instance, TimeSpan.Parse(newValue), null);
             }
+            else if (pd.PropertyInfo.PropertyType.IsEnum)
+            {
+                pd.PropertyInfo.SetValue(pd.Instance, Enum.Parse(pd.PropertyInfo.PropertyType, newValue, true), null);
+            }
             else
             {
                 pd.PropertyInfo.SetValue(pd.Instance, newValue, null);
