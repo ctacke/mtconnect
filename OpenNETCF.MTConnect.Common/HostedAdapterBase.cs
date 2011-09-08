@@ -48,10 +48,7 @@ namespace OpenNETCF.MTConnect
         public virtual void OnError(Exception exception) { }
         public virtual void OnNewAgentInterface() { }
         public virtual void BeforeLoad() { }
-        public virtual void AfterLoad()
-        {
-//            UpdateProperties();
-        }
+        public virtual void AfterLoad() { }
 
         public HostedAdapterBase()
         {

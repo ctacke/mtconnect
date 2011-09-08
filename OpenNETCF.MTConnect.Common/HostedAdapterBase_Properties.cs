@@ -43,134 +43,140 @@ namespace OpenNETCF.MTConnect
 
         private Dictionary<string, PropertyData> m_propertyDictionary;
         private Dictionary<string, string> m_propertyKeyMap;
-        bool m_firstPublish = true;
+        private bool m_firstPublish = true;
+        private object m_syncRoot = new object();
 
         protected void LoadProperties()
         {
-            m_propertyDictionary = new Dictionary<string, PropertyData>(StringComparer.InvariantCultureIgnoreCase);
-            m_propertyKeyMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-
-            // load device properties
-            var deviceProperties = from p in HostedDevice.GetType().GetProperties()
-                                   let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
-                                   where pr != null
-                                   select new DataItemProperty
-                                   {
-                                       PropertyInfo = p,
-                                       PropertyAttribute = pr as MTConnectPropertyAttribute
-                                   };
-
-            Debug.WriteLine(string.Format("Device '{0}' Properties", HostedDevice.Name));
-
-            foreach (var prop in deviceProperties)
+            lock (m_syncRoot)
             {
-                Debug.WriteLine(" - " + prop.PropertyInfo.Name);
+                m_propertyDictionary = new Dictionary<string, PropertyData>(StringComparer.InvariantCultureIgnoreCase);
+                m_propertyKeyMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
-                // create a DataItem to export
-                var id = CreateDataItemID(HostedDevice.Name, null, prop.PropertyInfo.Name);
-                var dataItem = CreateDataItem(prop, id);
-                Device.AddDataItem(dataItem);
+                // load device properties
+                var deviceProperties = from p in HostedDevice.GetType().GetProperties()
+                                       let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
+                                       where pr != null
+                                       select new DataItemProperty
+                                       {
+                                           PropertyInfo = p,
+                                           PropertyAttribute = pr as MTConnectPropertyAttribute
+                                       };
 
-                // cache the propertyinfo for later use
-                var pd = new PropertyData
+                Debug.WriteLine(string.Format("Device '{0}' Properties", HostedDevice.Name));
+
+                foreach (var prop in deviceProperties)
                 {
-                     PropertyInfo = prop.PropertyInfo,
-                     Instance = HostedDevice
-                };
-                m_propertyDictionary.Add(id, pd);
-                m_propertyKeyMap.Add(prop.PropertyInfo.Name, id);
+                    Debug.WriteLine(" - " + prop.PropertyInfo.Name);
 
-                // wire the DataItem set to the HostedProperty setter
-                if (pd.PropertyInfo.CanWrite)
-                {
-                    dataItem.ValueSet += delegate(object sender, DataItemValue e)
+                    // create a DataItem to export
+                    var id = CreateDataItemID(HostedDevice.Name, null, prop.PropertyInfo.Name);
+                    var dataItem = CreateDataItem(prop, id);
+                    Device.AddDataItem(dataItem);
+
+                    // cache the propertyinfo for later use
+                    var pd = new PropertyData
                     {
-                        var n = HostedDevice as INotifyPropertyChanged;
-                        // remove the change handler so our change doesn't reflect back to this point
-                        if (n != null)
-                        {
-                            n.PropertyChanged -= PropertyChangedHandler;
-                        }
-
-                        SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
-
-                        // rewire the change handler
-                        if (n != null)
-                        {
-                            n.PropertyChanged += PropertyChangedHandler;
-                        }
+                        PropertyInfo = prop.PropertyInfo,
+                        Instance = HostedDevice
                     };
-                }
-            }
+                    m_propertyDictionary.Add(id, pd);
+                    var key = string.Format("{0}_{1}", HostedDevice.Name, prop.PropertyInfo.Name);
+                    m_propertyKeyMap.Add(key, id);
 
-            var notifier = HostedDevice as INotifyPropertyChanged;
-            if (notifier != null)
-            {
-                notifier.PropertyChanged += PropertyChangedHandler;
-            }
-
-            // load component properties
-            if (HostedDevice.Components != null)
-            {
-                foreach (var component in HostedDevice.Components)
-                {
-                    Debug.WriteLine(string.Format(" Component '{0}'", component.Name));
-
-                    var componentProperties = from p in component.GetType().GetProperties()
-                                              let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
-                                              where pr != null
-                                              select new DataItemProperty
-                                              {
-                                                  PropertyInfo = p,
-                                                  PropertyAttribute = pr as MTConnectPropertyAttribute
-                                              };
-
-                    foreach (var prop in componentProperties)
+                    // wire the DataItem set to the HostedProperty setter
+                    if (pd.PropertyInfo.CanWrite)
                     {
-                        Debug.WriteLine("  - " + prop.PropertyInfo.Name);
-
-                        // create a DataItem to export
-                        var id = CreateDataItemID(HostedDevice.Name, component.Name, prop.PropertyInfo.Name);
-
-                        var dataItem = CreateDataItem(prop, id);
-                        Device.Components[component.Name].AddDataItem(dataItem);
-
-                        // cache the propertyinfo for later use
-                        var pd = new PropertyData
+                        dataItem.ValueSet += delegate(object sender, DataItemValue e)
                         {
-                            PropertyInfo = prop.PropertyInfo,
-                            Instance = component
-                        };
-                        m_propertyDictionary.Add(id, pd);
-                        m_propertyKeyMap.Add(prop.PropertyInfo.Name, id);
-
-                        // wire the DataItem set to the HostedProperty setter
-                        if (pd.PropertyInfo.CanWrite)
-                        {
-                            dataItem.ValueSet += delegate(object sender, DataItemValue e)
+                            var n = HostedDevice as INotifyPropertyChanged;
+                            // remove the change handler so our change doesn't reflect back to this point
+                            if (n != null)
                             {
-                                var n = component as INotifyPropertyChanged;
-                                // remove the change handler so our change doesn't reflect back to this point
-                                if (n != null)
-                                {
-                                    n.PropertyChanged -= PropertyChangedHandler;
-                                }
+                                n.PropertyChanged -= PropertyChangedHandler;
+                            }
 
-                                SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
+                            SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
 
-                                // rewire the change handler
-                                if (n != null)
-                                {
-                                    n.PropertyChanged += PropertyChangedHandler;
-                                }
-                            };
-                        }
+                            // rewire the change handler
+                            if (n != null)
+                            {
+                                n.PropertyChanged += PropertyChangedHandler;
+                            }
+                        };
                     }
+                }
 
-                    notifier = component as INotifyPropertyChanged;
-                    if (notifier != null)
+                var notifier = HostedDevice as INotifyPropertyChanged;
+                if (notifier != null)
+                {
+                    notifier.PropertyChanged += PropertyChangedHandler;
+                }
+
+                // load component properties
+                if (HostedDevice.Components != null)
+                {
+                    foreach (var component in HostedDevice.Components)
                     {
-                        notifier.PropertyChanged += PropertyChangedHandler;
+                        Debug.WriteLine(string.Format(" Component '{0}'", component.Name));
+
+                        var componentProperties = from p in component.GetType().GetProperties()
+                                                  let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
+                                                  where pr != null
+                                                  select new DataItemProperty
+                                                  {
+                                                      PropertyInfo = p,
+                                                      PropertyAttribute = pr as MTConnectPropertyAttribute
+                                                  };
+
+                        foreach (var prop in componentProperties)
+                        {
+                            Debug.WriteLine("  - " + prop.PropertyInfo.Name);
+
+                            // create a DataItem to export
+                            var id = CreateDataItemID(HostedDevice.Name, component.Name, prop.PropertyInfo.Name);
+
+                            var dataItem = CreateDataItem(prop, id);
+                            Device.Components[component.Name].AddDataItem(dataItem);
+
+                            // cache the propertyinfo for later use
+                            var pd = new PropertyData
+                            {
+                                PropertyInfo = prop.PropertyInfo,
+                                Instance = component
+                            };
+                            m_propertyDictionary.Add(id, pd);
+                            var key = string.Format("{0}_{1}", component.Name, prop.PropertyInfo.Name);
+                            m_propertyKeyMap.Add(key, id);
+
+                            // wire the DataItem set to the HostedProperty setter
+                            if (pd.PropertyInfo.CanWrite)
+                            {
+                                dataItem.ValueSet += delegate(object sender, DataItemValue e)
+                                {
+                                    var n = component as INotifyPropertyChanged;
+                                    // remove the change handler so our change doesn't reflect back to this point
+                                    if (n != null)
+                                    {
+                                        n.PropertyChanged -= PropertyChangedHandler;
+                                    }
+
+                                    SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
+
+                                    // rewire the change handler
+                                    if (n != null)
+                                    {
+                                        n.PropertyChanged += PropertyChangedHandler;
+                                    }
+                                };
+                            }
+                        }
+
+                        notifier = component as INotifyPropertyChanged;
+                        if (notifier != null)
+                        {
+                            notifier.PropertyChanged += PropertyChangedHandler;
+                        }
                     }
                 }
             }
@@ -178,15 +184,14 @@ namespace OpenNETCF.MTConnect
 
         void PropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
-            var id = GetPropertyID(e.PropertyName);
+            var id = GetPropertyID(sender, e.PropertyName);
             if(id != null)
             {
-
                 // get the new property value
                 var propData = m_propertyDictionary[id];
                 var newValue = propData.PropertyInfo.GetValue(sender, null);
 
-                Debug.WriteLine(string.Format("MTConnectProperty '{0}' value changed to '{1}'", e.PropertyName, newValue));
+                // Debug.WriteLine(string.Format("MTConnectProperty '{0}' value changed to '{1}'", e.PropertyName, newValue));
                 AgentInterface.PublishData(id, newValue);
             }
         }
@@ -207,7 +212,18 @@ namespace OpenNETCF.MTConnect
             }
             else if (pd.PropertyInfo.PropertyType == typeof(double))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, double.Parse(newValue), null);
+                switch(newValue.ToLower())
+                {
+                    case "infinity":
+                        pd.PropertyInfo.SetValue(pd.Instance, double.PositiveInfinity, null);
+                        break;
+                    case "nan":
+                        pd.PropertyInfo.SetValue(pd.Instance, double.PositiveInfinity, null);
+                        break;
+                    default:
+                        pd.PropertyInfo.SetValue(pd.Instance, double.Parse(newValue), null);
+                        break;
+                }
             }
             else if (pd.PropertyInfo.PropertyType == typeof(DateTime))
             {
@@ -227,11 +243,25 @@ namespace OpenNETCF.MTConnect
             }
         }
 
-        public string GetPropertyID(string propertyName)
+        public string GetPropertyID(object parent, string propertyName)
         {
-            if(m_propertyKeyMap.ContainsKey(propertyName))
+            string key;
+            if (parent is IHostedDevice)
             {
-                return m_propertyKeyMap[propertyName];
+                key = string.Format("{0}_{1}", (parent as IHostedDevice).Name, propertyName);
+            }
+            else if (parent is IHostedComponent)
+            {
+                key = string.Format("{0}_{1}", (parent as IHostedComponent).Name, propertyName);
+            }
+            else
+            {
+                return string.Empty;
+            }
+
+            if(m_propertyKeyMap.ContainsKey(key))
+            {
+                return m_propertyKeyMap[key];
             }
 
             return string.Empty;
