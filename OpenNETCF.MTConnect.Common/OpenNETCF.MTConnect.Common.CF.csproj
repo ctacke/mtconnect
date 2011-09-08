@@ -101,8 +101,12 @@
     <Compile Include="Extensions\DataItemCollectionExtensions.cs" />
     <Compile Include="Extensions\DeviceCollectionExtensions.cs" />
     <Compile Include="HostedAdapterBase.cs" />
-    <Compile Include="HostedAdapterBase_Methods.cs" />
-    <Compile Include="HostedAdapterBase_Properties.cs" />
+      <Compile Include="HostedAdapterBase_Methods.cs">
+          <DependentUpon>HostedAdapterBase.cs</DependentUpon>
+      </Compile>
+      <Compile Include="HostedAdapterBase_Properties.cs">
+          <DependentUpon>HostedAdapterBase.cs</DependentUpon>
+      </Compile>
     <Compile Include="HostedComponentBase.cs" />
     <Compile Include="HostedDeviceBase.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />
