@@ -53,6 +53,9 @@ namespace OpenNETCF.MTConnect
                 return deviceName;
             }
         }
+
+        public virtual string SerialNumber { get { return null; } }
+        public virtual string Manufacturer { get { return null; } }
         public virtual IEnumerable<IHostedComponent> Components { get { return null; } }
 
         protected void RaisePropertyChanged(string propertyName)

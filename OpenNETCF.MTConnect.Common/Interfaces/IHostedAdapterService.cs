@@ -46,6 +46,5 @@ namespace OpenNETCF.MTConnect
         XElement GetAdapterMethodInfos(IHostedAdapter adapter);
         string CallAdapterMethod(string adapterID, string methodName, string[] parameters);
         IAgentInterface CreateAgentInterface();
-        bool SetHostedProperty(string dataItemID, string value);
     }
 }

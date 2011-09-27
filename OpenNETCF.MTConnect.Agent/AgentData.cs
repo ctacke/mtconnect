@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
@@ -40,6 +41,10 @@ namespace OpenNETCF.MTConnect
         private object m_syncRoot = new object();
         private Agent m_agent;
         internal const int DefaultBufferSize = 10000;
+
+        private readonly XNamespace m_namespace = "urn:mtconnect.com:MTConnectStreams:1.1";
+        private readonly XNamespace m_xsi = "http://www.w3.org/2001/XMLSchema-instance";
+        private readonly string m_schemaLocation = "urn:mtconnect.com:MTConnectStreams:1.1 http://www.mtconnect.org/schemas/MTConnectStreams_1.1.xsd";
 
         internal AgentData(Agent agent)
             : this(agent, DefaultBufferSize)
@@ -153,41 +158,63 @@ namespace OpenNETCF.MTConnect
                     index++;
                 }
             }
-
             return values.ToArray();
+        }
+
+        // these items are used a lot - to help minimize crating string garbage, we reuse as much as we can
+        private XAttribute m_senderAttribute = null;
+        private XAttribute m_instanceAttribute = null;
+        private XAttribute m_bufferAttribute = null;
+        private XAttribute m_versionAttribute = null;
+
+        private XElement GetBaseStreamsElement()
+        {
+            return new XElement(m_namespace + "MTConnectStreams",
+                new XAttribute("xmlns", m_namespace),
+                new XAttribute(XNamespace.Xmlns + "xsi", m_xsi),
+                new XAttribute(m_xsi + "schemaLocation", m_schemaLocation));
+        }
+
+        private XElement GetBaseHeaderElement()
+        {
+            if (m_senderAttribute == null)
+            {
+                m_senderAttribute = new XAttribute("sender", m_agent.Host == null ? "[unconnected]" : m_agent.Host.HostName);
+                m_instanceAttribute = new XAttribute("instanceId", m_agent.InstanceID.ToString());
+                m_bufferAttribute = new XAttribute("bufferSize", m_agent.Data.BufferSize.ToString());
+                m_versionAttribute = new XAttribute("version", m_agent.Version);                
+            }
+
+            var @base = new XElement(m_namespace + "Header")
+                .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"));
+            @base.Add(m_senderAttribute);
+            @base.Add(m_instanceAttribute);
+            @base.Add(m_bufferAttribute);
+            @base.Add(m_versionAttribute);
+
+            return @base;
         }
 
         public string SampleXml(long startSequence, int requestedCount, out int actualCount, Func<DataItem, bool> filter)
         {
             var data = Sample(startSequence, requestedCount, filter);
+            
             actualCount = data.Length;
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", "true"));
 
-            XNamespace ns = "urn:mtconnect.com:MTConnectStreams:1.1";
-            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
-            var schemaLocation = "urn:mtconnect.com:MTConnectStreams:1.1 http://www.mtconnect.org/schemas/MTConnectStreams_1.1.xsd";
-
-            var mtcStreamsElement = new XElement(ns + "MTConnectStreams",
-                new XAttribute("xmlns", ns),
-                new XAttribute(XNamespace.Xmlns + "xsi", xsi),
-                new XAttribute(xsi + "schemaLocation", schemaLocation));
+            var mtcStreamsElement = GetBaseStreamsElement();
 
             doc.Add(mtcStreamsElement);
 
-            var headerElement = new XElement(ns + "Header")
-                .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"))
-                .AddAttribute("sender", m_agent.Host == null ? "[unconnected]" : m_agent.Host.HostName)
-                .AddAttribute("instanceId", m_agent.InstanceID.ToString())
-                .AddAttribute("bufferSize", m_agent.Data.BufferSize.ToString())
-                .AddAttribute("version", m_agent.Version)
+            var headerElement = GetBaseHeaderElement()
                 .AddAttribute("nextSequence", (data.LastSequence() + 1).ToString())
                 .AddAttribute("firstSequence", data.FirstSequence().ToString())
                 .AddAttribute("lastSequence", data.LastSequence().ToString());
 
             mtcStreamsElement.Add(headerElement);
 
-            mtcStreamsElement.Add(data.AsStreamsXml(ns));
+            mtcStreamsElement.Add(data.AsStreamsXml(m_namespace));
 
             return doc.ToString();
         }
@@ -254,30 +281,18 @@ namespace OpenNETCF.MTConnect
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", "true"));
 
-            XNamespace ns = "urn:mtconnect.com:MTConnectStreams:1.1";
-            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
-            var schemaLocation = "urn:mtconnect.com:MTConnectStreams:1.1 http://www.mtconnect.org/schemas/MTConnectStreams_1.1.xsd";
-
-            var mtcStreamsElement = new XElement(ns + "MTConnectStreams",
-                new XAttribute("xmlns", ns),
-                new XAttribute(XNamespace.Xmlns + "xsi", xsi),
-                new XAttribute(xsi + "schemaLocation", schemaLocation));
+            var mtcStreamsElement = GetBaseStreamsElement();
 
             doc.Add(mtcStreamsElement);
 
-            var headerElement = new XElement(ns + "Header")
-                .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"))
-                .AddAttribute("sender", m_agent.Host == null ? "[unconnected]" : m_agent.Host.HostName)
-                .AddAttribute("instanceId", m_agent.InstanceID.ToString())
-                .AddAttribute("bufferSize", m_agent.Data.BufferSize.ToString())
-                .AddAttribute("version", m_agent.Version)
+            var headerElement = GetBaseHeaderElement()
                 .AddAttribute("nextSequence", nextSequence.ToString())
                 .AddAttribute("firstSequence", data.FirstSequence().ToString())
                 .AddAttribute("lastSequence", data.LastSequence().ToString());
 
             mtcStreamsElement.Add(headerElement);
 
-            mtcStreamsElement.Add(data.AsStreamsXml(ns));
+            mtcStreamsElement.Add(data.AsStreamsXml(m_namespace));
 
             return doc.ToString();
         }
@@ -290,30 +305,18 @@ namespace OpenNETCF.MTConnect
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", "true"));
 
-            XNamespace ns = "urn:mtconnect.com:MTConnectStreams:1.1";
-            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
-            var schemaLocation = "urn:mtconnect.com:MTConnectStreams:1.1 http://www.mtconnect.org/schemas/MTConnectStreams_1.1.xsd";
-            
-            var mtcStreamsElement = new XElement(ns + "MTConnectStreams",
-                new XAttribute("xmlns", ns), 
-                new XAttribute(XNamespace.Xmlns + "xsi", xsi),
-                new XAttribute(xsi + "schemaLocation", schemaLocation));
+            var mtcStreamsElement = GetBaseStreamsElement();
 
             doc.Add(mtcStreamsElement);
 
-            var headerElement = new XElement(ns + "Header")
-                .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"))
-                .AddAttribute("sender", m_agent.Host == null ? "[unconnected]" : m_agent.Host.HostName)
-                .AddAttribute("instanceId", m_agent.InstanceID.ToString())
-                .AddAttribute("bufferSize", m_agent.Data.BufferSize.ToString())
-                .AddAttribute("version", m_agent.Version)
+            var headerElement = GetBaseHeaderElement()
                 .AddAttribute("nextSequence", nextSequence.ToString())
                 .AddAttribute("firstSequence", data.FirstSequence().ToString())
                 .AddAttribute("lastSequence", data.LastSequence().ToString());
 
             mtcStreamsElement.Add(headerElement);
 
-            mtcStreamsElement.Add(data.AsStreamsXml(ns));
+            mtcStreamsElement.Add(data.AsStreamsXml(m_namespace));
 
             return doc.ToString();
         }

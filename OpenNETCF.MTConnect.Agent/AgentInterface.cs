@@ -44,7 +44,6 @@ namespace OpenNETCF.MTConnect
         internal AgentInterface(Agent agent, IHostedAdapterService adapterService)
         {
             m_agent = agent;
-            m_agent.Adapters.DataItemValueSet += new EventHandler<DataItemValue>(DataItemValueSet);
             m_versionNumber = Assembly.GetCallingAssembly().GetName().Version.ToString(3);
             AdapterService = adapterService;
         }
@@ -52,23 +51,6 @@ namespace OpenNETCF.MTConnect
         public void ClearCache()
         {
             m_publishedValueCache.Clear();
-        }
-
-        private void DataItemValueSet(object sender, DataItemValue e)
-        {
-//            Debug.WriteLine(string.Format("AgentInterface:DataItemValueSet({0})", e.Item.ID));
-
-            ThreadPool.QueueUserWorkItem(
-                delegate
-                {
-                    if (AdapterService == null) return;
-
-                    if (AdapterService.SetHostedProperty(e.Item.ID, e.Value)) return;
-
-                    DataItemValueChanged.Fire(sender, e);
-
-                }
-            );
         }
 
         private bool IsChangedValue(string dataItemID, string value)
