@@ -67,7 +67,6 @@
       <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
     </Compile>
     <Compile Include="AgentInformation.cs" />
-    <Compile Include="Attributes\DataItemAttribute.cs" />
     <Compile Include="Attributes\MTConnectMethodAttribute.cs" />
     <Compile Include="Attributes\MTConnectPropertyAttribute.cs" />
     <Compile Include="Components\Component.cs" />
@@ -101,12 +100,12 @@
     <Compile Include="Extensions\DataItemCollectionExtensions.cs" />
     <Compile Include="Extensions\DeviceCollectionExtensions.cs" />
     <Compile Include="HostedAdapterBase.cs" />
-      <Compile Include="HostedAdapterBase_Methods.cs">
-          <DependentUpon>HostedAdapterBase.cs</DependentUpon>
-      </Compile>
-      <Compile Include="HostedAdapterBase_Properties.cs">
-          <DependentUpon>HostedAdapterBase.cs</DependentUpon>
-      </Compile>
+    <Compile Include="HostedAdapterBase_Methods.cs">
+      <DependentUpon>HostedAdapterBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HostedAdapterBase_Properties.cs">
+      <DependentUpon>HostedAdapterBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="HostedComponentBase.cs" />
     <Compile Include="HostedDeviceBase.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />

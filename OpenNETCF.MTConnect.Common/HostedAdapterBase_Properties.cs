@@ -45,6 +45,7 @@ namespace OpenNETCF.MTConnect
         private Dictionary<string, string> m_propertyKeyMap;
         private bool m_firstPublish = true;
         private object m_syncRoot = new object();
+        private List<string> m_ignorePropertyChangeIDs = new List<string>();
 
         protected void LoadProperties()
         {
@@ -72,13 +73,18 @@ namespace OpenNETCF.MTConnect
                     // create a DataItem to export
                     var id = CreateDataItemID(HostedDevice.Name, null, prop.PropertyInfo.Name);
                     var dataItem = CreateDataItem(prop, id);
+                    // see if it's publicly writable
+                    if (prop.PropertyInfo.GetSetMethod() == null)
+                    {
+                        dataItem.Writable = false;
+                    }
                     Device.AddDataItem(dataItem);
 
                     // cache the propertyinfo for later use
                     var pd = new PropertyData
                     {
                         PropertyInfo = prop.PropertyInfo,
-                        Instance = HostedDevice
+                        Instance = HostedDevice,
                     };
                     m_propertyDictionary.Add(id, pd);
                     var key = string.Format("{0}_{1}", HostedDevice.Name, prop.PropertyInfo.Name);
@@ -89,6 +95,12 @@ namespace OpenNETCF.MTConnect
                     {
                         dataItem.ValueSet += delegate(object sender, DataItemValue e)
                         {
+                            // look to see if we're getting called from a propertychanged handler - if so we want to prevent reentrancy
+                            lock (m_ignorePropertyChangeIDs)
+                            {
+                                if (m_ignorePropertyChangeIDs.Contains(id)) return;
+                            }
+
                             var n = HostedDevice as INotifyPropertyChanged;
                             // remove the change handler so our change doesn't reflect back to this point
                             if (n != null)
@@ -111,6 +123,10 @@ namespace OpenNETCF.MTConnect
                 if (notifier != null)
                 {
                     notifier.PropertyChanged += PropertyChangedHandler;
+                }
+                else
+                {
+                    Debug.WriteLine("notifier is null");
                 }
 
                 // load component properties
@@ -137,6 +153,11 @@ namespace OpenNETCF.MTConnect
                             var id = CreateDataItemID(HostedDevice.Name, component.Name, prop.PropertyInfo.Name);
 
                             var dataItem = CreateDataItem(prop, id);
+                            // see if it's publicly writable
+                            if (prop.PropertyInfo.GetSetMethod() == null)
+                            {
+                                dataItem.Writable = false;
+                            }
                             Device.Components[component.Name].AddDataItem(dataItem);
 
                             // cache the propertyinfo for later use
@@ -154,19 +175,34 @@ namespace OpenNETCF.MTConnect
                             {
                                 dataItem.ValueSet += delegate(object sender, DataItemValue e)
                                 {
-                                    var n = component as INotifyPropertyChanged;
-                                    // remove the change handler so our change doesn't reflect back to this point
-                                    if (n != null)
+                                    // look to see if we're getting called from a propertychanged handler - if so we want to prevent reentrancy
+                                    lock (m_ignorePropertyChangeIDs)
                                     {
-                                        n.PropertyChanged -= PropertyChangedHandler;
+                                        if (m_ignorePropertyChangeIDs.Contains(id)) return;
                                     }
 
-                                    SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
+                                    var n = component as INotifyPropertyChanged;
 
-                                    // rewire the change handler
-                                    if (n != null)
+                                    // remove the change handler so our change doesn't reflect back to this point
+                                    try
                                     {
-                                        n.PropertyChanged += PropertyChangedHandler;
+                                        if (n != null)
+                                        {
+                                            Monitor.Enter(n);
+//                                            n.PropertyChanged -= PropertyChangedHandler;
+                                        }
+
+                                        SetMTConnectPropertyFromDataItemValueChange(pd, e.Value);
+
+                                        // rewire the change handler
+                                        if (n != null)
+                                        {
+//                                            n.PropertyChanged += PropertyChangedHandler;
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        if (n != null) Monitor.Exit(n);
                                     }
                                 };
                             }
@@ -175,7 +211,12 @@ namespace OpenNETCF.MTConnect
                         notifier = component as INotifyPropertyChanged;
                         if (notifier != null)
                         {
+                            Debug.WriteLine("Wired PropertyChanged on " + component.Name);
                             notifier.PropertyChanged += PropertyChangedHandler;
+                        }
+                        else
+                        {
+                            Debug.WriteLine("notifier is null");
                         }
                     }
                 }
@@ -192,26 +233,39 @@ namespace OpenNETCF.MTConnect
                 var newValue = propData.PropertyInfo.GetValue(sender, null);
 
                 // Debug.WriteLine(string.Format("MTConnectProperty '{0}' value changed to '{1}'", e.PropertyName, newValue));
-                AgentInterface.PublishData(id, newValue);
+                lock (m_ignorePropertyChangeIDs)
+                {
+                    m_ignorePropertyChangeIDs.Add(id);
+                    AgentInterface.PublishData(id, newValue);
+                    m_ignorePropertyChangeIDs.Remove(id);
+                }
             }
         }
 
         private void SetMTConnectPropertyFromDataItemValueChange(PropertyData pd, string newValue)
         {
-            if (pd.PropertyInfo.PropertyType == typeof(bool))
+            var type = pd.PropertyInfo.PropertyType;
+
+            // can't parse a null/empty
+            if ((type != typeof(string)) && (newValue.IsNullOrEmpty())) return;
+
+            if (type == typeof(bool))
             {
                 pd.PropertyInfo.SetValue(pd.Instance, bool.Parse(newValue), null);
             }
-            else if (pd.PropertyInfo.PropertyType == typeof(long))
+            else if (type == typeof(long))
             {
                 pd.PropertyInfo.SetValue(pd.Instance, long.Parse(newValue), null);
             }
-            else if (pd.PropertyInfo.PropertyType == typeof(int))
+            else if (type == typeof(int))
             {
                 pd.PropertyInfo.SetValue(pd.Instance, int.Parse(newValue), null);
             }
-            else if (pd.PropertyInfo.PropertyType == typeof(double))
+            else if (type == typeof(double))
             {
+                // can't parse a null
+                if (newValue.IsNullOrEmpty()) return;
+
                 switch(newValue.ToLower())
                 {
                     case "infinity":
@@ -225,15 +279,15 @@ namespace OpenNETCF.MTConnect
                         break;
                 }
             }
-            else if (pd.PropertyInfo.PropertyType == typeof(DateTime))
+            else if (type == typeof(DateTime))
             {
                 pd.PropertyInfo.SetValue(pd.Instance, DateTime.Parse(newValue), null);
             }
-            else if (pd.PropertyInfo.PropertyType == typeof(TimeSpan))
+            else if (type == typeof(TimeSpan))
             {
                 pd.PropertyInfo.SetValue(pd.Instance, TimeSpan.Parse(newValue), null);
             }
-            else if (pd.PropertyInfo.PropertyType.IsEnum)
+            else if (type.IsEnum)
             {
                 pd.PropertyInfo.SetValue(pd.Instance, Enum.Parse(pd.PropertyInfo.PropertyType, newValue, true), null);
             }
@@ -275,7 +329,7 @@ namespace OpenNETCF.MTConnect
 
         private DataItem CreateDataItem(DataItemProperty property, string id)
         {
-            var category = DataItemCategory.Event;
+            var category = property.PropertyAttribute.ItemCategory;
 
             // Samples *MUST* have Units
             if (!string.IsNullOrEmpty(property.PropertyAttribute.Units))
@@ -289,12 +343,25 @@ namespace OpenNETCF.MTConnect
                 }
             }
 
-            var type = property.PropertyInfo.PropertyType.ToString();
-
+            var valueType = property.PropertyInfo.PropertyType;
+            var type = property.PropertyAttribute.ItemType;
             var name = property.PropertyInfo.Name;
 
             var dataItem = new DataItem(category, type, name, id);
             dataItem.Writable = property.PropertyInfo.CanWrite;
+            dataItem.ValueType = valueType;
+
+            if (property.PropertyAttribute.ItemSubType != DataItemSubtype.NONE)
+            {
+                dataItem.SubType = property.PropertyAttribute.ItemSubType.ToString();
+            }
+
+            dataItem.UUID = property.PropertyAttribute.UUID;
+            dataItem.Source = property.PropertyAttribute.Source;
+            dataItem.SignificantDigits = property.PropertyAttribute.SignificantDigits;
+            dataItem.NativeUnits = property.PropertyAttribute.NativeUnits;
+            dataItem.NativeScale = property.PropertyAttribute.NativeScale;
+            dataItem.CoordinateSystem = property.PropertyAttribute.CoordianteSystem;
 
             if (category == DataItemCategory.Sample)
             {
@@ -331,18 +398,26 @@ namespace OpenNETCF.MTConnect
             try
             {
                 if (e.Value == null) return false;
+                // get the current value
                 object value = property.PropertyInfo.GetValue(property.Instance, null);
-
+                // return if there's been no change
                 if (value != null && value.ToString() == e.Value)
                 {
                     return false;
                 }
+
                 if (property.PropertyInfo.PropertyType == typeof(double))
                 {
+                    // can't parse an empty string to a double
+                    if(e.Value.IsNullOrEmpty()) return false;
+
                     newProperty = (object)double.Parse(e.Value);
                 }
-                else if (property.PropertyInfo.PropertyType == typeof(Int32))
+                else if (property.PropertyInfo.PropertyType == typeof(int))
                 {
+                    // can't parse an empty string to an int
+                    if (e.Value.IsNullOrEmpty()) return false;
+
                     newProperty = (object)Int32.Parse(e.Value);
                 }
                 else if (property.PropertyInfo.PropertyType == typeof(string))
@@ -351,6 +426,9 @@ namespace OpenNETCF.MTConnect
                 }
                 else if (property.PropertyInfo.PropertyType == typeof(bool))
                 {
+                    // can't parse an empty string to a bool
+                    if (e.Value.IsNullOrEmpty()) return false;
+
                     newProperty = (object)bool.Parse(e.Value);
                 }
                 else

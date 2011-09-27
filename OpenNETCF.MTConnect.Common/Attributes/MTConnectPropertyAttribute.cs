@@ -32,11 +32,23 @@ namespace OpenNETCF.MTConnect
     [AttributeUsage(AttributeTargets.Property)]
     public sealed  class MTConnectPropertyAttribute : Attribute
     {
-        public string Units { get; set; }
         public string ID { get; set; }
+        public DataItemType ItemType { get; set; }
+        public DataItemSubtype ItemSubType { get; set; }
+        public string Units { get; set; }
+        public DataItemCategory ItemCategory { get; set; }
+        public string CoordianteSystem { get; set; }
+        public string UUID { get; set; }
+        public string Source { get; set; }
+        public string SignificantDigits { get; set; }
+        public string NativeUnits { get; set; }
+        public string NativeScale { get; set; }
 
         public MTConnectPropertyAttribute()
         {
+            ItemSubType = DataItemSubtype.NONE;
+            ItemType = DataItemType.OTHER;
+            ItemCategory = DataItemCategory.Event;
         }
     }
 }
