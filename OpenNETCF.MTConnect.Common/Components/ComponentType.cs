@@ -34,10 +34,11 @@ namespace OpenNETCF.MTConnect
         Axes,
         Linear,
         Rotary,
-        Controllers,
+        Controller,
         Path,
         Door,
         Actuator,
+        Sensor,
         Pressure,
         Thermostat,
         Vibration,
@@ -46,6 +47,13 @@ namespace OpenNETCF.MTConnect
         Pneumatic,
         Coolant,
         Lubrication,
-        Electric
+        Electric,
+
+        // these are extensions outside of the spec (1.2) but deemed useful in our deployments
+        Component,
+        Library,
+        Workpiece,
+        Tailstock,
+        Turret,
     }
 }

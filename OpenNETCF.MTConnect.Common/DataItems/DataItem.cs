@@ -34,6 +34,7 @@ namespace OpenNETCF.MTConnect
     public class DataItem
     {
         public event EventHandler<DataItemValue> ValueSet;
+        public event EventHandler<DataItemValue> Removed;
 
         private DataItemCategory? m_category;
         private ComponentBase m_component;
@@ -344,6 +345,11 @@ namespace OpenNETCF.MTConnect
             }
 
             return element;
+        }
+
+        public void RemoveEvent()
+        {
+            Removed(this, new DataItemValue(-1, this, string.Empty)); 
         }
 
         public void SetValue(string value)

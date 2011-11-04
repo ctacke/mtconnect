@@ -51,6 +51,11 @@ namespace OpenNETCF.MTConnect
         }
 
         public Device(string name, string uuid, string id)
+            : this(name, uuid, id, true)
+        {
+        }
+
+        public Device(string name, string uuid, string id, bool createAvailability)
             : base(new PropertyCollection())
         {
             OpenNETCF.Validate
@@ -64,13 +69,17 @@ namespace OpenNETCF.MTConnect
             UUID = uuid;
             ID = id;
 
-            m_available = new DataItem(DataItemCategory.Event, DataItemType.AVAILABILITY, "Available", AvailabilityDataItemID)
+            if (createAvailability)
             {
-                Device = this
-            };
+                m_available = new DataItem(DataItemCategory.Event, DataItemType.AVAILABILITY, "Available", AvailabilityDataItemID)
+                {
+                    Device = this
+                };
 
-            this.DataItems.Add(m_available);
-            SetAvailability(true);
+                DataItems.Add(m_available);
+
+                SetAvailability(true);            
+            }
         }
 
         public virtual string AvailabilityDataItemID
@@ -83,7 +92,11 @@ namespace OpenNETCF.MTConnect
 
         public void SetAvailability(bool available)
         {
-            m_available.SetValue(available ? "AVAILABLE" : "UNAVAILABLE");
+            var existing = DataItems.FirstOrDefault(i => string.Compare(i.Type, DataItemType.AVAILABILITY.ToString(), true) == 0);
+
+            if (existing == null) return;
+
+            existing.SetValue(available ? "AVAILABLE" : "UNAVAILABLE");
         }
 
         public override XElement AsXElement(XNamespace ns)

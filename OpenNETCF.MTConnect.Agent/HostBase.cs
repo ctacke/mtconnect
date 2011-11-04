@@ -41,6 +41,7 @@ namespace OpenNETCF.MTConnect
         public abstract void SendResponse(string responseData, object context, bool flush);
         public abstract bool IsClientConnected(object context);
         public abstract void SetResponseHeader(object context, string headerName, string value);
+        public abstract void ClearResponseHeaders(object context);
 
         public Agent Agent { get; private set; }
 
@@ -113,34 +114,17 @@ namespace OpenNETCF.MTConnect
                 if (sample.Frequency > 0)
                 {
                     var boundary = "==== MTConnect Stream Boundary ====";
-                    
+
+                    ClearResponseHeaders(context);
+                    SetResponseHeader(context, "Date", DateTime.Now.ToUniversalTime().ToString("s"));
+                    SetResponseHeader(context, "Expires", "-1");
+                    SetResponseHeader(context, "Connection", "close");
+                    SetResponseHeader(context, "Content-Type", "multipart/x-mixed-replace;boundary=" + boundary);
+
                     // TODO add filtering
                     // TODO: spin this in a separate thread so we can process multiple clients?
-                    SetResponseHeader(context, "Connection", "close");
-//                    SetResponseHeader(context, "MIME-Version", "1.0");
-                    SetResponseHeader(context, "Content-Disposition", "inline");
-                    SetResponseHeader(context, "Content-Type", "multipart/x-mixed-replace;boundary=" + boundary);
-                    SetResponseHeader(context, "Content-Length", "-1");
-                    SetResponseHeader(context, "Status", "200 OK");
-                    SetResponseHeader(context, "Date", DateTime.Now.ToUniversalTime().ToString("s"));
-                    //                    SetResponseHeader(context, "MIME", "1.0");
-
-                    //StringBuilder header = new StringBuilder();
-                    //header.AppendLine("HTTP/1.1 200 OK");
-                    //header.AppendLine("Connection: close");
-                    //header.AppendLine("Date: " + DateTime.Now.ToUniversalTime().ToString("s"));
-                    //header.AppendLine("Status: 200 OK");
-                    //header.AppendLine("MIME-Version: 1.0");                    
-                    //header.AppendLine("Content-Disposition: inline");
-                    //header.Append("Content-Type: multipart/x-mixed-replace;");
-                    //header.Append("boundary=");
-                    //var boundary = "==== MTConnect Stream Boundary ====";
-                    //header.Append(boundary + "\r\n\r\n");
-
-                    //SendResponse(header.ToString(), context, false);
                     int resultCount = 0;
 
-//                    var xml = Agent.Data.SampleXml(sample.From, sample.Count, out resultCount, t => true);
                     var from = sample.From;
 
                     while (true)
@@ -154,14 +138,18 @@ namespace OpenNETCF.MTConnect
                         var xml = Agent.Data.SampleXml(from, sample.Count, out resultCount, t => true);
 
                         StringBuilder b = new StringBuilder();
-                        b.Append("\n--" + boundary + "\n");
-                        b.Append("Content-type: text/xml\n");
-                        b.Append("Content-length: " + xml.Length + "\n");
-                        b.Append("\n");
+                        b.Append("\r\n");
+                        b.Append("--" + boundary + "\r\n");
+                        b.Append("Content-type: text/xml\r\n");
+                        b.Append("Content-length: " + xml.Length + "\r\n");
+                        b.Append("\r\n");
 
                         SendResponse(b.ToString(), context, true);
 
                         SendResponse(xml, context, true);
+
+                        b.Append("\r\n");
+                        b.Append("\r\n");
 
                         Thread.Sleep(sample.Frequency);
                         from += resultCount;

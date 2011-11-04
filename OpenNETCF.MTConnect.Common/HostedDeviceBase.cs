@@ -32,6 +32,8 @@ namespace OpenNETCF.MTConnect
 {
     public abstract class HostedDeviceBase : IHostedDevice, INotifyPropertyChanged
     {
+        private string m_id;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public IHostedAdapter HostedAdapter { get; private set; }
 
@@ -52,6 +54,12 @@ namespace OpenNETCF.MTConnect
                 }
                 return deviceName;
             }
+        }
+
+        public virtual string ID
+        {
+            set { m_id = value; }
+            get { return m_id ?? Name; }
         }
 
         public virtual string SerialNumber { get { return null; } }

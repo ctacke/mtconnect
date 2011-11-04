@@ -70,7 +70,14 @@ namespace OpenNETCF.MTConnect
         {
             item.Component = m_parent;
             m_items.Add(item.ID, item);
-            item.ValueSet += new EventHandler<DataItemValue>(item_ValueSet);
+            item.ValueSet += item_ValueSet;
+        }
+
+        internal void Remove(DataItem item)
+        {
+            item.ValueSet -= item_ValueSet;
+            item.RemoveEvent();
+            m_items.Remove(item.ID);
         }
 
         public void Clear()
