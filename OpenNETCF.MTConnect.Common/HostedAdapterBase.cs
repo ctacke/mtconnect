@@ -104,13 +104,24 @@ namespace OpenNETCF.MTConnect
 
         public virtual void CreateDeviceAndComponents()
         {
-            Device = new Device(HostedDevice.Name, HostedDevice.Name, HostedDevice.Name);
+            Device = new Device(HostedDevice.Name, HostedDevice.Name, HostedDevice.ID, false);
 
             if (HostedDevice.Components != null)
             {
                 foreach (var component in HostedDevice.Components)
                 {
-                    Device.AddComponent(new Component("Library", component.Name, component.Name));
+                    var comp = new Component(component.ComponentType, component.Name, component.ID);
+
+                    Device.AddComponent(comp);
+
+                    if (component.Components != null)
+                    {
+                        foreach (var subcomponent in component.Components)
+                        {
+                            var subcomp = new Component(subcomponent.ComponentType, subcomponent.Name, subcomponent.ID);
+                            comp.Components.Add(subcomp);
+                        }
+                    }
                 }
             }
         }

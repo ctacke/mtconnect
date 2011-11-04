@@ -27,19 +27,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
     public abstract class HostedComponentBase : IHostedComponent, INotifyPropertyChanged
     {
+        private List<IHostedComponent> m_components = new List<IHostedComponent>();
+        private string m_id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public abstract string Name { get; }
+        public virtual string Name { get; set; }
+        
+        public virtual string ID
+        {
+            set { m_id = value; }
+            get { return m_id ?? Name; }
+        }
+
+        public virtual ComponentType ComponentType 
+        {
+            get { return ComponentType.Component; } 
+        }
+
+        public virtual List<IHostedComponent> Components
+        {
+            get { return m_components; }
+        }
 
         protected void RaisePropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler == null) return;
+            if (handler == null)
+            {
+                Debug.WriteLine("No handler for " + propertyName);
+                return;
+            }
             handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }

@@ -42,5 +42,10 @@ namespace OpenNETCF.MTConnect.Test
         public override void SetResponseHeader(object context, string headerName, string value)
         {
         }
+
+        public override void ClearResponseHeaders(object context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

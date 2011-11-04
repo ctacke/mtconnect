@@ -229,5 +229,10 @@ namespace OpenNETCF.MTConnect
             DataItems.Add(dataItem);
             return dataItem;
         }
+
+        public void RemoveDataItem(DataItem dataItem)
+        {
+            DataItems.Remove(dataItem);
+        }
     }
 }

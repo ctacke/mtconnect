@@ -161,6 +161,14 @@ namespace OpenNETCF.MTConnect
                 attribs.Add(attrib.Name.LocalName, attrib.Value);
             }
 
+            if (element.Parent.Name.LocalName == "Components")
+            {
+                if (!attribs.Keys.Contains(CommonProperties.Type))
+                {
+                    attribs.Add(CommonProperties.Type, element.Name.LocalName.ToString());
+                }
+            }
+
             return attribs;
         }
     }

@@ -33,5 +33,8 @@ namespace OpenNETCF.MTConnect
     public interface IHostedComponent
     {
         string Name { get; }
+        string ID { get; }
+        List<IHostedComponent> Components { get; }
+        ComponentType ComponentType { get; }
     }
 }

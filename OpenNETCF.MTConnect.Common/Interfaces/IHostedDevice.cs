@@ -33,6 +33,10 @@ namespace OpenNETCF.MTConnect
     public interface IHostedDevice
     {
         string Name { get; }
+        string ID { get; }
+        string SerialNumber { get; }
+        string Manufacturer { get; }
+
         IEnumerable<IHostedComponent> Components { get; }
     }
 }

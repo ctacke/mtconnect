@@ -107,6 +107,7 @@
       <DependentUpon>HostedAdapterBase.cs</DependentUpon>
     </Compile>
     <Compile Include="HostedComponentBase.cs" />
+    <Compile Include="HostedComponentCollections.cs" />
     <Compile Include="HostedDeviceBase.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />
     <Compile Include="Interfaces\IAdapterInstanceInfo.cs" />

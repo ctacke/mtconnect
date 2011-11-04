@@ -184,7 +184,7 @@ namespace OpenNETCF.MTConnect
                         var now2 = Environment.TickCount;
                         if (now2 - now > 20)
                         {
-                            Debug.WriteLine(string.Format("! DataMonitor: Sample took {0}ms", now2 - now));
+                            Debug.WriteLine(string.Format("! DataMonitor: HandleNewData took {0}ms", now2 - now));
                         }
 
                         if (!Connected)
@@ -195,13 +195,10 @@ namespace OpenNETCF.MTConnect
                     else
                     {
                         Connected = false;
+                        Thread.Sleep(500);
                     }
 
                     et = Environment.TickCount - start;
-                    if (et > 20)
-                    {
-                        Debug.WriteLine(string.Format("Data Monitor Thread {0} Took {1} (ms)", Thread.CurrentThread.ManagedThreadId, et));
-                    }
                     if (et < Period) Thread.Sleep(Period - et);
                 }
             }

@@ -51,6 +51,11 @@ namespace OpenNETCF.MTConnect
             m_values.Add(name, value);
         }
 
+        internal void Remove(string name)
+        {
+            m_values.Remove(name);
+        }
+
         public int Count
         {
             get { return m_values.Count; }

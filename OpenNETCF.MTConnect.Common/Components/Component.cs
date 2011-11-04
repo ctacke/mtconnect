@@ -58,6 +58,7 @@ namespace OpenNETCF.MTConnect
             : base(descriptor.Properties)
         {
             XmlNodeName = descriptor.Type;
+            ComponentType = descriptor.Type;
             m_device = device;
         }
 
@@ -72,11 +73,14 @@ namespace OpenNETCF.MTConnect
                 .Begin()
                 .IsNotNullOrEmpty(componentType)
                 .IsFalse(componentType.Contains(' '))  // spec requires the type to have no spaces, as it becomes an XML node name
-                .IsNotNullOrEmpty(name)
                 .IsNotNullOrEmpty(id)
                 .Check();
 
-            this.Name = name;
+            if (name != null)
+            {
+                this.Name = name;
+            }
+
             this.ID = id;
             this.XmlNodeName = componentType.ToString();
             this.ComponentType = componentType;
@@ -150,6 +154,9 @@ namespace OpenNETCF.MTConnect
 
             foreach (var prop in Properties)
             {
+                // component type does not get serialized out, it becomes the node name
+                if (prop.Key == CommonProperties.Type) continue;
+
                 element.AddAttributeIfHasValue(prop.Key, prop.Value);
             }
 

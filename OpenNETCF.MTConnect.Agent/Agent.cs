@@ -167,7 +167,8 @@ namespace OpenNETCF.MTConnect
                 }
                 else
                 {
-                    foreach (var device in Devices.ToArray())
+                    var collection = Devices.ToArray();
+                    foreach (var device in collection)
                     {
                         var items = device.DataItems.Find(d => d.ID == dataItemID);
 
@@ -183,6 +184,7 @@ namespace OpenNETCF.MTConnect
                                 dataItem.Device = device;
                             }
 
+                            dataItem.Removed += dataItem_Removed;
                             m_dataItemMap.Add(dataItemID, dataItem);
                             break;
                         }
@@ -191,6 +193,12 @@ namespace OpenNETCF.MTConnect
             }
 
             return dataItem;
+        }
+
+        void dataItem_Removed(object sender, DataItemValue e)
+        {
+            e.Item.Removed -= dataItem_Removed;
+            m_dataItemMap.Remove(e.Item.ID);
         }
 
         public void Start()

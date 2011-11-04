@@ -36,7 +36,7 @@ namespace OpenNETCF.MTConnect
         public event EventHandler<GenericEventArgs<StatusSummary>> StatusChanged;
         public event EventHandler AdapterConfigurationChanged;
 
-        protected abstract Adapter[] GetAdapters();
+        public abstract Adapter[] GetAdapters();
         protected abstract IHost GetHost(Agent agent);
         protected abstract void OnSetAdapterConfiguration(string requestSource, string xml);
 

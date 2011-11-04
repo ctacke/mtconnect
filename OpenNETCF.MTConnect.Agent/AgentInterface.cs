@@ -85,6 +85,7 @@ namespace OpenNETCF.MTConnect
 
         public void PublishData(string dataItemID, object value, bool ignoreDuplicates, object parameter)
         {
+            if (value == null) return;
             if ((ignoreDuplicates) && (!IsChangedValue(dataItemID, value.ToString())))
             {
                 return;
