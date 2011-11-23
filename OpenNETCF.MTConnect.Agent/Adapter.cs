@@ -55,6 +55,8 @@ namespace OpenNETCF.MTConnect
 
         public AdapterCollection Container { get; internal set; }
         public String InstanceName { get; set; }
+        public String AdapterType { get; set; }
+
         public virtual void Start() { }
         public virtual PropertyCollection GetDeviceProperties() { return null; }
         public virtual ComponentDescription GetComponentDescription(ComponentBase component) { return null; }
@@ -72,7 +74,7 @@ namespace OpenNETCF.MTConnect
             m_defaultDataMap.Add("AVAILABILITY", "AVAILABLE");
         }
 
-        internal Adapter(Device device)
+        public Adapter(Device device)
             : this()
         {
             Device = device;
@@ -133,6 +135,60 @@ namespace OpenNETCF.MTConnect
         public virtual void OnDataItemValueSet(object sender, DataItemValue value)
         {
             DataItemValueSetDelegate.Fire(sender ?? Device, value);
+        }
+
+        public void AddAlarm(string name, string id, string path)
+        {
+            DataItem dataItem = new DataItem(DataItemCategory.Condition, DataItemType.HARDWARE, name, id);
+
+            dataItem.Writable = true;
+
+            string[] paths = path.Split('.');
+
+            if (paths.Length == 2)
+            {
+                Component component = Device.Components[paths[1]];
+                component.AddDataItem(dataItem);
+                return;
+            }
+
+            if (paths.Length == 3)
+            {
+                string componentPath = paths[0] + "." + paths[1];
+                Component component = Device.Components[componentPath];
+                Component subComponent = component.Components[path];
+                subComponent.AddDataItem(dataItem);
+                return;
+            }
+
+            Device.AddDataItem(dataItem);
+        }
+
+        public void RemoveAlarm(string name, string id, string path)
+        {
+            //travel path
+            string[] paths = path.Split('.');
+
+            if (paths.Length == 2)
+            {
+                Component component = Device.Components[path];
+                var dataItems = (List<DataItem>)component.DataItems.Find(t => t.Name == name && t.ID == id);
+                component.RemoveDataItem(dataItems[0]);
+                return;
+            }
+
+            if (paths.Length == 3)
+            {
+                string componentPath = paths[0] + "." + paths[1];
+                Component component = Device.Components[componentPath];
+                Component subComponent = component.Components[path];
+                var dataItems = (List<DataItem>)component.DataItems.Find(t => t.Name == name && t.ID == id);
+                subComponent.RemoveDataItem(dataItems[0]);
+                return;
+            }
+
+            var deviceDataItems = (List<DataItem>) Device.DataItems.Find(t => t.Name == name && t.ID == id);
+            Device.RemoveDataItem(deviceDataItems[0]);
         }
     }
 }

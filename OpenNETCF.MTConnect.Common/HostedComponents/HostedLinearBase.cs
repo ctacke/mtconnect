@@ -2,7 +2,7 @@
 // LICENSE INFORMATION
 //
 // - This software is licensed under the MIT shared source license.
-// - The "official" source code for this project is maintained at http://mtconnect.codeplex.com
+// - The "official" source code for this project is maintained at http://mtcagent.codeplex.com
 //
 // Copyright (c) 2010 OpenNETCF Consulting
 //
@@ -26,22 +26,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Net;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
-    public interface IVirtualAgentService
+    public abstract class HostedLinearBase : HostedComponentBase
     {
-        event EventHandler<GenericEventArgs<StatusSummary>> StatusChanged;
-        event EventHandler RestartRequested;
+        public HostedLinearBase(string id)
+        {
+            this.ID = id;
+        }
 
-        bool AutoStart { get; }
-        string AgentAddress { get; }
-        bool Running { get; }
-        IHostedAdapter[] LoadedAdapters { get; }
- 
-        void Start();
-        void Stop();
-        void Restart();
+        public override ComponentType ComponentType
+        {
+            get { return ComponentType.Linear; }
+        }
     }
 }

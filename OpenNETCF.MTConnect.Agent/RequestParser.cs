@@ -107,6 +107,8 @@ namespace OpenNETCF.MTConnect
                     return new CurrentRequest() { RequestSource = source, ResourceName = resourceName.Replace("/", string.Empty) };
                 case "sample":
                     return new SampleRequest() { RequestSource = source, ResourceName = resourceName.Replace("/", string.Empty) };
+                case "assets":
+                    return new AssetsRequest() { RequestSource = source, ResourceName = resourceName.Replace("/", string.Empty) };
                 default:
                     throw new InvalidRequestCommandException(string.Format("Unknown command '{0}' from {1}", typeString, source));
             }

@@ -146,6 +146,11 @@ namespace OpenNETCF.MTConnect
             }
         }
         
+        public ICondition[] Conditions()
+        {
+            return m_conditions.Values.ToArray();
+        }
+        
         private void MonitorThreadProc()
         {
             Running = true;

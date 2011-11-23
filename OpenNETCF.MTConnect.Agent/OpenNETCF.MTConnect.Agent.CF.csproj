@@ -83,6 +83,7 @@
     <Compile Include="Interfaces\IHost.cs" />
     <Compile Include="MTConnectProvider.cs" />
     <Compile Include="RequestParser.cs" />
+    <Compile Include="Requests\AssetsRequest.cs" />
     <Compile Include="Requests\CurrentRequest.cs" />
     <Compile Include="Requests\IResourceRequest.cs" />
     <Compile Include="Requests\ProbeRequest.cs" />

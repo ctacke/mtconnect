@@ -40,7 +40,8 @@ namespace OpenNETCF.MTConnect
 
         public Device Device { get; protected set; }
         public bool Loaded { get; protected set; }
-        public virtual string AdapterType { get; protected set; }
+        public virtual string AdapterType { get; set; }
+        public virtual string ID { get; set; }
 
         public abstract IHostedDevice HostedDevice { get; }
 
@@ -49,6 +50,7 @@ namespace OpenNETCF.MTConnect
         public virtual void OnNewAgentInterface() { }
         public virtual void BeforeLoad() { }
         public virtual void AfterLoad() { }
+        public ILogService LogService { get; set; }
 
         public HostedAdapterBase()
         {
@@ -71,11 +73,6 @@ namespace OpenNETCF.MTConnect
         {
             Debug.WriteLine("PublishDefaultData for " + this.Device.Name);
         }
-
-        public virtual string ID { get; set; }
-        //{
-        //    get { return this.GetType().Assembly.GetName().Name; }
-        //}
 
         public virtual string AssemblyName
         {

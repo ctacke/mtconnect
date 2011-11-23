@@ -63,7 +63,7 @@ namespace OpenNETCF.MTConnect
             m_agent = agent;
         }
 
-        internal long AddValue(DataItem item, string value, DateTime time)
+        public long AddValue(DataItem item, string value, DateTime time)
         {
             lock (m_syncRoot)
             {
