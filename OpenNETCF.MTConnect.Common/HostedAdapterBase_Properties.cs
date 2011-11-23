@@ -177,7 +177,11 @@ namespace OpenNETCF.MTConnect
                 Debug.WriteLine("  - " + prop.PropertyInfo.Name);
 
                 // create a DataItem to export
-                var id = CreateDataItemID(HostedDevice.Name, component.Name, prop.PropertyInfo.Name);
+                var id = prop.PropertyAttribute.ID;
+                if (id.IsNullOrEmpty())
+                {
+                    id = CreateDataItemID(HostedDevice.Name, component.Name, prop.PropertyInfo.Name);
+                }
 
                 var dataItem = CreateDataItem(prop, id);
                 // see if it's publicly writable
@@ -479,11 +483,14 @@ namespace OpenNETCF.MTConnect
 
         public void UpdateProperties()
         {
-            try
+            var propName = string.Empty;
+
+            foreach (var id in m_propertyDictionary.Keys)
             {
-                foreach (var id in m_propertyDictionary.Keys)
+                try
                 {
                     var propertyInfo = m_propertyDictionary[id].PropertyInfo;
+                    propName = propertyInfo.Name;
 
                     object value = propertyInfo.GetValue(m_propertyDictionary[id].Instance, null);
                     if (value == null)
@@ -495,15 +502,19 @@ namespace OpenNETCF.MTConnect
                         AgentInterface.PublishData(id, value.ToString(), !m_firstPublish, this);
                     }
                 }
-                m_firstPublish = false;
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine("HostedAdapterBase::UpdateProperties Exception: " + ex.Message);
-                return;
-            }
-        }
+                catch (Exception ex)
+                {
+                    if (LogService != null)
+                    {
+                        LogService.Log(ex, this.GetType().Name + ".UpdateProperty:" + propName);
+                    }
 
+                    Debug.WriteLine("HostedAdapterBase::UpdateProperties Exception: " + ex.Message);
+                    return;
+                }
+            }
+            m_firstPublish = false;
+        }
     }
 
 }

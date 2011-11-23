@@ -212,16 +212,18 @@ namespace OpenNETCF.MTConnect
 
         public Type ValueType
         {
-            //get
-            //{
-            //    bool value = false;
-            //    try
-            //    {
-            //        value = bool.Parse(Properties[ExtendedProperties.ValueType]);
-            //    }
-            //    catch { }
-            //    return value;
-            //}
+            get
+            {
+                string type = Properties[ExtendedProperties.ValueType];
+                switch(type)
+                {
+                    case "int": return typeof(int);
+                    case "boolean": return typeof(bool);
+                    case "double": return typeof(double);
+                    case "string": return typeof(string);
+                    default: return typeof(string);
+                }
+            }
             set 
             {
                 if(value.Equals(typeof(string)))

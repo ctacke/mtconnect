@@ -32,48 +32,21 @@ using System.Diagnostics;
 namespace OpenNETCF.MTConnect
 {
     /// <summary>
-    /// This is a simple, common utility Component for holding Linear and Rotary Axis subcomponents
-    /// </summary>
-    public class HostedAxes : HostedComponentBase
-    {
-        public HostedAxes()
-            : this("axes", "axes")
-        {
-        }
-
-        public HostedAxes(string id)
-            : this("axes", null)
-        {
-        }
-
-        public HostedAxes(string id, string name)
-        {
-            this.ID = id;
-            this.Name = name;
-        }
-
-        public override ComponentType ComponentType
-        {
-            get { return OpenNETCF.MTConnect.ComponentType.Axes; }
-        }
-    }
-
-    /// <summary>
     /// This is a simple, common utility Component for holding a variety of System-type subcomponents
     /// </summary>
-    public class HostedSystems : HostedComponentBase
+    public abstract class HostedSystemsBase : HostedComponentBase
     {
-        public HostedSystems()
+        public HostedSystemsBase()
             : this("systems", "systems")
         {
         }
 
-        public HostedSystems(string id)
+        public HostedSystemsBase(string id)
             : this("systems", null)
         {
         }
 
-        public HostedSystems(string id, string name)
+        public HostedSystemsBase(string id, string name)
         {
             this.ID = id;
             this.Name = name;
@@ -82,64 +55,6 @@ namespace OpenNETCF.MTConnect
         public override ComponentType ComponentType
         {
             get { return OpenNETCF.MTConnect.ComponentType.Systems; }
-        }
-    }
-
-    public class HostedController : HostedComponentBase
-    {
-        public HostedController()
-            : this("controller", "controller")
-        {
-        }
-
-        public HostedController(string id)
-            : this(id, null)
-        {
-        }
-
-        public HostedController(string id, string name)
-        {
-            Validate
-                .Begin()
-                .IsNotNullOrEmpty(id)
-                .Check();
-
-            this.Name = name;
-            this.ID = id;
-        }
-
-        public override ComponentType ComponentType
-        {
-            get { return OpenNETCF.MTConnect.ComponentType.Controller; }
-        }
-    }
-
-    public class HostedPath : HostedComponentBase
-    {
-        public HostedPath()
-            : this("path", "path")
-        {
-        }
-
-        public HostedPath(string id)
-            : this(null, id)
-        {
-        }
-
-        public HostedPath(string id, string name)
-        {
-            Validate
-                .Begin()
-                .IsNotNullOrEmpty(id)
-                .Check();
-
-            this.Name = name;
-            this.ID = id;
-        }
-
-        public override ComponentType ComponentType
-        {
-            get { return OpenNETCF.MTConnect.ComponentType.Path; }
         }
     }
 }

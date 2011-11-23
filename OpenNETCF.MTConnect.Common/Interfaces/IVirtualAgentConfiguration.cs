@@ -39,5 +39,9 @@ namespace OpenNETCF.MTConnect
         string CollectorFolder { get; }
         string ControllerFolder { get; }
         string ConnectionsFolder { get; }
+
+        bool EnableIPCService { get; }
+        bool EnableSHDRService { get; }
+        int SHDRPort { get; }
     }
 }

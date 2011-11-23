@@ -35,7 +35,6 @@ namespace OpenNETCF.MTConnect
     {
         string ID { get; set; }
         string AssemblyName { get; }
-        string AdapterType { get; }
 
         IHostedDevice HostedDevice { get; }
 

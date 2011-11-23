@@ -49,11 +49,13 @@ namespace OpenNETCF.MTConnect
         public XmlDefinedAdapter(XDocument configuration)
         {
             m_deviceElement = ConfigParser.GetDeviceElement(configuration, null);
+            AdapterType = "VirtualAdapter";
         }
 
         public XmlDefinedAdapter(XElement deviceElement)
         {
             m_deviceElement = deviceElement;
+            AdapterType = "VirtualAdapter";
         }
 
         public override PropertyCollection GetDeviceProperties()

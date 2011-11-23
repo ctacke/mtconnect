@@ -32,6 +32,7 @@ namespace OpenNETCF.MTConnect
     public interface IAdapter
     {
         Device Device { get; }
+        string AdapterType { get; set; }
 
         void PublishDefaultData();
     }

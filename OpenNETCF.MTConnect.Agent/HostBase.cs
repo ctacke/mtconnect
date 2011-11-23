@@ -164,6 +164,12 @@ namespace OpenNETCF.MTConnect
                     SendResponse(xml, context, true);
                 }
             }
+            else if (request is AssetsRequest)
+            {
+                SetResponseHeader(context, "Content-Type", "text/xml");
+                var response = Agent.Assets();
+                SendResponse(response, context, true);
+            }
             else
             {
                 // TODO return valid MTConnect error string

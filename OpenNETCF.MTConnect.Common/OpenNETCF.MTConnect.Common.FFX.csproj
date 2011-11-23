@@ -83,8 +83,12 @@
     <Compile Include="HostedAdapterBase.cs" />
     <Compile Include="HostedAdapterBase_Methods.cs" />
     <Compile Include="HostedAdapterBase_Properties.cs" />
-    <Compile Include="HostedComponentBase.cs" />
-    <Compile Include="HostedComponentCollections.cs" />
+    <Compile Include="HostedComponents\HostedAxes.cs" />
+    <Compile Include="HostedComponents\HostedComponentBase.cs" />
+    <Compile Include="HostedComponents\HostedControllerBase.cs" />
+    <Compile Include="HostedComponents\HostedLinearBase.cs" />
+    <Compile Include="HostedComponents\HostedPathBase.cs" />
+    <Compile Include="HostedComponents\HostedSystemsBase.cs" />
     <Compile Include="HostedDeviceBase.cs" />
     <Compile Include="Interfaces\IAdapter.cs" />
     <Compile Include="Interfaces\IAdapterInstanceInfo.cs" />

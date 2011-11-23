@@ -306,5 +306,35 @@ namespace OpenNETCF.MTConnect
 
             return root.ToString();
         }
+
+        public string Assets()
+        {
+            XNamespace ns = "urn:mtconnect.org:MTConnectAssets:1.2";
+            XElement root = null;
+
+            XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+            var schemaLocation = "urn:mtconnect.org:MTConnectAssets:1.2 http://www.mtconnect.org/schemas/MTConnectAssets_1.2.xsd";
+
+            root = new XElement(ns + "MTConnectAssets",
+                new XAttribute("xmlns", ns),
+                new XAttribute(XNamespace.Xmlns + "xsi", xsi),
+                new XAttribute(xsi + "schemaLocation", schemaLocation));
+
+            root.Add(
+                new XElement(ns + "Header")
+                    .AddAttribute("creationTime", DateTime.Now.ToUniversalTime().ToString("s"))
+                    .AddAttribute("sender", Host == null ? "[unconnected]" : Host.HostName)
+                    .AddAttribute("version", Version)
+                    .AddAttribute("bufferSize", this.Data.BufferSize.ToString())
+                    .AddAttribute("instanceId", this.InstanceID.ToString())
+                    .AddAttribute("agentType", AgentTypeName)
+                    );
+
+            XElement element = new XElement(ns + "Assets");
+
+            root.Add(element);
+
+            return root.ToString(); 
+        }
     }
 }
