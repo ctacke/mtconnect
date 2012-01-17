@@ -36,5 +36,6 @@ namespace OpenNETCF.MTConnect
         internal const string Components = "Components";
         internal const string DataItems = "DataItems";
         internal const string DataItem = "DataItem";
+        internal const string Conditions = "Conditions";
     }
 }

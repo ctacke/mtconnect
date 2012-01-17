@@ -90,8 +90,7 @@ namespace OpenNETCF.MTConnect
                     ValueType = typeof(double);
                     break;
                 case DataItemCategory.Condition:
-                    ValueType = typeof(string);
-                    break;
+                    throw new NotSupportedException();
                 case DataItemCategory.Event:
                     // TODO:
                     ValueType = typeof(object);
@@ -268,7 +267,8 @@ namespace OpenNETCF.MTConnect
             }
             set 
             {
-                SetProperty(CommonProperties.Category, value.ToString());
+                // per the spec, category values (SAMPLE, CONDITION, EVENT) are in all caps
+                SetProperty(CommonProperties.Category, value.ToString().ToUpper());
                 m_category = value;
             }
         }
@@ -336,7 +336,7 @@ namespace OpenNETCF.MTConnect
             return item;
         }
 
-        public XElement AsXElement(XNamespace ns)
+        public virtual XElement AsXElement(XNamespace ns)
         {
             if (ns == null) ns = string.Empty;
             var element = new XElement(ns + NodeNames.DataItem);
@@ -354,37 +354,22 @@ namespace OpenNETCF.MTConnect
             Removed(this, new DataItemValue(-1, this, string.Empty)); 
         }
 
-        public void SetValue(string value)
+        public void SetValue(object value)
         {
-            SetValue(null, value, DateTime.Now);
+            SetValue(value, DateTime.Now);
         }
 
-        public void SetValue(string value, DateTime time)
+        public virtual void SetValue(object value, DateTime time)
         {
-            SetValue(null, value, time);
-        }
-
-        public void SetValue(object parameter, string value, DateTime time)
-        {
-            if (this.Category == DataItemCategory.Condition)
-            {
-                // per spec (Part 3, 3.1.1), CONDITION category values must be Normal, Warning, Fault or Unavailable
-                switch (value.ToLower())
-                {
-                    case "normal":
-                    case "warning":
-                    case "fault":
-                    case "unavailable":
-                        break;
-                    default:
-                        throw new InvalidDataItemValueException(this, value, "Condition DataItems must be 'Normal', 'Warning', 'Fault' or 'Unavailable'");
-                }
-            }
-
             // TODO: check constraints?
             // TODO: check alarms?
 
-            ValueSet.Fire(parameter, new DataItemValue(-1, this, value, time));
+            RaiseValueSet(value, time);
+        }
+
+        protected void RaiseValueSet(object value, DateTime time)
+        {
+            ValueSet.Fire(null, new DataItemValue(-1, this, value, time));
         }
     }
 }

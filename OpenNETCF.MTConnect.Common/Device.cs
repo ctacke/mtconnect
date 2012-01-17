@@ -109,8 +109,15 @@ namespace OpenNETCF.MTConnect
                 element.AddAttributeIfHasValue(prop.Key, prop.Value);
             }
 
+            var dataItemElement = DataItems.AsXElement(ns);
+
+            //foreach(var condition in Conditions.AsXElement(ns).Elements(ns + NodeNames.DataItem))
+            //{
+            //    dataItemElement.Add(condition);
+            //}
+
             element
-                .AddChildElement(DataItems.AsXElement(ns))
+                .AddChildElement(dataItemElement)
                 .AddChildElement(Components.AsXElement(ns));
 
             return element;

@@ -137,12 +137,7 @@ namespace OpenNETCF.MTConnect
             }
         }
 
-        public void PublishData(string dataItemID, string value, DateTime time)
-        {
-            PublishData(dataItemID, value, time, null);
-        }
-
-        public void PublishData(string dataItemID, string value, DateTime time, object parameter)
+        public void PublishData(string dataItemID, object value, DateTime time)
         {
             DataItem dataItem = GetDataItemByID(dataItemID);
 
@@ -152,7 +147,7 @@ namespace OpenNETCF.MTConnect
                 return;
             }
 
-            dataItem.SetValue(parameter, value, DateTime.Now);
+            dataItem.SetValue(value, DateTime.Now);
         }
 
         public DataItem GetDataItemByID(string dataItemID)
@@ -172,6 +167,17 @@ namespace OpenNETCF.MTConnect
                     {
                         var items = device.DataItems.Find(d => d.ID == dataItemID);
 
+                        if (items == null)
+                        {
+                            foreach (var component in device.Components)
+                            {
+                                items = component.DataItems.Find(e => e.ID == dataItemID);
+                                if (items != null)
+                                {
+                                }
+                            }
+                        }
+
                         if (items != null)
                         {
                             dataItem = items.FirstOrDefault();
@@ -189,6 +195,11 @@ namespace OpenNETCF.MTConnect
                             break;
                         }
                     }
+                }
+
+                if (dataItem == null)
+                {
+                    var collection = Devices.ToArray();
                 }
             }
 
@@ -237,6 +248,7 @@ namespace OpenNETCF.MTConnect
                     .AddAttribute("version", Version)
                     .AddAttribute("bufferSize", this.Data.BufferSize.ToString())
                     .AddAttribute("instanceId", this.InstanceID.ToString())
+                    .AddAttribute("agentType", AgentTypeName)
                     );
 
             var errorsNode = new XElement(ns + "Errors");

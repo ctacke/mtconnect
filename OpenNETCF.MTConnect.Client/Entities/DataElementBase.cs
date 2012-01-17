@@ -42,13 +42,13 @@ namespace OpenNETCF.MTConnect
 
         internal DataElementBase(XNamespace ns, XElement element)
         {
-            var attr = element.Attribute("dataItemId");
+            var attr = element.Attribute(XmlAttributeName.DataItemID);
             if (attr != null)
             {
                 DataItemID = attr.Value;
             }
 
-            attr = element.Attribute("timestamp");
+            attr = element.Attribute(ns + XmlAttributeName.Timestamp);
             if (attr != null)
             {
                 try
@@ -58,7 +58,7 @@ namespace OpenNETCF.MTConnect
                 catch { }
             }
 
-            attr = element.Attribute("sequence");
+            attr = element.Attribute(ns + XmlAttributeName.Sequence);
             if (attr != null)
             {
                 try
@@ -70,7 +70,7 @@ namespace OpenNETCF.MTConnect
 
             Writable = false;
 
-            attr = element.Attribute("writable");
+            attr = element.Attribute(ns + XmlAttributeName.Writable);
             if (attr != null)
             {
                 try

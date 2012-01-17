@@ -32,7 +32,7 @@ namespace OpenNETCF.MTConnect
     public static class XmlAttributeName
     {
         public const string AgentAddress = "agentAddress";
-        public const string DataItemID = "dataItemID";
+        public const string DataItemID = "dataItemId";
         public const string Timestamp = "timestamp";
         public const string Value = "value";
         public const string Device = "device";
@@ -60,6 +60,15 @@ namespace OpenNETCF.MTConnect
         public const string AdapterType = "adapterType";
         public const string Trigger = "trigger";
         public const string State = "state";
+        public const string Sequence = "sequence";
+        public const string Writable = "writable";
+        public const string SubType = "subtype";
+        public const string Category = "category";
+        public const string Qualifier = "qualifier";
+        public const string NativeCode = "nativeCode";
+        public const string NativeSeverity = "nativeSeverity";
+
+        public static System.Xml.Linq.XAttribute DataItemId { get; set; }
     }
 
     public static class XmlNodeName

@@ -63,17 +63,20 @@ namespace OpenNETCF.MTConnect
             m_agent = agent;
         }
 
-        public long AddValue(DataItem item, string value, DateTime time)
+        public long AddValue(DataItem item, object value, DateTime time)
         {
             lock (m_syncRoot)
             {
-                // See if the value is actually "new".
-                // This slows things down, yes, but the spec requires that we only store changed data and
-                // we can't rely on the Adapter implementer to ensure this
-                var last = m_buffer.Last(i => i.Item.ID == item.ID);
-                if (last != null)
+                if (m_currentValues.ContainsKey(item.ID))
                 {
-                    if (last.Value == value) return -1;
+                    var currentValue = m_currentValues[item.ID].Value;
+                    if (currentValue is Condition)
+                    {
+                    }
+                    else
+                    {
+                        if (currentValue == value) return -1;
+                    }
                 }
 
                 var sequence = IncrementSequenceNumber();
@@ -115,10 +118,7 @@ namespace OpenNETCF.MTConnect
 
         private long IncrementSequenceNumber()
         {
-            lock (m_syncRoot)
-            {
-                return m_currentSequence++;
-            }
+            return m_currentSequence++;
         }
 
         public DataItemValue GetFromBuffer(long sequenceNumber)
@@ -140,7 +140,7 @@ namespace OpenNETCF.MTConnect
         {
             int index = 0;
 
-            List<DataItemValue> values = new List<DataItemValue>();
+            List<DataItemValue> values = new List<DataItemValue>(count);
 
             while (index <= Count - 1)
             {
@@ -344,9 +344,13 @@ namespace OpenNETCF.MTConnect
             get { return m_currentSequence; }
         }
 
-        public string GetCurrentValue(string dataItemID)
+        public object GetCurrentValue(string dataItemID)
         {
             DataItemValue item = null;
+
+            if (dataItemID  == null) return null;
+            if (m_currentValues.Count == 0) return null;
+            if (m_currentValues.Keys == null) return null;
 
             if (m_currentValues.Keys.Contains(dataItemID))
             {

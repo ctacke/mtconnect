@@ -30,9 +30,9 @@ using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    public class Sample : DataElementBase<double?>, ISample
+    public class SampleElement : DataElementBase<double?>, ISample
     {
-        internal Sample(XNamespace ns, XElement element)
+        internal SampleElement(XNamespace ns, XElement element)
             : base(ns, element)
         {
             this.Type = element.Name.LocalName;

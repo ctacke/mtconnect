@@ -56,12 +56,12 @@ namespace OpenNETCF.MTConnect
 
                 // load device properties
                 var deviceProperties = from p in HostedDevice.GetType().GetProperties()
-                                       let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
+                                       let pr = p.GetCustomAttributes(typeof(DataItemAttribute), true).FirstOrDefault()
                                        where pr != null
                                        select new DataItemProperty
                                        {
                                            PropertyInfo = p,
-                                           PropertyAttribute = pr as MTConnectPropertyAttribute
+                                           PropertyAttribute = pr as DataItemAttribute
                                        };
 
                 Debug.WriteLine(string.Format("Device '{0}' Properties", HostedDevice.Name));
@@ -164,12 +164,12 @@ namespace OpenNETCF.MTConnect
             Debug.WriteLine(string.Format(" Component '{0}'", component.Name));
 
             var componentProperties = from p in component.GetType().GetProperties()
-                                        let pr = p.GetCustomAttributes(typeof(MTConnectPropertyAttribute), true).FirstOrDefault()
+                                        let pr = p.GetCustomAttributes(typeof(DataItemAttribute), true).FirstOrDefault()
                                         where pr != null
                                         select new DataItemProperty
                                         {
                                             PropertyInfo = p,
-                                            PropertyAttribute = pr as MTConnectPropertyAttribute
+                                            PropertyAttribute = pr as DataItemAttribute
                                         };
 
             foreach (var prop in componentProperties)
@@ -275,31 +275,33 @@ namespace OpenNETCF.MTConnect
             }
         }
 
-        private void SetMTConnectPropertyFromDataItemValueChange(PropertyData pd, string newValue)
+        private void SetMTConnectPropertyFromDataItemValueChange(PropertyData pd, object newValue)
         {
+            var value = newValue as string;
+
             var type = pd.PropertyInfo.PropertyType;
 
             // can't parse a null/empty
-            if ((type != typeof(string)) && (newValue.IsNullOrEmpty())) return;
+            if ((type != typeof(string)) && (value.IsNullOrEmpty())) return;
 
             if (type == typeof(bool))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, bool.Parse(newValue), null);
+                pd.PropertyInfo.SetValue(pd.Instance, bool.Parse(value), null);
             }
             else if (type == typeof(long))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, long.Parse(newValue), null);
+                pd.PropertyInfo.SetValue(pd.Instance, long.Parse(value), null);
             }
             else if (type == typeof(int))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, int.Parse(newValue), null);
+                pd.PropertyInfo.SetValue(pd.Instance, int.Parse(value), null);
             }
             else if (type == typeof(double))
             {
                 // can't parse a null
-                if (newValue.IsNullOrEmpty()) return;
+                if (value.IsNullOrEmpty()) return;
 
-                switch(newValue.ToLower())
+                switch (value.ToLower())
                 {
                     case "infinity":
                         pd.PropertyInfo.SetValue(pd.Instance, double.PositiveInfinity, null);
@@ -308,21 +310,21 @@ namespace OpenNETCF.MTConnect
                         pd.PropertyInfo.SetValue(pd.Instance, double.PositiveInfinity, null);
                         break;
                     default:
-                        pd.PropertyInfo.SetValue(pd.Instance, double.Parse(newValue), null);
+                        pd.PropertyInfo.SetValue(pd.Instance, double.Parse(value), null);
                         break;
                 }
             }
             else if (type == typeof(DateTime))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, DateTime.Parse(newValue), null);
+                pd.PropertyInfo.SetValue(pd.Instance, DateTime.Parse(value), null);
             }
             else if (type == typeof(TimeSpan))
             {
-                pd.PropertyInfo.SetValue(pd.Instance, TimeSpan.Parse(newValue), null);
+                pd.PropertyInfo.SetValue(pd.Instance, TimeSpan.Parse(value), null);
             }
             else if (type.IsEnum)
             {
-                pd.PropertyInfo.SetValue(pd.Instance, Enum.Parse(pd.PropertyInfo.PropertyType, newValue, true), null);
+                pd.PropertyInfo.SetValue(pd.Instance, Enum.Parse(pd.PropertyInfo.PropertyType, value, true), null);
             }
             else
             {
@@ -357,24 +359,28 @@ namespace OpenNETCF.MTConnect
         private class DataItemProperty
         {
             public PropertyInfo PropertyInfo { get; set; }
-            public MTConnectPropertyAttribute PropertyAttribute { get; set; }
+            public DataItemAttribute PropertyAttribute { get; set; }
         }
 
         private DataItem CreateDataItem(DataItemProperty property, string id)
         {
-            var category = property.PropertyAttribute.ItemCategory;
+            DataItemCategory category;
 
-            // Samples *MUST* have Units
-            if (!string.IsNullOrEmpty(property.PropertyAttribute.Units))
+            if (property.PropertyAttribute is SampleDataItemAttribute)
             {
-                if (property.PropertyInfo.PropertyType == typeof(double) ||
-                    property.PropertyInfo.PropertyType == typeof(int) ||
-                    property.PropertyInfo.PropertyType == typeof(long) ||
-                    property.PropertyInfo.PropertyType == typeof(short))
-                {
-                    category = DataItemCategory.Sample;
-                }
+                category = DataItemCategory.Sample;
             }
+            else if (property.PropertyAttribute is EventDataItemAttribute)
+            {
+                category = DataItemCategory.Event;
+            }
+            else
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+
+                throw new NotSupportedException();
+            }
+
 
             var valueType = property.PropertyInfo.PropertyType;
             var type = property.PropertyAttribute.ItemType;
@@ -395,11 +401,7 @@ namespace OpenNETCF.MTConnect
             dataItem.NativeUnits = property.PropertyAttribute.NativeUnits;
             dataItem.NativeScale = property.PropertyAttribute.NativeScale;
             dataItem.CoordinateSystem = property.PropertyAttribute.CoordianteSystem;
-
-            if (category == DataItemCategory.Sample)
-            {
-                dataItem.Units = property.PropertyAttribute.Units;
-            }
+            dataItem.Units = property.PropertyAttribute.Units;
 
             return dataItem;
         }
@@ -434,7 +436,7 @@ namespace OpenNETCF.MTConnect
                 // get the current value
                 object value = property.PropertyInfo.GetValue(property.Instance, null);
                 // return if there's been no change
-                if (value != null && value.ToString() == e.Value)
+                if (value != null && value.ToString() == e.Value as string)
                 {
                     return false;
                 }
@@ -442,27 +444,27 @@ namespace OpenNETCF.MTConnect
                 if (property.PropertyInfo.PropertyType == typeof(double))
                 {
                     // can't parse an empty string to a double
-                    if(e.Value.IsNullOrEmpty()) return false;
+//                    if(e.Value.IsNullOrEmpty()) return false;
 
-                    newProperty = (object)double.Parse(e.Value);
+                    newProperty = e.Value;
                 }
                 else if (property.PropertyInfo.PropertyType == typeof(int))
                 {
                     // can't parse an empty string to an int
-                    if (e.Value.IsNullOrEmpty()) return false;
+//                    if (e.Value.IsNullOrEmpty()) return false;
 
-                    newProperty = (object)Int32.Parse(e.Value);
+                    newProperty = e.Value;
                 }
                 else if (property.PropertyInfo.PropertyType == typeof(string))
                 {
-                    newProperty = (object)e.Value;
+                    newProperty = e.Value;
                 }
                 else if (property.PropertyInfo.PropertyType == typeof(bool))
                 {
                     // can't parse an empty string to a bool
-                    if (e.Value.IsNullOrEmpty()) return false;
+//                    if (e.Value.IsNullOrEmpty()) return false;
 
-                    newProperty = (object)bool.Parse(e.Value);
+                    newProperty = e.Value;
                 }
                 else
                 {
@@ -483,9 +485,19 @@ namespace OpenNETCF.MTConnect
 
         public void UpdateProperties()
         {
+            if (AgentInterface == null)
+            {
+                Debug.WriteLine("HostedAdapterBase.UpdateProperties: AgentInterface == null");
+                return;
+            }
+
             var propName = string.Empty;
 
-            foreach (var id in m_propertyDictionary.Keys)
+            if (m_propertyDictionary == null) return;
+
+            var keys = m_propertyDictionary.Keys;
+
+            foreach (var id in keys)
             {
                 try
                 {
@@ -495,11 +507,11 @@ namespace OpenNETCF.MTConnect
                     object value = propertyInfo.GetValue(m_propertyDictionary[id].Instance, null);
                     if (value == null)
                     {
-                        AgentInterface.PublishData(id, string.Empty, !m_firstPublish, this);
+                        AgentInterface.PublishData(id, null);
                     }
                     else
                     {
-                        AgentInterface.PublishData(id, value.ToString(), !m_firstPublish, this);
+                        AgentInterface.PublishData(id, value);
                     }
                 }
                 catch (Exception ex)

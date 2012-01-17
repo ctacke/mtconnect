@@ -62,6 +62,10 @@ namespace OpenNETCF.MTConnect
             Dispose();
         }
 
+        public virtual int RefreshPeriod
+        {
+            get { return m_refreshPeriod; }
+        }
 
         public void Dispose()
         {
@@ -72,6 +76,16 @@ namespace OpenNETCF.MTConnect
         public virtual void PublishDefaultData() 
         {
             Debug.WriteLine("PublishDefaultData for " + this.Device.Name);
+
+            new Thread(new ThreadStart(delegate
+            {
+                this.UpdateProperties();
+            }))
+            {
+                IsBackground = true,
+                Name = "PublishDefaultData"
+            }
+            .Start();
         }
 
         public virtual string AssemblyName
@@ -81,11 +95,18 @@ namespace OpenNETCF.MTConnect
 
         public IAgentInterface AgentInterface
         {
+            [DebuggerStepThrough]
             get { return m_agentInterface; }
             set
             {
+                if (m_agentInterface == value) return;
+
                 m_agentInterface = value;
-                m_agentInterface.DataItemValueChanged += new EventHandler<DataItemValue>(OnDataItemValueChanged);
+                if (m_agentInterface != null)
+                {
+                    m_agentInterface.DataItemValueChanged += new EventHandler<DataItemValue>(OnDataItemValueChanged);
+                }
+
                 OnNewAgentInterface();
             }
         }
@@ -103,11 +124,31 @@ namespace OpenNETCF.MTConnect
         {
             Device = new Device(HostedDevice.Name, HostedDevice.Name, HostedDevice.ID, false);
 
+            // deep copy over the Conditions
+            if (HostedDevice.Conditions != null)
+            {
+                foreach (var c in HostedDevice.Conditions)
+                {
+                    Device.DataItems.Add(c.Copy());
+                }
+            }
+
+            WireConditionHandlers(HostedDevice.Conditions);
+
             if (HostedDevice.Components != null)
             {
                 foreach (var component in HostedDevice.Components)
                 {
                     var comp = new Component(component.ComponentType, component.Name, component.ID);
+
+                    if (component.Conditions != null)
+                    {
+                        // deep copy over the Conditions
+                        foreach (var c in component.Conditions)
+                        {
+                            comp.DataItems.Add(c.Copy());
+                        }
+                    }
 
                     Device.AddComponent(comp);
 
@@ -120,6 +161,19 @@ namespace OpenNETCF.MTConnect
                         }
                     }
                 }
+            }
+        }
+
+        private void WireConditionHandlers(ConditionCollection conditions)
+        {
+            if (conditions == null) return;
+
+            foreach (var c in conditions)
+            {
+                c.ValueSet += delegate
+                {
+                    AgentInterface.PublishData(c.ID, c);
+                };
             }
         }
 
@@ -159,7 +213,7 @@ namespace OpenNETCF.MTConnect
             UpdateProperties();
 
             // do periodic publishing work here
-            while (!m_shutdownEvent.WaitOne(m_refreshPeriod, false))
+            while (!m_shutdownEvent.WaitOne(RefreshPeriod, false))
             {
                 OnPublish();
             }

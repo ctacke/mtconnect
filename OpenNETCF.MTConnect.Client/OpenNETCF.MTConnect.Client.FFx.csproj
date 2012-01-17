@@ -53,12 +53,13 @@
     <Compile Include="DataMonitor.cs" />
     <Compile Include="Entities\BaseStream.cs" />
     <Compile Include="Entities\ComponentStream.cs" />
-    <Compile Include="Entities\Condition.cs" />
+    <Compile Include="Entities\ConditionElement.cs" />
     <Compile Include="Entities\DataElementBase.cs" />
+    <Compile Include="Entities\DataElementFactory.cs" />
     <Compile Include="Entities\DeviceStream.cs" />
     <Compile Include="Entities\DataStream.cs" />
-    <Compile Include="Entities\Event.cs" />
-    <Compile Include="Entities\Sample.cs" />
+    <Compile Include="Entities\EventElement.cs" />
+    <Compile Include="Entities\SampleElement.cs" />
     <Compile Include="Clients\EntityClient.cs" />
     <Compile Include="Interfaces\ICondition.cs" />
     <Compile Include="Interfaces\IDataElement.cs" />

@@ -107,7 +107,15 @@ namespace OpenNETCF.MTConnect
 
         public void Stop()
         {
-            m_stopEvent.Set();
+#if !WindowsCE
+            if (!m_stopEvent.SafeWaitHandle.IsClosed && !m_stopEvent.SafeWaitHandle.IsInvalid)
+            {
+#endif
+                m_stopEvent.Set();
+
+#if !WindowsCE
+            }
+#endif
         }
 
         public ISample GetSample(string id)
@@ -145,65 +153,62 @@ namespace OpenNETCF.MTConnect
                 return null;
             }
         }
-        
+
         public ICondition[] Conditions()
         {
             return m_conditions.Values.ToArray();
         }
-        
+
+        private const int MaxSamplesPerQuery = 100;
+        private const int ConnectedTries = 5;
+
         private void MonitorThreadProc()
         {
             Running = true;
+            int reTries = 0;
 
             try
             {
                 m_stopEvent.Reset();
 
-                var start = Environment.TickCount;
-
-                var data = m_client.Sample();
-                if (data != null)
-                {
-                    Connected = true;
-                    HandleNewData(data);
-                }
-
-                var et = Environment.TickCount - start;
-                if (et < Period) Thread.Sleep(Period - et);
+                Thread.Sleep(Period);
 
                 while (!(m_stopEvent.WaitOne(0)))
                 {
-                    start = Environment.TickCount;
+                    var start = Environment.TickCount;
 
-                    data = m_client.Sample();
-
-                    var now = Environment.TickCount;
-                    if (now - start > 20)
-                    {
-                        Debug.WriteLine(string.Format("! DataMonitor: Sample took {0}ms", now - start));
-                    }
+                    var data = m_client.Sample(MaxSamplesPerQuery);
 
                     if (data != null)
                     {
+                        reTries = 0;
+                        Connected = true;
                         HandleNewData(data);
-                        var now2 = Environment.TickCount;
-                        if (now2 - now > 20)
-                        {
-                            Debug.WriteLine(string.Format("! DataMonitor: HandleNewData took {0}ms", now2 - now));
-                        }
 
-                        if (!Connected)
+                        // make sure we pulled *all* data
+                        var remain = data.LastSequence - data.NextSequence + 1;
+                        while (remain > 0)
                         {
-                            Connected = true;
+                            data = m_client.Sample(MaxSamplesPerQuery);
+                            if (data == null)
+                            {
+                                continue;
+                            }
+
+                            HandleNewData(data);
+                            remain = data.LastSequence - data.NextSequence + 1;
                         }
                     }
                     else
                     {
-                        Connected = false;
-                        Thread.Sleep(500);
+                        reTries++;
+                        if (reTries > ConnectedTries)
+                        {
+                            Connected = false;
+                        }
                     }
 
-                    et = Environment.TickCount - start;
+                    var et = Environment.TickCount - start;
                     if (et < Period) Thread.Sleep(Period - et);
                 }
             }
@@ -215,6 +220,8 @@ namespace OpenNETCF.MTConnect
 
         private void HandleNewData(DataStream data)
         {
+            if (data == null) return;
+
             var samples = data.AllSamples();
             
             lock (m_samples)

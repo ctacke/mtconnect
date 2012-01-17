@@ -110,7 +110,7 @@ namespace OpenNETCF.MTConnect
 
         }
 
-        internal static DeviceCollection ParseConfigFile(Stream configFile)
+        public static DeviceCollection ParseConfigFile(Stream configFile)
         {
             string xml;
 
@@ -123,7 +123,7 @@ namespace OpenNETCF.MTConnect
             return ParseConfigFile(xml);
         }
 
-        internal static DeviceCollection ParseConfigFile(string xml)
+        public static DeviceCollection ParseConfigFile(string xml)
         {
             var deviceList = new DeviceCollection();
 

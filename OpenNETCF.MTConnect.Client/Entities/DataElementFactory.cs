@@ -34,7 +34,7 @@ namespace OpenNETCF.MTConnect
     {
         internal static ICondition ConditionFromXml(XNamespace ns, XElement element)
         {
-            return new Condition(ns, element);
+            return new ConditionElement(ns, element);
         }
 
         internal static IEvent EventFromXml(XNamespace ns, XElement element)
@@ -51,23 +51,23 @@ namespace OpenNETCF.MTConnect
             switch (valueType.ToLower())
             {
                 case "int":
-                    @event = new Event<int?>(ns, element);
+                    @event = new EventElement<int?>(ns, element);
                     @event.Value = int.Parse(element.Value);
                     break;
                 case "boolean":
-                    @event = new Event<bool?>(ns, element);
+                    @event = new EventElement<bool?>(ns, element);
                     @event.Value = bool.Parse(element.Value);
                     break;
                 case "string":
-                    @event = new Event<string>(ns, element);
+                    @event = new EventElement<string>(ns, element);
                     @event.Value = element.Value;
                     break;
                 case "double":
-                    @event = new Event<double?>(ns, element);
+                    @event = new EventElement<double?>(ns, element);
                     @event.Value = double.Parse(element.Value);
                     break;
                 case "datetime":
-                    @event = new Event<DateTime?>(ns, element);
+                    @event = new EventElement<DateTime?>(ns, element);
                     @event.Value = DateTime.Parse(element.Value);
                     break;
                 default:
@@ -79,25 +79,7 @@ namespace OpenNETCF.MTConnect
 
         internal static ISample SampleFromXml(XNamespace ns, XElement element)
         {
-            return new Sample(ns, element);
-        }
-    }
-
-    public class Condition : DataElementBase<string>, ICondition
-    {
-        public string ConditionType { get; internal protected set; }
-
-        internal Condition(XNamespace ns, XElement element)
-            : base(ns, element)
-        {
-            this.ConditionType = element.Name.LocalName;
-            this.Value = ConditionType.ToString();
-
-            var attr = element.Attribute("type");
-            if (attr != null)
-            {
-                Type = attr.Value;
-            }
+            return new SampleElement(ns, element);
         }
     }
 }

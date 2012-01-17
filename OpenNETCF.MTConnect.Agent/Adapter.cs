@@ -89,12 +89,14 @@ namespace OpenNETCF.MTConnect
 
         private void PublishDefaultData(ComponentBase component)
         {
-            foreach (var di in component.DataItems)
+            var dataItems = component.DataItems.ToArray();
+            foreach (var di in dataItems)
             {
                 PublishDefaultData(di);
             }
 
-            foreach (var c in component.Components)
+            var components = component.Components.ToArray();
+            foreach (var c in components)
             {
                 PublishDefaultData(c);
             }
@@ -139,15 +141,19 @@ namespace OpenNETCF.MTConnect
 
         public void AddAlarm(string name, string id, string path)
         {
-            DataItem dataItem = new DataItem(DataItemCategory.Condition, DataItemType.HARDWARE, name, id);
-
-            dataItem.Writable = true;
+            var dataItem = new Condition(id)
+            {
+                Type = "Alarm",
+                Name = name,
+                Writable = true
+            };
 
             string[] paths = path.Split('.');
 
             if (paths.Length == 2)
             {
                 Component component = Device.Components[paths[1]];
+                if (component == null) component = Device.Components[path];
                 component.AddDataItem(dataItem);
                 return;
             }
@@ -172,6 +178,11 @@ namespace OpenNETCF.MTConnect
             if (paths.Length == 2)
             {
                 Component component = Device.Components[path];
+                if (component == null)
+                {
+                    component = Device.Components[paths[1]];
+                }
+                if (component == null) return;
                 var dataItems = (List<DataItem>)component.DataItems.Find(t => t.Name == name && t.ID == id);
                 component.RemoveDataItem(dataItems[0]);
                 return;
