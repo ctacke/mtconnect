@@ -58,8 +58,14 @@ namespace OpenNETCF.MTConnect
         public DeviceCollection Probe()
         {
             var xml = GetProbeXml();
-            var devices = ConfigParser.ParseConfigFile(xml);
+			
+#if IPHONE
+			DeviceCollection devices = ConfigParser.ParseConfigFile(xml);
             return devices;
+#else
+			var devices = ConfigParser.ParseConfigFile(xml);
+            return devices;
+#endif
         }
 
         public DataStream Current()

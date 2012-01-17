@@ -34,7 +34,8 @@ namespace OpenNETCF.MTConnect
     {
         string Name { get; }
         string ID { get; }
-        List<IHostedComponent> Components { get; }
         ComponentType ComponentType { get; }
+        List<IHostedComponent> Components { get; }
+        ConditionCollection Conditions { get; }
     }
 }

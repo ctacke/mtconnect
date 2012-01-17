@@ -38,7 +38,6 @@ namespace OpenNETCF.MTConnect
 
         private string m_versionNumber;
         private Agent m_agent;
-        private Dictionary<string, string> m_publishedValueCache = new Dictionary<string, string>();
         private IHostedAdapterService AdapterService { get; set; }
 
         internal AgentInterface(Agent agent, IHostedAdapterService adapterService)
@@ -50,48 +49,16 @@ namespace OpenNETCF.MTConnect
 
         public void ClearCache()
         {
-            m_publishedValueCache.Clear();
-        }
-
-        private bool IsChangedValue(string dataItemID, string value)
-        {
-            lock (m_publishedValueCache)
-            {
-                if (!m_publishedValueCache.ContainsKey(dataItemID))
-                {
-                    m_publishedValueCache.Add(dataItemID, value);
-                    return true;
-                }
-
-                var previous = m_publishedValueCache[dataItemID];
-                if (previous != value)
-                {
-                    m_publishedValueCache[dataItemID] = value;
-                    return true;
-                }
-            }
-            return false;
         }
 
         public void PublishData(string dataItemID, object value)
         {
-            PublishData(dataItemID, value, true, this);
+            PublishData(dataItemID, value, true);
         }
 
         public void PublishData(string dataItemID, object value, bool ignoreDuplicates)
         {
-            PublishData(dataItemID, value, ignoreDuplicates, this);
-        }
-
-        public void PublishData(string dataItemID, object value, bool ignoreDuplicates, object parameter)
-        {
-            if (value == null) return;
-            if ((ignoreDuplicates) && (!IsChangedValue(dataItemID, value.ToString())))
-            {
-                return;
-            }
-
-            m_agent.PublishData(dataItemID, value.ToString(), DateTime.Now, parameter);
+            m_agent.PublishData(dataItemID, value, DateTime.Now);
         }
 
         public string Version
@@ -114,7 +81,7 @@ namespace OpenNETCF.MTConnect
             get { return m_agent.Data.Count; }
         }
 
-        public string GetDataItemCurrentValue(string dataItemID)
+        public object GetDataItemCurrentValue(string dataItemID)
         {
             var et = Environment.TickCount;
             var value = m_agent.Data.GetCurrentValue(dataItemID);

@@ -38,5 +38,6 @@ namespace OpenNETCF.MTConnect
         string Manufacturer { get; }
 
         IEnumerable<IHostedComponent> Components { get; }
+        ConditionCollection Conditions { get; }
     }
 }

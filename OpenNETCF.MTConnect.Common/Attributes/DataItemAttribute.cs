@@ -29,15 +29,38 @@ using System.Text;
 
 namespace OpenNETCF.MTConnect
 {
-    internal static class AttributeNames
+    [AttributeUsage(AttributeTargets.Property)]
+    public abstract class DataItemAttribute : Attribute
     {
-        internal const string DataItemId = "dataItemId";
-        internal const string Sequence = "sequence";
-        internal const string Timestamp = "timestamp";
-        internal const string Type = "type";
-        internal const string Name = "name";
-        internal const string Qualifier = "qualifier";
-        internal const string NativeCode = "nativeCode";
-        internal const string NativeSeverity = "nativeSeverity";
+        public string ID { get; set; }
+        public DataItemType ItemType { get; set; }
+        public DataItemSubtype ItemSubType { get; set; }
+        public string Units { get; set; }
+        public string CoordianteSystem { get; set; }
+        public string UUID { get; set; }
+        public string Source { get; set; }
+        public string SignificantDigits { get; set; }
+        public string NativeUnits { get; set; }
+        public string NativeScale { get; set; }
+
+        public DataItemAttribute()
+        {
+            ItemSubType = DataItemSubtype.NONE;
+            ItemType = DataItemType.OTHER;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class EventDataItemAttribute : DataItemAttribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class SampleDataItemAttribute : DataItemAttribute
+    {
+        public SampleDataItemAttribute(string units)
+        {
+            Units = units;
+        }
     }
 }

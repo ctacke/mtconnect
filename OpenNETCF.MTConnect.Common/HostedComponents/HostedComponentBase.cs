@@ -39,6 +39,12 @@ namespace OpenNETCF.MTConnect
         public event PropertyChangedEventHandler PropertyChanged;
 
         public virtual string Name { get; set; }
+        public virtual ConditionCollection Conditions { get; private set; }
+
+        public HostedComponentBase()
+        {
+            Conditions = new ConditionCollection();
+        }
         
         public virtual string ID
         {
@@ -55,6 +61,7 @@ namespace OpenNETCF.MTConnect
         {
             get { return m_components; }
         }
+
 
         protected void RaisePropertyChanged(string propertyName)
         {

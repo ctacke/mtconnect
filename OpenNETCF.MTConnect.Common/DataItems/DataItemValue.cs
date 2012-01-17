@@ -32,12 +32,12 @@ namespace OpenNETCF.MTConnect
 {
     public class DataItemValue : EventArgs
     {
-        public DataItemValue(long sequence, DataItem item, string value)
+        public DataItemValue(long sequence, DataItem item, object value)
             : this(sequence, item, value, DateTime.Now)
         {
         }
 
-        public DataItemValue(long sequence, DataItem item, string value, DateTime time)
+        public DataItemValue(long sequence, DataItem item, object value, DateTime time)
         {
             Sequence = sequence;
             Item = item;
@@ -47,7 +47,7 @@ namespace OpenNETCF.MTConnect
 
         public long Sequence { get; internal set; }
         public DataItem Item { get; private set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
         public DateTime Time { get; private set; }
 
         internal XElement AsXml(XNamespace ns)
@@ -57,28 +57,24 @@ namespace OpenNETCF.MTConnect
             switch (Item.Category)
             {
                 case DataItemCategory.Condition:
-                    element = new XElement(ns + this.Value)
-                        .AddAttribute(AttributeNames.DataItemId, this.Item.ID)
-                        .AddAttribute(AttributeNames.Sequence, this.Sequence.ToString())
-                        .AddAttribute(AttributeNames.Timestamp, this.Time.ToString("s"))
-                        .AddAttribute(AttributeNames.Type, this.Item.Type.ToString())
-                        .AddAttributeIfHasValue(AttributeNames.Name, this.Item.Name)
-                        .AddAttributeIfHasValue(AttributeNames.Qualifier, this.Item.Properties[CommonProperties.Qualifier])
-                        .AddAttributeIfHasValue(AttributeNames.NativeCode, this.Item.Properties[CommonProperties.NativeCode])
-                        .AddAttributeIfHasValue(AttributeNames.NativeSeverity, this.Item.Properties[CommonProperties.NativeSeverity]);
+                    element = (Value as Condition).AsXElement(ns);
 
-                    // TODO: xs:lang
+                    element.Attribute("id").Remove();
+                    element.AddAttribute(XmlAttributeName.DataItemID, this.Item.ID);
 
                     break;
                 case DataItemCategory.Event:
                 case DataItemCategory.Sample:
                     element = new XElement(ns + TypeToCamel(this.Item.Type))
-                        .AddAttribute(AttributeNames.DataItemId, this.Item.ID)
-                        .AddAttribute(AttributeNames.Sequence, this.Sequence.ToString())
-                        .AddAttribute(AttributeNames.Timestamp, this.Time.ToString("s"))
-                        .AddAttributeIfHasValue(AttributeNames.Name, this.Item.Name);
-                    
-                    element.Value = Value;
+                        .AddAttribute(XmlAttributeName.DataItemID, this.Item.ID)
+                        .AddAttribute(XmlAttributeName.Sequence, this.Sequence.ToString())
+                        .AddAttribute(XmlAttributeName.Timestamp, this.Time.ToString("s"))
+                        .AddAttributeIfHasValue(XmlAttributeName.Name, this.Item.Name);
+
+                    if (Value != null)
+                    {
+                        element.Value = Value.ToString();
+                    }
 
                     break;
                 default:
@@ -120,6 +116,14 @@ namespace OpenNETCF.MTConnect
             }
 
             return new string(dest.ToArray(), 0, dest.Count);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} (id: {1}) = {2}",
+                this.Item.Name,
+                this.Item.ID,
+                this.Value);
         }
     }
 }

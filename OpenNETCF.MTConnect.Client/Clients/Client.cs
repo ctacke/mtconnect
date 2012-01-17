@@ -149,7 +149,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetProbePath();
-                var xml = RestConnector.Get(path, 2000);
+                var xml = RestConnector.Get(path, RequestTimeout);
                 return xml;
             }
         }

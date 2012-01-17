@@ -26,29 +26,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace OpenNETCF.MTConnect
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed  class MTConnectPropertyAttribute : Attribute
+    public class ConditionElement : DataElementBase<string>, ICondition
     {
-        public string ID { get; set; }
-        public DataItemType ItemType { get; set; }
-        public DataItemSubtype ItemSubType { get; set; }
-        public string Units { get; set; }
-        public DataItemCategory ItemCategory { get; set; }
-        public string CoordianteSystem { get; set; }
-        public string UUID { get; set; }
-        public string Source { get; set; }
-        public string SignificantDigits { get; set; }
-        public string NativeUnits { get; set; }
-        public string NativeScale { get; set; }
+        public string ConditionType { get; internal protected set; }
 
-        public MTConnectPropertyAttribute()
+        internal ConditionElement(XNamespace ns, XElement element)
+            : base(ns, element)
         {
-            ItemSubType = DataItemSubtype.NONE;
-            ItemType = DataItemType.OTHER;
-            ItemCategory = DataItemCategory.Event;
+            this.ConditionType = element.Name.LocalName;
+            this.Value = ConditionType.ToString();
+
+            var attr = element.Attribute("type");
+            if (attr != null)
+            {
+                Type = attr.Value;
+            }
         }
     }
 }

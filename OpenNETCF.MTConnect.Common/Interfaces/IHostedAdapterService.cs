@@ -39,6 +39,8 @@ namespace OpenNETCF.MTConnect
         void AddAdapter(IHostedAdapter adapter);
         void RemoveAdapter(IHostedAdapter adapter);
 
+        void StartAdapterPublishing();
+
         void LoadInstance(string adapterName, string instanceName);
         void RemoveInstance(string adapterName, string instanceName);
         void RemoveAdapter(string adapterName);

@@ -36,10 +36,12 @@ namespace OpenNETCF.MTConnect
 
         public event PropertyChangedEventHandler PropertyChanged;
         public IHostedAdapter HostedAdapter { get; private set; }
+        public ConditionCollection Conditions { get; private set; }
 
         public HostedDeviceBase(IHostedAdapter adapter)
         {
             HostedAdapter = adapter;
+            Conditions = new ConditionCollection();
         }
 
         public virtual string Name

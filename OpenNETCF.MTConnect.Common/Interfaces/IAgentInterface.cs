@@ -37,10 +37,8 @@ namespace OpenNETCF.MTConnect
 
         string CallMethod(string adapterID, string methodName, string[] parameters);
         void ClearCache();
-        string GetDataItemCurrentValue(string dataItemID);
+        object GetDataItemCurrentValue(string dataItemID);
         void PublishData(string dataItemID, object value);
-        void PublishData(string dataItemID, object value, bool ignoreDuplicates);
-        void PublishData(string dataItemID, object value, bool ignoreDuplicates, object parameter);
         DataItem GetDataItemByID(string dataItemID);
     }
 }

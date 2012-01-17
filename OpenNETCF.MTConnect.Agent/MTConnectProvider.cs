@@ -42,7 +42,6 @@ namespace OpenNETCF.MTConnect
 
         public abstract string AgentAddress { get; }
         public abstract bool Running { get; }
-        public abstract void Start();
         public abstract void Stop();
         public abstract void SetDataByDataItemID(string requestSource, string dataItemID, string data);
 
@@ -50,6 +49,8 @@ namespace OpenNETCF.MTConnect
 
         public Agent Agent { get; private set; }
         public IHost Host { get; private set; }
+
+        public virtual void OnStart() { }
 
         protected MTConnectProvider(int bufferSize, int checkpointFrequency)
         {
@@ -89,6 +90,17 @@ namespace OpenNETCF.MTConnect
                     TimeStamp = DateTime.Now
                 }));
             });
+        }
+
+        public void Start()
+        {
+            OnStart();
+
+            //var adapters = this.Agent.Adapters.ToArray();
+            //foreach (var adapter in adapters)
+            //{
+            //    adapter.PublishDefaultData();
+            //}
         }
     }
 }
