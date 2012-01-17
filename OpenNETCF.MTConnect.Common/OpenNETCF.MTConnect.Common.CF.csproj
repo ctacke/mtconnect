@@ -67,8 +67,8 @@
       <Link>Properties\MTConnect.SDK.VersionInfo.cs</Link>
     </Compile>
     <Compile Include="AgentInformation.cs" />
+    <Compile Include="Attributes\DataItemAttribute.cs" />
     <Compile Include="Attributes\MTConnectMethodAttribute.cs" />
-    <Compile Include="Attributes\MTConnectPropertyAttribute.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="Components\ComponentCollection.cs" />
@@ -76,7 +76,6 @@
     <Compile Include="Components\ComponentDescriptor.cs" />
     <Compile Include="Components\ComponentType.cs" />
     <Compile Include="ConfigParser.cs" />
-    <Compile Include="Constants\AttributeNames.cs" />
     <Compile Include="Constants\CommonProperties.cs" />
     <Compile Include="Constants\ErrorCode.cs">
       <SubType>Code</SubType>
@@ -86,6 +85,7 @@
     <Compile Include="Constants\NodeNames.cs" />
     <Compile Include="Constants\UnitValues.cs" />
     <Compile Include="Constants\XmlNames.cs" />
+    <Compile Include="DataItems\Condition.cs" />
     <Compile Include="DataItems\Constraint.cs" />
     <Compile Include="DataItems\DataItem.cs" />
     <Compile Include="DataItems\DataItemCategory.cs" />
