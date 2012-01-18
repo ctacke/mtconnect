@@ -94,6 +94,33 @@ namespace OpenNETCF.MTConnect
             return conditions.ToArray();
         }
 
+        public IEvent GetEvent(string sampleID)
+        {
+            foreach (var device in DeviceStreams)
+            {
+                foreach (var @event in device.Events)
+                {
+                    if (@event.DataItemID == sampleID)
+                    {
+                        return @event;
+                    }
+                }
+
+                foreach (var component in device.ComponentStreams)
+                {
+                    foreach (var @event in component.Events)
+                    {
+                        if (@event.DataItemID == sampleID)
+                        {
+                            return @event;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public ISample GetSample(string sampleID)
         {
             foreach (var device in DeviceStreams)

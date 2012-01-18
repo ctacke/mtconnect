@@ -33,6 +33,7 @@ namespace OpenNETCF.MTConnect
     public abstract class HostedDeviceBase : IHostedDevice, INotifyPropertyChanged
     {
         private string m_id;
+        private string m_name;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public IHostedAdapter HostedAdapter { get; private set; }
@@ -42,20 +43,12 @@ namespace OpenNETCF.MTConnect
         {
             HostedAdapter = adapter;
             Conditions = new ConditionCollection();
+            m_name = this.GetType().Name;
         }
 
         public virtual string Name
         {
-            get
-            {
-                string deviceName = HostedAdapter.ID;
-                string adapterEnd = "Adapter";
-                if (deviceName.EndsWith(adapterEnd))
-                {
-                    deviceName = deviceName.Substring(0, deviceName.Length - adapterEnd.Length);
-                }
-                return deviceName;
-            }
+            get { return m_name; }
         }
 
         public virtual string ID
