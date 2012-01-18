@@ -35,15 +35,22 @@ namespace OpenNETCF.MTConnect
     {
         private List<IHostedComponent> m_components = new List<IHostedComponent>();
         private string m_id;
+        private string m_name;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual string Name { get; set; }
         public virtual ConditionCollection Conditions { get; private set; }
 
         public HostedComponentBase()
         {
             Conditions = new ConditionCollection();
+            m_name = this.GetType().Name;
+        }
+
+        public virtual string Name 
+        {
+            get { return m_name; }
+            set { m_name = value; }
         }
         
         public virtual string ID

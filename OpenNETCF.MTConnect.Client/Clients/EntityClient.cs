@@ -100,6 +100,24 @@ namespace OpenNETCF.MTConnect
             return null;
         }
 
+        public void SetDataByDataItemID(string dataItemID, string data)
+        {
+            var request =
+                new XElement(XmlNodeName.DataItems,
+                    new XElement(XmlNodeName.DataItem,
+                        new XAttribute(XmlAttributeName.DataItemID, dataItemID),
+                        new XElement(XmlNodeName.Value,
+                            data)
+                    )
+                );
+
+            var path = "/agent/data";
+            lock (SyncRoot)
+            {
+                RestConnector.Post(path, request.ToString(), RequestTimeout);
+            }
+        }
+
         public DataStream Sample()
         {
             return Sample(100);
