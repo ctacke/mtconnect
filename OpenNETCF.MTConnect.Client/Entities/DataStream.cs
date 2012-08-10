@@ -37,6 +37,7 @@ namespace OpenNETCF.MTConnect
         public int FirstSequence { get; private set; }
         public int LastSequence { get; private set; }
         public int NextSequence { get; private set; }
+        public long InstanceID { get; private set; }
         public DeviceStream[] DeviceStreams { get; private set; }
 
         internal DataStream()
@@ -150,6 +151,8 @@ namespace OpenNETCF.MTConnect
 
         internal static DataStream FromXml(string xml)
         {
+            if (xml.IsNullOrEmpty()) return null;
+
             var doc = XDocument.Parse(xml);
             var ns = doc.Root.GetDefaultNamespace();
             var root = doc.Element(ns + "MTConnectStreams");
@@ -183,6 +186,16 @@ namespace OpenNETCF.MTConnect
                 catch { }
             }
 
+            attr = header.Attribute("instanceId");
+            if (attr != null)
+            {
+                try
+                {
+                    dataStream.InstanceID = long.Parse(attr.Value);
+                }
+                catch { }
+            }
+
             attr = header.Attribute("nextSequence");
             if (attr != null)
             {
@@ -212,7 +225,7 @@ namespace OpenNETCF.MTConnect
                 }
                 catch { }
             }
-            
+
             foreach (var deviceStream in root.Element(ns + "Streams").Elements(ns + "DeviceStream"))
             {
                 var ds = DeviceStream.FromXml(ns, deviceStream);

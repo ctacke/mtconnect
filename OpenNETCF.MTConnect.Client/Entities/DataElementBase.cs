@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Globalization;
 
 namespace OpenNETCF.MTConnect
 {
@@ -78,6 +79,36 @@ namespace OpenNETCF.MTConnect
                     Writable = bool.Parse(attr.Value);
                 }
                 catch { }
+            }
+        }
+
+        public static explicit operator double?(DataElementBase<T> de)
+        {
+            if (de.Value == null) return null;
+
+            if (de.Value is string)
+            {
+                if ((string)de.Value == string.Empty) return null;
+
+                try
+                {
+                    return double.Parse(de.Value as string, NumberStyles.Float, NumberFormatInfo.InvariantInfo);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToDouble(de.Value);
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }

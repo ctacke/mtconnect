@@ -50,15 +50,16 @@ namespace OpenNETCF.MTConnect
             }
             else
             {
-                try
+                double parsedValue;
+                if (Parsers.TryParse(element.Value, out parsedValue))
                 {
-                    Value = double.Parse(element.Value);
-
+                    Value = parsedValue;
                 }
-                catch
+                else
                 {
                     Value = null;
                 }
+
             }
         }
     }
