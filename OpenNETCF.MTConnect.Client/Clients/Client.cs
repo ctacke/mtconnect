@@ -48,7 +48,7 @@ namespace OpenNETCF.MTConnect
             }
 
             var uri = new Uri(clientAddress, UriKind.Absolute);
-            var connector = new RestConnector(uri.Host);
+            var connector = new RestConnector(uri.Authority);
             Initialize(connector, uri.LocalPath);
         }
 
@@ -79,7 +79,7 @@ namespace OpenNETCF.MTConnect
 
         private void Initialize(RestConnector connector, string rootFolder)
         {
-            RequestTimeout = 2000;
+            RequestTimeout = 4000;
 
             SyncRoot = new object();
             RestConnector = connector;
@@ -158,7 +158,7 @@ namespace OpenNETCF.MTConnect
         {
             lock (SyncRoot)
             {
-                var path = GetCurrentPath();
+                var path = GetCurrentPath().Replace('\\', '/');
                 var xml = RestConnector.Get(path, RequestTimeout);
                 return xml;
             }
@@ -191,7 +191,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 next = 0;
-                
+
                 if (from == -1)
                 {
                     var result = GetCurrentXml();
@@ -213,18 +213,25 @@ namespace OpenNETCF.MTConnect
 
         protected int GetNextSequenceID(string xml)
         {
-            var doc = XDocument.Parse(xml);
+            try
+            {
+                var doc = XDocument.Parse(xml);
 
-            var ns = doc.Root.GetDefaultNamespace();
+                var ns = doc.Root.GetDefaultNamespace();
 
-            var stream = doc.Element(ns + "MTConnectStreams");
+                var stream = doc.Element(ns + "MTConnectStreams");
 
-            if (stream == null) return -1;
+                if (stream == null) return -1;
 
-            var header = stream.Element(ns + "Header");
-            var next = int.Parse(header.Attribute("nextSequence").Value);
+                var header = stream.Element(ns + "Header");
+                var next = int.Parse(header.Attribute("nextSequence").Value);
 
-            return next;
+                return next;
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 }

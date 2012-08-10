@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 
 namespace OpenNETCF.MTConnect
 {
@@ -37,5 +38,194 @@ namespace OpenNETCF.MTConnect
         int Sequence { get; }
         bool Writable { get; }
         object Value { get; set; }
+    }
+
+    public static class IDataElementExtensions
+    {
+        public static double? AsNullableDouble(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return null;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return null;
+
+                try
+                {
+                    return double.Parse(evt.Value as string, NumberStyles.Float, NumberFormatInfo.InvariantInfo);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToDouble(evt.Value);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+        }
+
+        public static double AsDouble(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return 0;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return 0;
+
+                try
+                {
+                    return double.Parse(evt.Value as string, NumberStyles.Float, NumberFormatInfo.InvariantInfo);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToDouble(evt.Value);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+
+        }
+
+        public static int? AsNullableInt(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return null;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return null;
+
+                try
+                {
+                    return int.Parse(evt.Value as string, NumberStyles.Integer, NumberFormatInfo.InvariantInfo);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToInt32(evt.Value);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+        }
+
+        public static int AsInt(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return 0;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return 0;
+
+                try
+                {
+                    return int.Parse(evt.Value as string, NumberStyles.Integer, NumberFormatInfo.InvariantInfo);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToInt32(evt.Value);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+
+        }
+
+        public static bool? AsNullableBool(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return null;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return null;
+
+                try
+                {
+                    return bool.Parse(evt.Value as string);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToBoolean(evt.Value);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+        }
+
+        public static bool AsBool(this IDataElement evt)
+        {
+            if ((evt == null) || (evt.Value == null)) return false;
+
+            if (evt.Value is string)
+            {
+                if ((string)evt.Value == string.Empty) return false;
+
+                try
+                {
+                    return bool.Parse(evt.Value as string);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.ToBoolean(evt.Value);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+        }
     }
 }

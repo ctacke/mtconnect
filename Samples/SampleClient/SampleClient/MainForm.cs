@@ -14,6 +14,8 @@ namespace SampleClient
         {
             InitializeComponent();
 
+            agentAddress.Text = "192.168.10.239:5000";
+
             InitializeAgentTree();
 
             InitializeDataList();

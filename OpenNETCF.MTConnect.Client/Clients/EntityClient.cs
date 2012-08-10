@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using OpenNETCF.Web;
+using System.Diagnostics;
 
 namespace OpenNETCF.MTConnect
 {
@@ -55,15 +56,17 @@ namespace OpenNETCF.MTConnect
             m_nextSequence = -1;
         }
 
+        public long InstanceID { get; private set; }
+
         public DeviceCollection Probe()
         {
             var xml = GetProbeXml();
-			
+
 #if IPHONE
 			DeviceCollection devices = ConfigParser.ParseConfigFile(xml);
             return devices;
 #else
-			var devices = ConfigParser.ParseConfigFile(xml);
+            var devices = ConfigParser.ParseConfigFile(xml);
             return devices;
 #endif
         }
@@ -71,33 +74,46 @@ namespace OpenNETCF.MTConnect
         public DataStream Current()
         {
             var xml = GetCurrentXml();
-            return DataStream.FromXml(xml);
+            if (xml.IsNullOrEmpty()) return null;
+            var stream = DataStream.FromXml(xml);
+            InstanceID = stream.InstanceID;
+            return stream;
         }
 
         public DataStream Current(string deviceName)
         {
             var xml = GetCurrentXml(deviceName);
-            return DataStream.FromXml(xml);
+            var stream = DataStream.FromXml(xml);
+            InstanceID = stream.InstanceID;
+            return stream;
         }
 
         public IDataElement GetDataItemById(string id)
         {
-            string path = string.Format("//DataItem[@id=\"{0}\"]", id);
-            var xml = GetPathFilteredCurrentXml(path);
-            if (xml == string.Empty) return null;
-            var stream = DataStream.FromXml(xml);
-            if (stream == null) return null;
-            if(stream.DeviceStreams.Length == 0) return null;
-            if (stream.DeviceStreams[0].AllDataItems.Length > 0)
+            try
             {
-                return stream.DeviceStreams[0].AllDataItems.FirstOrDefault();
-            }
-            if (stream.DeviceStreams[0].ComponentStreams.Length > 0)
-            {
-                return stream.DeviceStreams[0].ComponentStreams[0].AllDataItems.FirstOrDefault();
-            }
+                string path = string.Format("//DataItem[@id=\"{0}\"]", id);
+                var xml = GetPathFilteredCurrentXml(path);
+                if (xml == string.Empty) return null;
+                var stream = DataStream.FromXml(xml);
+                if (stream == null) return null;
+                if (stream.DeviceStreams.Length == 0) return null;
+                if (stream.DeviceStreams[0].AllDataItems.Length > 0)
+                {
+                    return stream.DeviceStreams[0].AllDataItems.FirstOrDefault();
+                }
+                if (stream.DeviceStreams[0].ComponentStreams.Length > 0)
+                {
+                    return stream.DeviceStreams[0].ComponentStreams[0].AllDataItems.FirstOrDefault();
+                }
 
-            return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("EntityClient.GetDataItemId exception: " + ex.Message);
+                return null;
+            }
         }
 
         public void SetDataByDataItemID(string dataItemID, string data)
@@ -136,8 +152,9 @@ namespace OpenNETCF.MTConnect
                 m_nextSequence = -1;
             }
             if (xml == string.Empty) return null;
-            return DataStream.FromXml(xml);
+            var stream = DataStream.FromXml(xml);
+            InstanceID = stream.InstanceID;
+            return stream;
         }
     }
-
 }
