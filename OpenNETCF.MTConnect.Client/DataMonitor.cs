@@ -27,39 +27,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using OpenNETCF.Web;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace OpenNETCF.MTConnect
 {
     public class DataMonitor : IDisposable
     {
+        public event EventHandler<GenericEventArgs<ISample>> NewSample;
+        public event EventHandler<GenericEventArgs<IEvent>> NewEvent;
+        public event EventHandler<GenericEventArgs<ICondition>> NewCondition;
+        public event EventHandler<GenericEventArgs<Boolean>> OnConnected;
+
+        private static Random m_random = new Random();
         private readonly bool Profiling = false;
+
         private int m_lastET;
         private ulong m_totalTicks;
         private ulong m_sumET;
         private bool m_connected;
+        private bool m_currentlyGettingData = false;
         private const int MaxSamplesPerQuery = 100;
         private const int ConnectedTries = 5;
         private EntityClient m_client;
         private string m_agentAddress;
         private int m_period;
-        private AutoResetEvent m_stopEvent;
         private Dictionary<string, ISample> m_samples = new Dictionary<string, ISample>();
         private Dictionary<string, IEvent> m_events = new Dictionary<string, IEvent>();
         private Dictionary<string, ICondition> m_conditions = new Dictionary<string, ICondition>();
-        private static Random m_random = new Random();
+        private Timer m_monitorTimer;
 
-        public event EventHandler<GenericEventArgs<ISample>> NewSample;
-        public event EventHandler<GenericEventArgs<IEvent>> NewEvent;
-        public event EventHandler<GenericEventArgs<ICondition>> NewCondition;
+        public int MeanExecutionTime { get; private set; }
+        public RestConnector RestConnector { get; private set; }
 
-        public event EventHandler<GenericEventArgs<Boolean>> OnConnected;
+        public DataMonitor(EntityClient entityClient)
+            : this(entityClient, 1000)
+        {
+        }
 
-        public bool Running { get; private set; }
+        public DataMonitor(EntityClient entityClient, int period)
+        {
+#if DEBUG
+            Profiling = true;
+#endif
+            m_agentAddress = entityClient.RestConnector.EndpointAddress;
+            m_client = entityClient;
+            RestConnector = m_client.RestConnector;
+            Period = period;
+        }
+
+        ~DataMonitor()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            Stop();
+        }
+
         public bool Connected
         {
-            get{ return m_connected;}
+            get { return m_connected; }
             private set
             {
                 if (m_connected != value)
@@ -72,38 +103,15 @@ namespace OpenNETCF.MTConnect
                 }
             }
         }
-        public int MeanExecutionTime { get; private set; }
 
-        public RestConnector RestConnector { get; private set; }
-        public long InstanceID { get { return m_client.InstanceID; } }
-
-        public DataMonitor(EntityClient entityClient)
-            : this(entityClient, 1000)
+        public bool Running
         {
+            get { return m_monitorTimer != null; }
         }
 
-        public DataMonitor(EntityClient entityClient, int period)
+        public long InstanceID
         {
-#if DEBUG
-            Profiling = true;
-#endif
-            m_agentAddress = entityClient.RestConnector.DeviceAddress;
-            m_client = entityClient;
-            RestConnector = m_client.RestConnector;
-            Period = period;
-            m_stopEvent = new AutoResetEvent(false);
-            Running = false;
-        }
-
-        ~DataMonitor()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Stop();
+            get { return m_client.InstanceID; }
         }
 
         public int Period
@@ -124,27 +132,15 @@ namespace OpenNETCF.MTConnect
         {
             if (Running) return;
 
-            new Thread(MonitorThreadProc) 
-            { 
-                IsBackground = true,
-                Name = string.Format("DataMonitor[{0}]", m_client.AgentAddress)
-            }
-            .Start();
+            m_monitorTimer = new Timer(MonitorTimerProc, null, Period, Period);
 
             Connected = false;
         }
 
         public void Stop()
         {
-#if !WindowsCE
-            if (!m_stopEvent.SafeWaitHandle.IsClosed && !m_stopEvent.SafeWaitHandle.IsInvalid)
-            {
-#endif
-                m_stopEvent.Set();
-
-#if !WindowsCE
-            }
-#endif
+            m_monitorTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            m_monitorTimer.Dispose();
         }
 
         public ISample GetSample(string id)
@@ -188,61 +184,67 @@ namespace OpenNETCF.MTConnect
             return m_conditions.Values.ToArray();
         }
 
-        private void MonitorThreadProc()
+        private void MonitorTimerProc(object o)
         {
             int reTries = 0;
             int currentWaitPeriod = Period;
-            Running = true;
+
+            var start = Environment.TickCount;
+
+            if (m_currentlyGettingData)
+            {
+                return;
+            }
 
             try
             {
-                m_stopEvent.Reset();
-
-                Thread.Sleep(Period);
-
-                while (!(m_stopEvent.WaitOne(0)))
+                var data = m_client.Sample(MaxSamplesPerQuery);
+                if (data != null)
                 {
-                    var start = Environment.TickCount;
+                    Connected = true;
+                    reTries = 0;
+                    HandleNewData(data);
 
-                    var data = m_client.Sample(MaxSamplesPerQuery);
-                    if (data != null)
+                    // make sure we pulled *all* data
+                    var remain = data.LastSequence - data.NextSequence + 1;
+                    while (remain > 0)
                     {
-                        Connected = true;
-                        reTries = 0;
+                        data = m_client.Sample(MaxSamplesPerQuery);
+                        if (data == null)
+                        {
+                            continue;
+                        }
+
                         HandleNewData(data);
-
-                        // make sure we pulled *all* data
-                        var remain = data.LastSequence - data.NextSequence + 1;
-                        while (remain > 0)
-                        {
-                            data = m_client.Sample(MaxSamplesPerQuery);
-                            if (data == null)
-                            {
-                                continue;
-                            }
-
-                            HandleNewData(data);
-                            remain = data.LastSequence - data.NextSequence + 1;
-                        }
+                        remain = data.LastSequence - data.NextSequence + 1;
                     }
-                    else
+                }
+                else
+                {
+                    reTries++;
+                    if (reTries > ConnectedTries)
                     {
-                        reTries++;
-                        if (reTries > ConnectedTries)
-                        {
-                            Connected = false;
-                        }
+                        Connected = false;
                     }
+                }
 
-                    var et = Environment.TickCount - start;
-                    var wait = GetWaitPeriod(et, Connected);
+                var et = Environment.TickCount - start;
 
-                    Thread.Sleep(wait);
+                var wait = GetWaitPeriod(et, Connected);
+                if (wait > Period)
+                {
+                    // we're slow in retrieving data - slow down
+                    m_monitorTimer.Change(wait, wait);
+                }
+                else if (wait > (Period / 2d))
+                {
+                    // we took less than half the period time to process, speed back up
+                    m_monitorTimer.Change(Period, Period);
                 }
             }
             finally
             {
-                Running = false;
+                m_currentlyGettingData = false;
             }
         }
 
@@ -274,9 +276,7 @@ namespace OpenNETCF.MTConnect
 
             if (Profiling)
             {
-#if !MONOTOUCH
-                Trace.WriteLine(string.Format("DataMonitor period on {0} slowed to {1}ms", this.m_agentAddress, actualwait));
-#endif
+                Debug.WriteLine(string.Format("DataMonitor period on {0} slowed to {1}ms", this.m_agentAddress, actualwait));
             }
             
             return actualwait;
@@ -301,7 +301,7 @@ namespace OpenNETCF.MTConnect
                         m_samples.Add(s.DataItemID, s);
                     }
 
-                    ThreadPool.QueueUserWorkItem(delegate
+                    Task.Run(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
                         NewSample.Fire(this, new GenericEventArgs<ISample>(s));
@@ -323,7 +323,7 @@ namespace OpenNETCF.MTConnect
                         m_events.Add(e.DataItemID, e);
                     }
 
-                    ThreadPool.QueueUserWorkItem(delegate
+                    Task.Run(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
                         NewEvent.Fire(this, new GenericEventArgs<IEvent>(e));
@@ -345,7 +345,7 @@ namespace OpenNETCF.MTConnect
                         m_conditions.Add(c.DataItemID, c);
                     }
 
-                    ThreadPool.QueueUserWorkItem(delegate
+                    Task.Run(delegate
                     {
                         // raise the event on a thread so we don't slow down processing
                         NewCondition.Fire(this, new GenericEventArgs<ICondition>(c));

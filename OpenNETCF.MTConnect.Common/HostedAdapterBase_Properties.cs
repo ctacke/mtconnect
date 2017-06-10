@@ -51,11 +51,11 @@ namespace OpenNETCF.MTConnect
         {
             lock (m_syncRoot)
             {
-                m_propertyDictionary = new Dictionary<string, PropertyData>(StringComparer.InvariantCultureIgnoreCase);
-                m_propertyKeyMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+                m_propertyDictionary = new Dictionary<string, PropertyData>(StringComparer.OrdinalIgnoreCase);
+                m_propertyKeyMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
                 // load device properties
-                var deviceProperties = from p in HostedDevice.GetType().GetProperties()
+                var deviceProperties = from p in HostedDevice.GetType().GetRuntimeProperties()
                                        let pr = p.GetCustomAttributes(typeof(DataItemAttribute), true).FirstOrDefault()
                                        where pr != null
                                        select new DataItemProperty
@@ -81,7 +81,7 @@ namespace OpenNETCF.MTConnect
 
                     var dataItem = CreateDataItem(prop, id);
                     // see if it's publicly writable
-                    if (prop.PropertyInfo.GetSetMethod() == null)
+                    if (prop.PropertyInfo.SetMethod == null)
                     {
                         dataItem.Writable = false;
                     }
@@ -163,7 +163,7 @@ namespace OpenNETCF.MTConnect
         {
             Debug.WriteLine(string.Format(" Component '{0}'", component.Name));
 
-            var componentProperties = from p in component.GetType().GetProperties()
+            var componentProperties = from p in component.GetType().GetRuntimeProperties()
                                         let pr = p.GetCustomAttributes(typeof(DataItemAttribute), true).FirstOrDefault()
                                         where pr != null
                                         select new DataItemProperty
@@ -185,7 +185,7 @@ namespace OpenNETCF.MTConnect
 
                 var dataItem = CreateDataItem(prop, id);
                 // see if it's publicly writable
-                if (prop.PropertyInfo.GetSetMethod() == null)
+                if (prop.PropertyInfo.SetMethod == null)
                 {
                     dataItem.Writable = false;
                 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>opennetcf-mtconnect-client</id>
+        <version>1.0.17160.0</version>
+        <title>A .NET Standard MTConnect Client SDK Connector</title>
+        <authors>Chris Tacke</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A library targeting .NET Standard 1.2 for creating MTConnect consumeing client applications.</description>
+
+    <dependencies>
+      <group>
+        <dependency id="opennetcf-extensions-standard" version="1.0.17160"/>
+        <dependency id="opennetcf-restconnector" version="1.0.17160"/>
+      </group>
+    </dependencies>
+    </metadata>
+  <files>
+    <file src=".\OpenNETCF.MTConnect.Client\bin\Release\OpenNETCF.MTConnect.Client.dll" target="lib\netstandard1.2" />
+    <file src=".\OpenNETCF.MTConnect.Client\bin\Release\OpenNETCF.MTConnect.Common.dll" target="lib\netstandard1.2" />
+  </files>
+</package>

@@ -90,7 +90,7 @@ namespace OpenNETCF.MTConnect
             OpenNETCF.Validate
                 .Begin()
                 .IsNotNullOrEmpty(propertyName)
-                .IsNotNull(value)
+                .ParameterIsNotNull(value)
                 .Check();
 
             Properties[propertyName] = value;
@@ -120,17 +120,18 @@ namespace OpenNETCF.MTConnect
 
             PropertyCollection props = ConfigParser.GetAttributes(element);
 
-            T comp;
+            T comp = default(T);
 
             // the reason for this is to prevent exposing a public, parameterless constructor for Device and Component
+            var typeInfo = typeof(T).GetTypeInfo().DeclaredConstructors;
+            var ctor = typeof(T).GetTypeInfo().DeclaredConstructors.First(c => c.GetParameters().ElementAt(0).ParameterType == typeof(PropertyCollection));
+
             if (parent == null)
             {
-                var ctor = typeof(T).GetConstructor(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new Type[] { typeof(PropertyCollection) }, null);
                 comp = (T)ctor.Invoke(new object[] { props });
             }
             else
             {
-                var ctor = typeof(T).GetConstructor(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new Type[] { typeof(PropertyCollection), typeof(Device) }, null);
                 comp = (T)ctor.Invoke(new object[] { props, parent });
             }
 
@@ -203,7 +204,7 @@ namespace OpenNETCF.MTConnect
         {
             OpenNETCF.Validate
                 .Begin()
-                .IsNotNull(component)
+                .ParameterIsNotNull(component)
                 .Check();
 
             if (component.Device == null)
@@ -222,7 +223,7 @@ namespace OpenNETCF.MTConnect
         {
             OpenNETCF.Validate
                 .Begin()
-                .IsNotNull(dataItem)
+                .ParameterIsNotNull(dataItem)
                 .Check();
 
             dataItem.Component = this;

@@ -72,7 +72,7 @@ namespace OpenNETCF.MTConnect
             OpenNETCF.Validate
                 .Begin()
                 .IsNotNullOrEmpty(componentType)
-                .IsFalse(componentType.Contains(' '))  // spec requires the type to have no spaces, as it becomes an XML node name
+                .IsFalse(componentType.Contains(" "))  // spec requires the type to have no spaces, as it becomes an XML node name
                 .IsNotNullOrEmpty(id)
                 .Check();
 

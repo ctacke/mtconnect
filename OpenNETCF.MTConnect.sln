@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Common.Standard", "OpenNETCF.MTConnect.Common\OpenNETCF.MTConnect.Common.Standard.csproj", "{CBA9483F-7463-481F-91D4-89EB94309DA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.MTConnect.Client.Standard", "OpenNETCF.MTConnect.Client\OpenNETCF.MTConnect.Client.Standard.csproj", "{5BED7545-44E1-477A-BECB-45312C368192}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleClient", "Samples\SampleClient\SampleClient\SampleClient.csproj", "{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBA9483F-7463-481F-91D4-89EB94309DA0}.Release|x86.Build.0 = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Debug|x86.Build.0 = Debug|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|x86.ActiveCfg = Release|Any CPU
+		{5BED7545-44E1-477A-BECB-45312C368192}.Release|x86.Build.0 = Release|Any CPU
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|x86.ActiveCfg = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Debug|x86.Build.0 = Debug|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Any CPU.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|Mixed Platforms.Build.0 = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|x86.ActiveCfg = Release|x86
+		{F28D26A8-D35D-4D42-86B2-05F5340E5C0B}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = OpenNETCF.Net.MTConnect.FFx.vsmdi
+	EndGlobalSection
+EndGlobal

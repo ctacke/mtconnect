@@ -53,7 +53,7 @@ namespace OpenNETCF.MTConnect
                 m_descriptionCache = new Dictionary<ErrorCode, string>();
 
                 var type = typeof(ErrorCode);
-                var fields = type.GetFields(BindingFlags.Static | BindingFlags.GetField | BindingFlags.Public);
+                var fields = type.GetRuntimeFields();
 
                 foreach (var fi in fields)
                 {

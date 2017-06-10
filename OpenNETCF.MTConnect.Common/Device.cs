@@ -92,7 +92,7 @@ namespace OpenNETCF.MTConnect
 
         public void SetAvailability(bool available)
         {
-            var existing = DataItems.FirstOrDefault(i => string.Compare(i.Type, DataItemType.AVAILABILITY.ToString(), true) == 0);
+            var existing = DataItems.FirstOrDefault(i => string.Compare(i.Type, DataItemType.AVAILABILITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0);
 
             if (existing == null) return;
 

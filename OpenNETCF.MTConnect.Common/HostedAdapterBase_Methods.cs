@@ -47,7 +47,7 @@ namespace OpenNETCF.MTConnect
             m_methodDictionary = new Dictionary<string, MethodData>();
 
             // load device methods
-            var deviceMethods = from m in HostedDevice.GetType().GetMethods()
+            var deviceMethods = from m in HostedDevice.GetType().GetRuntimeMethods()
                                    let ma = m.GetCustomAttributes(typeof(MTConnectMethodAttribute), true).FirstOrDefault()
                                    where ma != null
                                    select m;
@@ -72,7 +72,7 @@ namespace OpenNETCF.MTConnect
                 {
                     Debug.WriteLine(string.Format(" Component '{0}'", component.Name));
 
-                    var componentMethods = from m in component.GetType().GetMethods()
+                    var componentMethods = from m in component.GetType().GetRuntimeMethods()
                                            let ma = m.GetCustomAttributes(typeof(MTConnectMethodAttribute), true).FirstOrDefault()
                                            where ma != null
                                            select m;

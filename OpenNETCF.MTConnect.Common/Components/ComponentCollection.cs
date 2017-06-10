@@ -80,7 +80,7 @@ namespace OpenNETCF.MTConnect
         {
             OpenNETCF.Validate
                 .Begin()
-                .IsNotNull(component)
+                .ParameterIsNotNull(component)
                 .Check();
 
             lock (m_syncRoot)

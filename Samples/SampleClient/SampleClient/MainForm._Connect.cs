@@ -17,6 +17,7 @@ namespace SampleClient
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return;
             }
 
             connect.Enabled = false;

@@ -28,7 +28,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
-using OpenNETCF.Web;
 
 namespace OpenNETCF.MTConnect
 {
@@ -42,13 +41,13 @@ namespace OpenNETCF.MTConnect
 
         public Client(string clientAddress)
         {
-            if (!clientAddress.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            if (!clientAddress.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
                 clientAddress = "http://" + clientAddress;
             }
 
             var uri = new Uri(clientAddress, UriKind.Absolute);
-            var connector = new RestConnector(uri.Authority);
+            var connector = new RestConnector(uri);
             Initialize(connector, uri.LocalPath);
         }
 
@@ -83,7 +82,7 @@ namespace OpenNETCF.MTConnect
 
             SyncRoot = new object();
             RestConnector = connector;
-            AgentAddress = connector.DeviceAddress;
+            AgentAddress = connector.EndpointAddress;
             RootFolder = rootFolder;
         }
 
@@ -149,7 +148,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetProbePath();
-                var xml = RestConnector.Get(path, RequestTimeout);
+                var xml = RestConnector.GetString(path, RequestTimeout);
                 return xml;
             }
         }
@@ -159,7 +158,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetCurrentPath().Replace('\\', '/');
-                var xml = RestConnector.Get(path, RequestTimeout);
+                var xml = RestConnector.GetString(path, RequestTimeout);
                 return xml;
             }
         }
@@ -169,7 +168,7 @@ namespace OpenNETCF.MTConnect
             lock (SyncRoot)
             {
                 var path = GetCurrentPath(deviceName);
-                var xml = RestConnector.Get(path, RequestTimeout);
+                var xml = RestConnector.GetString(path, RequestTimeout);
                 return xml;
             }
         }
@@ -181,7 +180,7 @@ namespace OpenNETCF.MTConnect
                 var path = GetCurrentPath();
                 path += "?path=";
                 path += filter;
-                var xml = RestConnector.Get(path, RequestTimeout);
+                var xml = RestConnector.GetString(path, RequestTimeout);
                 return xml;
             }
         }
@@ -201,7 +200,7 @@ namespace OpenNETCF.MTConnect
                 }
 
                 var path = GetSamplePath(from, maxItems);
-                var xml = RestConnector.Get(path, RequestTimeout);
+                var xml = RestConnector.GetString(path, RequestTimeout);
                 if (xml != string.Empty)
                 {
                     next = GetNextSequenceID(xml);
